@@ -24,4 +24,4 @@ spring:
             refresh: true
             group: FuFuMakingFriend
 server:
-  port: 5001
+  port: 4201

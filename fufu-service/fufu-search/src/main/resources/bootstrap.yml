@@ -1,6 +1,6 @@
 spring:
   application:
-    name: fufu-socializing
+    name: fufu-search
   cloud:
     sentinel:
       transport:
@@ -24,4 +24,4 @@ spring:
             refresh: true
             group: FuFuMakingFriend
 server:
-  port: 4101
+  port: 4301

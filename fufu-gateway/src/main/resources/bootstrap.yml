@@ -1,24 +1,28 @@
 spring:
-  main:
-    web-application-type: reactive
+#  main:
+#    web-application-type: reactive
   application:
-    name: gateway-service-test
+    name: fufu-gateway
   cloud:
     nacos:
       server-addr: localhost:8848
       discovery:
-        group: test
+        group: FuFuMakingFriend
+        enabled: true
       config:
-        group: test
+        enabled: true
+        group: FuFuMakingFriend
         prefix: ${spring.application.name}
         file-extension: yaml
+        encode: "UTF-8"
+        refresh-enabled: true
         shared-configs:
           - data-id: redis-conf.yaml
             refresh: true
-            group: test
+            group: FuFuMakingFriend
           - data-id: sa-token-conf.yaml
             refresh: true
-            group: test
+            group: FuFuMakingFriend
     sentinel:
       transport:
 #         添加sentinel的控制台地址
@@ -64,4 +68,3 @@ spring:
 logging:
   level:
     org.springframework.cloud.gateway: debug
-

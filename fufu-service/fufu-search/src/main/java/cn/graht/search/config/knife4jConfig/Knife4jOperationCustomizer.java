@@ -1,4 +1,4 @@
-package cn.graht.user.config.knife4jConfig;
+package cn.graht.search.config.knife4jConfig;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.security.SecurityRequirement;

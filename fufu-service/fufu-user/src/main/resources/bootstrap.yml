@@ -30,7 +30,6 @@ spring:
         heart-beat-timeout: 40000
         # 该实例在不发送心跳后，被nacos下掉该实例的时间。（单位:毫秒）
         ip-delete-timeout: 70000
-
       config:
         # 开关
         enabled: true

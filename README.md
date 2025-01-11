@@ -13,3 +13,6 @@
 >  用户服务 :
 >  通过feign来远程调用
 >  订单服务
+#### 服务启动
+> -javaagent:C:\Users\43070\Desktop\bs\Code\env\apache-skywalking-java-agent-9.3.0\skywalking-agent.jar [skywalking-agent jar包位置]
+> -Dskywalking.agent.service_name=[服务名] -Dskywalking.collector.backend_service=127.0.0.1:11800 [日志地址]

@@ -1,5 +1,6 @@
 package cn.graht.gateway.filter;
 
+import cn.graht.gateway.utils.GatewayHttpUtil;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -9,7 +10,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
@@ -42,14 +42,14 @@ GateWayFilter {
             boolean b = true;
             if ("POST".equals(method)) {
                 //从请求里获取Post请求体
-                String bodyStr = resolveBodyFromRequest(serverHttpRequest);
+                String bodyContent = GatewayHttpUtil.getBodyContent(ex);
                 //得到Post请求的请求参数后，做想做的事
-                log.debug("访问网关uri:{},post请求参数：{}",url,bodyStr);
-                if(bodyStr != null){
+                log.debug("访问网关uri:{},post请求参数：{}",url,bodyContent);
+                if(bodyContent != null){
                     //下面的将请求体再次封装写回到request里，传到下一级，否则，由于请求体已被消费，后续的服务将取不到值
                     URI uri = serverHttpRequest.getURI();
                     ServerHttpRequest request = serverHttpRequest.mutate().uri(uri).build();
-                    DataBuffer bodyDataBuffer = stringBuffer(bodyStr);
+                    DataBuffer bodyDataBuffer = stringBuffer(bodyContent);
                     Flux<DataBuffer> bodyFlux = Flux.just(bodyDataBuffer);
                     request = new ServerHttpRequestDecorator(request) {
                         @Override
