@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: order-service-test
+  cloud:
+    sentinel:
+      transport:
+        port: 5501
+        dashboard: localhost:8088
+      web-context-unify: false
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        group: test
+      config:
+        file-extension: yaml
+        refresh-enabled: true
+        prefix: ${spring.application.name}
+        group: test
+        shared-configs:
+          - data-id: redis-conf.yaml
+            refresh: true
+            group: test
+          - data-id: sa-token-conf.yaml
+            refresh: true
+            group: test
+server:
+  port: 5001

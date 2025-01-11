@@ -1,0 +1,67 @@
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service-test
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        group: test
+      config:
+        group: test
+        prefix: ${spring.application.name}
+        file-extension: yaml
+        shared-configs:
+          - data-id: redis-conf.yaml
+            refresh: true
+            group: test
+          - data-id: sa-token-conf.yaml
+            refresh: true
+            group: test
+    sentinel:
+      transport:
+#         添加sentinel的控制台地址
+        dashboard: localhost:8088
+        port: 9999
+    gateway:
+#      开启nacos自动下发 之后自己配置的会失效
+      discovery:
+        locator:
+          enabled: true
+#      globalcors: # 跨域配置
+#        cors-configurations:
+#          '[/**]':
+#            allow-credentials: true #允许携带认证信息Cookie
+#            # 我们可以通 过域名的方式 也可以通过指定ip  还可以 allowed-origins: "*"  #放行所有跨域请求
+#            allowed-origins: "*"
+#            allowed-headers: "*"   #允许所有请求头
+#            allowed-methods: "*"   #允许所有请求方式
+#            max-age: 86400  # 86400 秒，也就是 24 小时 在有效时间内，浏览器无须为同一请求再次发起预检请求，可以减少发送请求的次数，减少系统部分压力。
+#      routes:
+#        # 路由id，可以任意写，但是要保证唯一
+#        # “-”：代表为list，可以配置多个
+#        - id: user
+#          # 代理的服务地址（将匹配到的url路由到代理地址上）
+##          uri: http://localhost:4001
+#          # 代理的服务地址（将匹配到的url路由到代理地址上） feign-consummer nacos服务名
+#          uri: lb://user-service-test
+#          # 谓词： url要匹配的规则，如果匹配成功则路由到上面的uri上。
+#          predicates:
+#            - Path=/u/**
+#            - Method=GET,POST
+#
+#        # 路由id，可以任意写，但是要保证唯一
+#        # “-”：代表为list，可以配置多个
+#        - id: order
+#          # 代理的服务地址（将匹配到的url路由到代理地址上）
+#          # uri: http://localhost:8050
+#          # 代理的服务地址（将匹配到的url路由到代理地址上） feign-consummer nacos服务名
+#          uri: lb://order-service-test
+#          # 谓词： url要匹配的规则，如果匹配成功则路由到上面的uri上。
+#          predicates:
+#            - Path=/order/**
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+

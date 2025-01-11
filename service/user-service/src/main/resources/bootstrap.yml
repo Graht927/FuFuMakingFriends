@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: user-service-test
+  cloud:
+    sentinel:
+      transport:
+        port: 4401 #跟管控台交流 随便指定未使用端口即可
+        dashboard: localhost:8088 #往管控台发送拦截统计信息
+      #默认会给进入springmvc的所有请求设置同一个root资源 这就导致链路失效 [queryGood只在queryOrder下没有在createOrder下] 所以我们需要关闭这种资源聚和 来使之生效
+      web-context-unify: false
+    # 之所以需要配置 spring.application.name ，是因为它是构成 Nacos 配置管理 dataId字段的一部分。
+    nacos:
+      # 服务器地址
+      server-addr: localhost:8848
+      # 用户名
+#      username: ${NACOS_USERNAME:nacos-user}
+      # 密码
+#      password: ${NACOS_PASSWORD:nacos-pwd}
+      # 服务发现
+      discovery:
+        # 服务发现开关
+        enabled: true
+        # 服务组名
+        group: test
+        # 服务要注册到的命名空间名称  默认DEFAULT_GROUP
+#        namespace: ${spring.profiles.active:dev}
+        # 该实例在客户端上报心跳的间隔时间。（单位:毫秒）
+        heart-beat-interval: 30000
+        # 该实例在不发送心跳后，从健康到不健康的时间。（单位:毫秒）
+        heart-beat-timeout: 40000
+        # 该实例在不发送心跳后，被nacos下掉该实例的时间。（单位:毫秒）
+        ip-delete-timeout: 70000
+
+      config:
+        # 开关
+        enabled: true
+        # 配置文件的分组（不写默认为DEFAULT_GROUP）
+        group: test
+        # 默认为P名ublic命空间,不需要写，如果加上的话会导致加载不到配置文件，这里很重要，启动后的配置文件加载的时候会到指定命名空间下找配置文件
+#        namespace: nacos-namespace
+        # 默认访问nacos的路径
+#        context-path: ${NACOS_CONTEXT_PATH:nacos}
+        # 配置文件后缀
+        file-extension: yaml
+        # 配置文件前缀
+        prefix: ${spring.application.name}
+        # 在 Nacos Spring Cloud 中，dataId 的完整格式如下：${prefix}-${spring.profiles.active}.${file-extension}
+        # 注意：当 spring.profiles.active 为空时，对应的连接符 - 也将不存在，dataId 的拼接格式变成 ${prefix}.${file-extension}
+        encode: "UTF-8"
+        # 是否自动刷新配置 这个确实可以自动刷新，但是对于@Value的注解这个不会自动刷新
+        refresh-enabled: true
+        shared-configs:
+          - data-id: redis-conf.yaml
+            refresh: true
+            group: test
+          - data-id: sa-token-conf.yaml
+            refresh: true
+            group: test
+server:
+  port: 4001
