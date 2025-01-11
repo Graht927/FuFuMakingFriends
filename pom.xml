@@ -28,6 +28,7 @@
         <module>fufu-feign-api</module>
         <module>fufu-utils</module>
         <module>fufu-test</module>
+        <module>fufu-model</module>
     </modules>
     <scm>
         <connection/>

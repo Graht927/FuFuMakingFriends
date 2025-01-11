@@ -88,6 +88,15 @@
             <artifactId>sa-token-spring-boot3-starter</artifactId>
             <version>1.39.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>cn.graht</groupId>
+            <artifactId>fufu-feign-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.graht</groupId>
+            <artifactId>fufu-model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

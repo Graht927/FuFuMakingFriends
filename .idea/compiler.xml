@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="fufu-test" />
+        <module name="fufu-model" />
         <module name="fufu-gateway" />
         <module name="fufu-organize-bureau" />
         <module name="fufu-search" />
@@ -23,6 +24,7 @@
       <module name="fufu-common" options="-parameters" />
       <module name="fufu-feign-api" options="-parameters" />
       <module name="fufu-gateway" options="-parameters" />
+      <module name="fufu-model" options="-parameters" />
       <module name="fufu-organize-bureau" options="-parameters" />
       <module name="fufu-search" options="-parameters" />
       <module name="fufu-socializing" options="-parameters" />
