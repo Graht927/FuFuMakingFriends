@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.graht</groupId>
-    <artifactId>FuFuMakingFirends</artifactId>
+    <artifactId>FuFuMakingFriends</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>FuFuMakingFirends</name>
-    <description>FuFuMakingFirends-backend</description>
+    <name>FuFuMakingFriends</name>
+    <description>FuFuMakingFriends-backend</description>
     <url/>
     <licenses>
         <license/>
@@ -22,9 +22,12 @@
         <developer/>
     </developers>
     <modules>
-        <module>service</module>
-        <module>common</module>
-        <module>gateway</module>
+        <module>fufu-service</module>
+        <module>fufu-common</module>
+        <module>fufu-gateway</module>
+        <module>fufu-feign-api</module>
+        <module>fufu-utils</module>
+        <module>fufu-test</module>
     </modules>
     <scm>
         <connection/>

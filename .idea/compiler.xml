@@ -6,19 +6,29 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="common" />
-        <module name="gateway" />
-        <module name="orderservice" />
-        <module name="userservice" />
+        <module name="fufu-test" />
+        <module name="fufu-gateway" />
+        <module name="fufu-organize-bureau" />
+        <module name="fufu-search" />
+        <module name="fufu-feign-api" />
+        <module name="fufu-utils" />
+        <module name="fufu-socializing" />
+        <module name="fufu-user" />
+        <module name="fufu-common" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="common" options="-parameters" />
-      <module name="gateway" options="-parameters" />
-      <module name="orderservice" options="-parameters" />
-      <module name="userservice" options="-parameters" />
+      <module name="fufu-common" options="-parameters" />
+      <module name="fufu-feign-api" options="-parameters" />
+      <module name="fufu-gateway" options="-parameters" />
+      <module name="fufu-organize-bureau" options="-parameters" />
+      <module name="fufu-search" options="-parameters" />
+      <module name="fufu-socializing" options="-parameters" />
+      <module name="fufu-test" options="-parameters" />
+      <module name="fufu-user" options="-parameters" />
+      <module name="fufu-utils" options="-parameters" />
     </option>
   </component>
 </project>
