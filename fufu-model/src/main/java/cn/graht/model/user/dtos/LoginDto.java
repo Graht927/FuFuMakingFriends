@@ -17,5 +17,5 @@ public class LoginDto {
     /**
      * 密码
      */
-    private String password;
+    private String userPassword;
 }

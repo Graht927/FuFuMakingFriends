@@ -12,7 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableFeignClients
 @MapperScan("cn.graht.user.mapper")
-@SpringBootApplication(exclude = {DruidDataSourceAutoConfigure.class, DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class FuFuUserApplicationStarter {
     public static void main(String[] args) {
         SpringApplication.run(FuFuUserApplicationStarter.class,args);
