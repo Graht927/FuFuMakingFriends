@@ -8153,3 +8153,384 @@ exception.BusinessException: 登录参数错误
 2025-01-12 11:48:24 [TID: N/A] [Thread-1] [INFO ]  De-registration finished. com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:115)
 2025-01-12 11:48:24 [TID: N/A] [Thread-1] [INFO ]  {dataSource-1} closing ... com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2204)
 2025-01-12 11:48:24 [TID: N/A] [Thread-1] [INFO ]  {dataSource-1} closed com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2277)
+2025-01-12 11:48:36 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:48:36 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [INFO ]  Ready to get current node abilities... com.alibaba.nacos.common.ability.AbstractAbilityControlManager.initAbilityTable(AbstractAbilityControlManager.java:61)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [INFO ]  Ready to initialize current node abilities, support modes: [SDK_CLIENT] com.alibaba.nacos.common.ability.AbstractAbilityControlManager.initAbilityTable(AbstractAbilityControlManager.java:89)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [INFO ]  Initialize current abilities finish... com.alibaba.nacos.common.ability.AbstractAbilityControlManager.initAbilityTable(AbstractAbilityControlManager.java:94)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [INFO ]  [AbilityControlManager] Successfully initialize AbilityControlManager com.alibaba.nacos.common.ability.discover.NacosAbilityManagerHolder.initAbilityControlManager(NacosAbilityManagerHolder.java:85)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [WARN ]  Ignore the empty nacos configuration and get it based on dataId[fufu-user] & group[FuFuMakingFriend] com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder.loadNacosData(NacosPropertySourceBuilder.java:97)
+2025-01-12 11:48:39 [TID: N/A] [restartedMain] [INFO ]  No active profile set, falling back to 1 default profile: "default" org.springframework.boot.SpringApplication.logStartupProfileInfo(SpringApplication.java:654)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  Initializing ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  Starting service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  Starting Servlet engine: [Apache Tomcat/10.1.31] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  Initializing Spring embedded WebApplicationContext org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  Init DruidDataSource com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure.dataSource(DruidDataSourceAutoConfigure.java:68)
+2025-01-12 11:48:42 [TID: N/A] [restartedMain] [INFO ]  {dataSource-1} inited com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:1002)
+2025-01-12 11:48:43 [TID: N/A] [restartedMain] [INFO ]  [Sentinel Starter] register SentinelWebInterceptor with urlPatterns: [/**]. com.alibaba.cloud.sentinel.SentinelWebMvcConfigurer.addInterceptors(SentinelWebMvcConfigurer.java:52)
+2025-01-12 11:48:45 [TID: N/A] [restartedMain] [INFO ]  Starting ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:48:45 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:48:45 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:48:45 [TID: N/A] [restartedMain] [INFO ]  nacos registry, FuFuMakingFriend fufu-user 192.168.10.2:4001 register finished com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:76)
+2025-01-12 11:48:46 [TID: N/A] [restartedMain] [INFO ]  Started FuFuUserApplicationStarter in 11.497 seconds (process running for 16.426) org.springframework.boot.StartupInfoLogger.logStarted(StartupInfoLogger.java:56)
+2025-01-12 11:48:46 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=redis-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:48:46 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=sa-token-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:48:46 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:48:46 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:38 [TID: N/A] [Thread-1] [INFO ]  Stopping ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:39 [TID: N/A] [Thread-1] [INFO ]  De-registering from Nacos Server now... com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:95)
+2025-01-12 11:49:39 [TID: N/A] [Thread-1] [INFO ]  De-registration finished. com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:115)
+2025-01-12 11:49:39 [TID: N/A] [Thread-1] [INFO ]  {dataSource-1} closing ... com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2204)
+2025-01-12 11:49:39 [TID: N/A] [Thread-1] [INFO ]  {dataSource-1} closed com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2277)
+2025-01-12 11:49:39 [TID: N/A] [Thread-1] [INFO ]  Stopping service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:40 [TID: N/A] [restartedMain] [WARN ]  Ignore the empty nacos configuration and get it based on dataId[fufu-user] & group[FuFuMakingFriend] com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder.loadNacosData(NacosPropertySourceBuilder.java:97)
+2025-01-12 11:49:40 [TID: N/A] [restartedMain] [INFO ]  No active profile set, falling back to 1 default profile: "default" org.springframework.boot.SpringApplication.logStartupProfileInfo(SpringApplication.java:654)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  Initializing ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  Starting service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  Starting Servlet engine: [Apache Tomcat/10.1.31] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  Initializing Spring embedded WebApplicationContext org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  Init DruidDataSource com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure.dataSource(DruidDataSourceAutoConfigure.java:68)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  {dataSource-2} inited com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:1002)
+2025-01-12 11:49:41 [TID: N/A] [restartedMain] [INFO ]  [Sentinel Starter] register SentinelWebInterceptor with urlPatterns: [/**]. com.alibaba.cloud.sentinel.SentinelWebMvcConfigurer.addInterceptors(SentinelWebMvcConfigurer.java:52)
+2025-01-12 11:49:42 [TID: N/A] [restartedMain] [INFO ]  Starting ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  nacos registry, FuFuMakingFriend fufu-user 192.168.10.2:4001 register finished com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:76)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  Started FuFuUserApplicationStarter in 3.475 seconds (process running for 73.557) org.springframework.boot.StartupInfoLogger.logStarted(StartupInfoLogger.java:56)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=redis-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=sa-token-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:43 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  Stopping ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  De-registering from Nacos Server now... com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:95)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  De-registration finished. com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:115)
+2025-01-12 11:49:44 [TID: N/A] [grpc-nio-worker-ELG-1-6] [INFO ]  Received trailers on closed stream:
+ Metadata()
+ {2} com.alibaba.nacos.shaded.io.grpc.internal.AbstractClientStream$TransportState.inboundTrailersReceived(AbstractClientStream.java:378)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  {dataSource-2} closing ... com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2204)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  {dataSource-2} closed com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2277)
+2025-01-12 11:49:44 [TID: N/A] [Thread-15] [INFO ]  Stopping service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [WARN ]  Ignore the empty nacos configuration and get it based on dataId[fufu-user] & group[FuFuMakingFriend] com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder.loadNacosData(NacosPropertySourceBuilder.java:97)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  No active profile set, falling back to 1 default profile: "default" org.springframework.boot.SpringApplication.logStartupProfileInfo(SpringApplication.java:654)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  Initializing ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  Starting service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  Starting Servlet engine: [Apache Tomcat/10.1.31] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  Initializing Spring embedded WebApplicationContext org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  Init DruidDataSource com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure.dataSource(DruidDataSourceAutoConfigure.java:68)
+2025-01-12 11:49:45 [TID: N/A] [restartedMain] [INFO ]  {dataSource-3} inited com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:1002)
+2025-01-12 11:49:46 [TID: N/A] [restartedMain] [INFO ]  [Sentinel Starter] register SentinelWebInterceptor with urlPatterns: [/**]. com.alibaba.cloud.sentinel.SentinelWebMvcConfigurer.addInterceptors(SentinelWebMvcConfigurer.java:52)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  Starting ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  nacos registry, FuFuMakingFriend fufu-user 192.168.10.2:4001 register finished com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:76)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  Started FuFuUserApplicationStarter in 3.093 seconds (process running for 77.98) org.springframework.boot.StartupInfoLogger.logStarted(StartupInfoLogger.java:56)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=redis-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=sa-token-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:49:47 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:50:04 [TID: bd54ba1239f04bc796551eef8a42610c.335.17366538046620001] [http-nio-4001-exec-1] [INFO ]  Initializing Spring DispatcherServlet 'dispatcherServlet' org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:50:04 [TID: bd54ba1239f04bc796551eef8a42610c.335.17366538046620001] [http-nio-4001-exec-1] [ERROR]  [BusinessException] 登录参数错误 ==<用户名或密码错误> cn.graht.user.exception.BusinessExceptionAdviser.handleBusinessException(BusinessExceptionAdviser.java:16)
+exception.BusinessException: 登录参数错误
+	at exception.ThrowUtils.throwIf(ThrowUtils.java:32) ~[classes/:?]
+	at cn.graht.user.controller.v1.UserLoginController.login(UserLoginController.java:35) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) [spring-webmvc-6.1.14.jar:6.1.14]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) [tomcat-embed-core-10.1.31.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) [spring-webmvc-6.1.14.jar:6.1.14]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) [tomcat-embed-core-10.1.31.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) [tomcat-embed-websocket-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at cn.dev33.satoken.filter.SaPathCheckFilterForJakartaServlet.doFilter(SaPathCheckFilterForJakartaServlet.java:55) [sa-token-spring-boot3-starter-1.39.0.jar:?]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03(StandardHostValve.java:115) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03$accessor$$sw$p8ebm33(StandardHostValve.java) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve$$sw$auxiliary$mq4hie1.call(Unknown Source) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstMethodsInter.intercept(InstMethodsInter.java:86) [skywalking-agent.jar:9.3.0]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at java.base/java.lang.Thread.run(Thread.java:842) [?:?]
+2025-01-12 11:50:12 [TID: bd54ba1239f04bc796551eef8a42610c.336.17366538116820001] [http-nio-4001-exec-2] [ERROR]  [BusinessException] 登录参数错误 ==<用户名或密码错误> cn.graht.user.exception.BusinessExceptionAdviser.handleBusinessException(BusinessExceptionAdviser.java:16)
+exception.BusinessException: 登录参数错误
+	at exception.ThrowUtils.throwIf(ThrowUtils.java:32) ~[classes/:?]
+	at cn.graht.user.service.impl.UserServiceImpl.login(UserServiceImpl.java:36) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:355) ~[spring-aop-6.1.14.jar:6.1.14]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:716) ~[spring-aop-6.1.14.jar:6.1.14]
+	at cn.graht.user.service.impl.UserServiceImpl$$SpringCGLIB$$0.login(<generated>) ~[classes/:?]
+	at cn.graht.user.controller.v1.UserLoginController.login(UserLoginController.java:37) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) [spring-webmvc-6.1.14.jar:6.1.14]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) [spring-webmvc-6.1.14.jar:6.1.14]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) [tomcat-embed-core-10.1.31.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) [spring-webmvc-6.1.14.jar:6.1.14]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) [tomcat-embed-core-10.1.31.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) [tomcat-embed-websocket-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at cn.dev33.satoken.filter.SaPathCheckFilterForJakartaServlet.doFilter(SaPathCheckFilterForJakartaServlet.java:55) [sa-token-spring-boot3-starter-1.39.0.jar:?]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-6.1.14.jar:6.1.14]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.1.14.jar:6.1.14]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03(StandardHostValve.java:115) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03$accessor$$sw$p8ebm33(StandardHostValve.java) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardHostValve$$sw$auxiliary$mq4hie1.call(Unknown Source) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstMethodsInter.intercept(InstMethodsInter.java:86) [skywalking-agent.jar:9.3.0]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.31.jar:10.1.31]
+	at java.base/java.lang.Thread.run(Thread.java:842) [?:?]
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  Stopping ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  De-registering from Nacos Server now... com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:95)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  De-registration finished. com.alibaba.cloud.nacos.registry.NacosServiceRegistry.deregister(NacosServiceRegistry.java:115)
+2025-01-12 11:51:04 [TID: N/A] [grpc-nio-worker-ELG-1-8] [INFO ]  Received trailers on closed stream:
+ Metadata()
+ {2} com.alibaba.nacos.shaded.io.grpc.internal.AbstractClientStream$TransportState.inboundTrailersReceived(AbstractClientStream.java:378)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  {dataSource-3} closing ... com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2204)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  {dataSource-3} closed com.alibaba.druid.pool.DruidDataSource.close(DruidDataSource.java:2277)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  Stopping service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [INFO ]  Destroying Spring FrameworkServlet 'dispatcherServlet' org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-executor-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/sun.nio.ch.Net.accept(Native Method)
+ java.base@17.0.12/sun.nio.ch.NioSocketImpl.accept(NioSocketImpl.java:760)
+ java.base@17.0.12/java.net.ServerSocket.implAccept(ServerSocket.java:675)
+ java.base@17.0.12/java.net.ServerSocket.platformImplAccept(ServerSocket.java:641)
+ java.base@17.0.12/java.net.ServerSocket.implAccept(ServerSocket.java:617)
+ java.base@17.0.12/java.net.ServerSocket.implAccept(ServerSocket.java:574)
+ java.base@17.0.12/java.net.ServerSocket.accept(ServerSocket.java:532)
+ app//com.alibaba.csp.sentinel.transport.command.SimpleHttpCommandCenter$ServerThread.run(SimpleHttpCommandCenter.java:191)
+ java.base@17.0.12/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+ java.base@17.0.12/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-heartbeat-send-task-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1672)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-time-tick-thread] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/java.lang.Thread.sleep(Native Method)
+ java.base@17.0.12/java.lang.Thread.sleep(Thread.java:346)
+ java.base@17.0.12/java.util.concurrent.TimeUnit.sleep(TimeUnit.java:446)
+ app//com.alibaba.csp.sentinel.util.TimeUtil.run(TimeUtil.java:123)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-system-status-record-task-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1672)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-metrics-record-task-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1672)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-heartbeat-send-task-thread-2] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1177)
+ java.base@17.0.12/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-2] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-3] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-4] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-5] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-6] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:04 [TID: N/A] [Thread-23] [WARN ]  The web application [ROOT] appears to have started a thread named [sentinel-command-center-service-executor-thread-7] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base@17.0.12/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base@17.0.12/java.util.concurrent.locks.LockSupport.park(LockSupport.java:341)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:506)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3465)
+ java.base@17.0.12/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3436)
+ java.base@17.0.12/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1623)
+ java.base@17.0.12/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+ java.base@17.0.12/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+ java.base@17.0.12/java.lang.Thread.run(Thread.java:842) org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [WARN ]  Ignore the empty nacos configuration and get it based on dataId[fufu-user] & group[FuFuMakingFriend] com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder.loadNacosData(NacosPropertySourceBuilder.java:97)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [INFO ]  No active profile set, falling back to 1 default profile: "default" org.springframework.boot.SpringApplication.logStartupProfileInfo(SpringApplication.java:654)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [INFO ]  Initializing ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [INFO ]  Starting service [Tomcat] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [INFO ]  Starting Servlet engine: [Apache Tomcat/10.1.31] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:05 [TID: N/A] [restartedMain] [INFO ]  Initializing Spring embedded WebApplicationContext org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:06 [TID: N/A] [restartedMain] [INFO ]  Init DruidDataSource com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure.dataSource(DruidDataSourceAutoConfigure.java:68)
+2025-01-12 11:51:06 [TID: N/A] [restartedMain] [INFO ]  {dataSource-4} inited com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:1002)
+2025-01-12 11:51:07 [TID: N/A] [restartedMain] [INFO ]  [Sentinel Starter] register SentinelWebInterceptor with urlPatterns: [/**]. com.alibaba.cloud.sentinel.SentinelWebMvcConfigurer.addInterceptors(SentinelWebMvcConfigurer.java:52)
+2025-01-12 11:51:09 [TID: N/A] [restartedMain] [INFO ]  Starting ProtocolHandler ["http-nio-4001"] org.apache.juli.logging.DirectJDKLog.log(DirectJDKLog.java:173)
+2025-01-12 11:51:09 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:51:09 [TID: N/A] [restartedMain] [INFO ]  [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success. com.alibaba.nacos.plugin.auth.spi.client.ClientAuthPluginManager.init(ClientAuthPluginManager.java:56)
+2025-01-12 11:51:09 [TID: N/A] [restartedMain] [INFO ]  nacos registry, FuFuMakingFriend fufu-user 192.168.10.2:4001 register finished com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:76)
+2025-01-12 11:51:10 [TID: N/A] [restartedMain] [INFO ]  Started FuFuUserApplicationStarter in 5.945 seconds (process running for 160.834) org.springframework.boot.StartupInfoLogger.logStarted(StartupInfoLogger.java:56)
+2025-01-12 11:51:10 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=redis-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:51:10 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=sa-token-conf.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:51:10 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user.yaml, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
+2025-01-12 11:51:10 [TID: N/A] [restartedMain] [INFO ]  [Nacos Config] Listening config: dataId=fufu-user, group=FuFuMakingFriend com.alibaba.cloud.nacos.refresh.NacosContextRefresher.registerNacosListener(NacosContextRefresher.java:131)
