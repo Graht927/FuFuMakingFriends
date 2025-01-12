@@ -25,10 +25,6 @@ public class SMSParams {
      */
     private String signName;
 
-    /**
-     * 模板code (需要替换 以及只有审核后才能使用) 在阿里云控制台中找到模板管理中的模板code
-     */
-    private String TemplateCode;
 
     /**
      * 产品名称:云通信短信API产品,开发者无需替换
@@ -38,11 +34,6 @@ public class SMSParams {
      * 产品域名,开发者无需替换
      */
     public static final String DOMAIN = "dysmsapi.aliyuncs.com";
-
-    /**
-     * 验证码
-     */
-    private static int captcha;
 
     public static String specialUrlEncode(String value) throws Exception {
         return java.net.URLEncoder.encode(value, "UTF-8")
@@ -58,7 +49,7 @@ public class SMSParams {
         return new Base64().encode(signData);
     }
 
-    public void setCaptcha() {
-        captcha = (int) (Math.random() * 999999) + 100;  //每次调用生成一位六位数的随机数;
+    public int getCaptcha() {
+         return (int) (Math.random() * 999999) + 100;  //每次调用生成一位六位数的随机数;
     }
 }

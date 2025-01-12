@@ -16,6 +16,7 @@
         <module name="fufu-utils" />
         <module name="fufu-socializing" />
         <module name="fufu-user" />
+        <module name="fufu-sms" />
         <module name="fufu-common" />
       </profile>
     </annotationProcessing>
@@ -28,6 +29,7 @@
       <module name="fufu-model" options="-parameters" />
       <module name="fufu-organize-bureau" options="-parameters" />
       <module name="fufu-search" options="-parameters" />
+      <module name="fufu-sms" options="-parameters" />
       <module name="fufu-socializing" options="-parameters" />
       <module name="fufu-test" options="-parameters" />
       <module name="fufu-user" options="-parameters" />

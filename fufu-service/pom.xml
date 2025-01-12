@@ -14,6 +14,7 @@
         <module>fufu-socializing</module>
         <module>fufu-organize-bureau</module>
         <module>fufu-search</module>
+        <module>fufu-sms</module>
     </modules>
 
     <properties>
@@ -108,6 +109,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.33.0</version>
         </dependency>
     </dependencies>
 </project>

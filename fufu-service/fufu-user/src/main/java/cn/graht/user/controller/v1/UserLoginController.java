@@ -5,6 +5,7 @@ import cn.graht.common.commons.ResultApi;
 import cn.graht.common.commons.ResultUtil;
 import cn.graht.common.constant.UserConstant;
 import cn.graht.model.user.dtos.LoginDto;
+import cn.graht.user.event.FuFuEventPublisher;
 import cn.hutool.core.util.ReUtil;
 import cn.graht.common.exception.ThrowUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +42,6 @@ public class UserLoginController {
         ThrowUtils.throwIf(phoneCode.length() != 6,ErrorCode.LOGIN_PARAMS_ERROR);
         String userPassword = loginDto.getUserPassword();
         ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN,userPassword),ErrorCode.LOGIN_PARAMS_ERROR);
-
         return ResultUtil.ok(userService.login(loginDto));
     }
 

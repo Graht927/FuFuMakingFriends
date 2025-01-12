@@ -7,16 +7,25 @@ import cn.graht.common.constant.UserConstant;
 import cn.graht.model.user.dtos.LoginDto;
 import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
+import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
 import cn.graht.user.service.UserService;
+import cn.graht.utils.aliSendSMS.AliYunSmsUtils;
+import cn.graht.utils.aliSendSMS.SMSParams;
+import cn.graht.utils.aliSendSMS.SMSTemplateCode;
 import cn.hutool.core.util.ReUtil;
+import cn.hutool.json.JSONUtil;
+import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
+import com.google.gson.Gson;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -29,6 +38,9 @@ import org.springframework.util.DigestUtils;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService{
 
+    @Resource
+    private FuFuEventPublisher fuFuEventPublisher;
+
     @Override
     public SaTokenInfo login(LoginDto loginDto) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(loginDto) ||
@@ -38,6 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()).eq(User::getUserPassword, userPassword));
         ThrowUtils.throwIf(ObjectUtils.isEmpty(user),ErrorCode.LOGIN_PARAMS_ERROR);
         StpUtil.login(user.getId());
+        fuFuEventPublisher.doStuffAndPublishAnEvent("user login:"+user.getId());
         return StpUtil.getTokenInfo();
     }
 
@@ -66,7 +79,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         long nicknameCount = count(new LambdaQueryWrapper<User>().eq(User::getNickname, registerDto.getNickname()));
         ThrowUtils.throwIf(nicknameCount == 1, ErrorCode.REGISTER_PHONE_ERROR);
         //否 => 判断验证码是否正确
-
+        //生成一个验证码
+//        fuFuEventPublisher.doStuffAndPublishAnEvent("user login:"+user.getId());
         return false;
     }
 }

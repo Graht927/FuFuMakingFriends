@@ -1,11 +1,15 @@
 package cn.graht.utils.aliSendSMS;
 
+import cn.hutool.json.JSONUtil;
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.dysmsapi20170525.AsyncClient;
 import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
 import darabonba.core.client.ClientOverrideConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -15,11 +19,16 @@ import java.util.concurrent.ExecutionException;
  *
  */
 public class AliYunSmsUtils {
+    private static final Logger log = LoggerFactory.getLogger(AliYunSmsUtils.class);
+
     /**
+     * @param smsParams 参数类
+     * @param templateCode 模板代码
      * @param phoneNumber 手机号
-     * @param code        验证码
+     * @param senCode        验证码
      */
-    public static SendSmsResponse sendSms(SMSParams smsParams,String phoneNumber, String code){
+    public static SendSmsResponse sendSms(SMSParams smsParams,String templateCode,String phoneNumber, int senCode){
+        String code = senCode+"";
         StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
                 .accessKeyId(smsParams.getAccessKeyId())
                 .accessKeySecret(smsParams.getAccessSecret())
@@ -35,7 +44,7 @@ public class AliYunSmsUtils {
                 .build();
         SendSmsRequest sendSmsRequest = SendSmsRequest.builder()
                 .signName(smsParams.getSignName())
-                .templateCode(smsParams.getTemplateCode())
+                .templateCode(templateCode)
                 .phoneNumbers(phoneNumber)
                 .templateParam("{\"code\":"+"\""+code+"\"}")
                 .build();
@@ -44,11 +53,11 @@ public class AliYunSmsUtils {
         SendSmsResponse resp = null;
         try {
             resp = response.get();
-        } catch (InterruptedException e) {
+            System.out.println(JSONUtil.toJsonStr(resp));
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
             return null;
-        } catch (ExecutionException e) {
-            return null;
-        }finally {
+        } finally {
             client.close();
         }
         return resp;

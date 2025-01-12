@@ -7,6 +7,7 @@ package cn.graht.common.commons;
 public enum ErrorCode {
     SUCCESS(20000,"响应成功","success"),
     SYSTEM_ERROR(50000,"系统内部错误",""),
+    SMS_PARAMS_ERROR(10001,"参数错误","sms参数错误"),
     PARAMS_ERROR(40000,"参数错误","请求参数错误"),
     PARAMS_NULL_ERROR(40001,"参数为空","请求参数为空"),
     NULL_ERROR(40002,"结果为空","请求结果为空"),

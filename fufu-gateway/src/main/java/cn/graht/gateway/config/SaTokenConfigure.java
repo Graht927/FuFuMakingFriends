@@ -27,6 +27,7 @@ public class SaTokenConfigure {
             .setAuth(obj -> {
                 // 登录校验 -- 拦截所有路由，并排除/user/doLogin 用于开放登录 
                 SaRouter.match("/**")
+                        .notMatch("/fufu-sms/v1/g")
                         .notMatch("/fufu-user/v1/login auth")
                         //网关服务
                         .notMatch("/doc.html",
