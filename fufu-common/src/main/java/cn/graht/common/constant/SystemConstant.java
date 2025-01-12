@@ -1,4 +1,4 @@
-package constant;
+package cn.graht.common.constant;
 
 /**
  * 系统公共常量

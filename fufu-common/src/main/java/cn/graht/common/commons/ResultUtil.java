@@ -1,4 +1,4 @@
-package cn.graht.common;
+package cn.graht.common.commons;
 
 /**
  * 返回工具类

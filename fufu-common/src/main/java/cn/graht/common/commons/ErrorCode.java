@@ -1,4 +1,4 @@
-package cn.graht.common;
+package cn.graht.common.commons;
 
 /**
  * 错误码
@@ -12,7 +12,13 @@ public enum ErrorCode {
     NULL_ERROR(40002,"结果为空","请求结果为空"),
     NO_AUTH(40101,"无权限","没权限"),
     NOT_LOGIN_ERROR(40100,"未登录","用户没登录"),
+
     LOGIN_PARAMS_ERROR(40101,"登录参数错误","用户名或密码错误"),
+    REGISTER_PARAMS_ERROR(40110,"注册参数错误","注册参数有误"),
+    REGISTER_PASSWORD_ERROR(40111,"注册参数错误","二次密码不一致"),
+    REGISTER_PHONE_ERROR(40112,"手机号已被注册","手机号不可以重复注册"),
+    REGISTER_NICKNAME_ERROR(40113,"昵称已被注册","该昵称已被占用"),
+
     NOT_FOUND_ERROR(40400, "请求数据不存在","请求数据为空"),
     FORBIDDEN_ERROR(40300, "禁止访问","禁止访问"),
     OPERATION_ERROR(50001, "操作失败","error"),

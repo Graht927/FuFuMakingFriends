@@ -1,8 +1,8 @@
-package exception;
+package cn.graht.common.exception;
 
-import cn.graht.common.ErrorCode;
-import cn.graht.common.ResultApi;
-import cn.graht.common.ResultUtil;
+import cn.graht.common.commons.ErrorCode;
+import cn.graht.common.commons.ResultApi;
+import cn.graht.common.commons.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

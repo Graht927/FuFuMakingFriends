@@ -1,4 +1,4 @@
-package cn.graht.common;
+package cn.graht.common.commons;
 
 import lombok.Data;
 

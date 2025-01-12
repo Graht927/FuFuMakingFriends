@@ -97,6 +97,11 @@
             <artifactId>fufu-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>cn.graht</groupId>
+            <artifactId>fufu-utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--   Boot热部署   -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

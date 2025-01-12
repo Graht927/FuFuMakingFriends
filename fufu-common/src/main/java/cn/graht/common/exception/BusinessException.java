@@ -1,7 +1,7 @@
-package exception;
+package cn.graht.common.exception;
 
 
-import cn.graht.common.ErrorCode;
+import cn.graht.common.commons.ErrorCode;
 
 /**
  *  自定义异常

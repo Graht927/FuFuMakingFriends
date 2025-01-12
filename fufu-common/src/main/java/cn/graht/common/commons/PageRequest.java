@@ -1,6 +1,6 @@
-package cn.graht.common;
+package cn.graht.common.commons;
 
-import constant.CommonConstant;
+import cn.graht.common.constant.CommonConstant;
 import lombok.Data;
 
 /**

@@ -1,4 +1,4 @@
-package constant;
+package cn.graht.common.constant;
 
 import java.util.Random;
 
