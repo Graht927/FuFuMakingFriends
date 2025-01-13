@@ -1,4 +1,4 @@
-package cn.graht.controller.v1;
+package cn.graht.sms.controller.v1;
 
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.ResultApi;
@@ -11,20 +11,17 @@ import cn.graht.utils.aliSendSMS.AliYunSmsUtils;
 import cn.graht.utils.aliSendSMS.SMSParams;
 import cn.graht.utils.aliSendSMS.SMSTemplateCode;
 import cn.hutool.core.util.ReUtil;
-import cn.hutool.json.JSONUtil;
 import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,6 +41,7 @@ public class SMSController {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+
     @PostMapping("/g")
     public ResultApi requestSms(@RequestBody SMSRequestParam smsRequestParam) {
         RLock lock = redisson.getLock(RedisKeyConstants.SMS_LOCK_PREFIX + smsRequestParam.getPhone());
@@ -56,13 +54,19 @@ public class SMSController {
                     , ErrorCode.SMS_PARAMS_ERROR);
             int captcha = smsParams.getCaptcha();
             SendSmsResponse sendSmsResponse = AliYunSmsUtils.sendSms(smsParams, smsTemplateCode.getTemplateCode(smsRequestParam.getTemplateCodeStr()), smsRequestParam.getPhone(), captcha);
-            log.info("{}", JSONUtil.toJsonStr(sendSmsResponse));
             if (!ObjectUtils.isEmpty(sendSmsResponse)) {
-                stringRedisTemplate.opsForValue().set(RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getPhone(),
-                        String.valueOf(captcha),
+                String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
+                String redisValue = String.valueOf(captcha);
+                //key格式为 fufu:sms:[templateCode]:[PhoneCode]
+
+                log.info("redis添加信息: [key:{},value: {}]",redisKey,redisValue);
+
+                stringRedisTemplate.opsForValue().set(
+                        redisKey,
+                        redisValue,
                         RedisKeyConstants.SMS_TIMEOUT,
                         TimeUnit.SECONDS);
-                return ResultUtil.ok(sendSmsResponse);
+                return ResultUtil.ok();
             }
         } finally {
             lock.unlock();

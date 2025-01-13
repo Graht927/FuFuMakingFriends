@@ -1,10 +1,8 @@
-package cn.graht.config;
+package cn.graht.sms.config;
 
 import cn.graht.utils.aliSendSMS.SMSParams;
 import cn.graht.utils.aliSendSMS.SMSTemplateCode;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +23,8 @@ public class SMSConfig {
     private String loginTemplateCode;
     @Value("${ali.sms.registerTemplateCode}")
     private String registerTemplateCode;
+    @Value("${ali.sms.reqHeaderCode}")
+    private String reqHeaderCode;
 
     @Bean
     public SMSParams smsParams() {
@@ -32,6 +32,7 @@ public class SMSConfig {
         smsParams.setAccessKeyId(accessKeyId);
         smsParams.setAccessSecret(accessSecret);
         smsParams.setSignName(signName);
+        smsParams.setReqHeaderCode(reqHeaderCode);
         return smsParams;
     }
 

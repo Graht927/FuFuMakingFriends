@@ -1,4 +1,4 @@
-package cn.graht;
+package cn.graht.sms;
 
 import com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.SpringApplication;

@@ -1,5 +1,6 @@
 package cn.graht.user.controller.v1;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.common.commons.ResultUtil;
@@ -42,7 +43,9 @@ public class UserLoginController {
         ThrowUtils.throwIf(phoneCode.length() != 6,ErrorCode.LOGIN_PARAMS_ERROR);
         String userPassword = loginDto.getUserPassword();
         ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN,userPassword),ErrorCode.LOGIN_PARAMS_ERROR);
-        return ResultUtil.ok(userService.login(loginDto));
+        SaTokenInfo saTokenInfo = userService.login(loginDto);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(saTokenInfo),ErrorCode.NULL_ERROR);
+        return ResultUtil.ok(saTokenInfo);
     }
 
 }

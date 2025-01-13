@@ -1,4 +1,4 @@
-package cn.graht.config.knife4jConfig;
+package cn.graht.sms.config.knife4jConfig;
  
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -18,17 +18,15 @@ public class knife4jConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()
-                        .title("user")
+                        .title("sms")
                         .version("v1"))
-                .addSecurityItem(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION))
+                .addSecurityItem(new SecurityRequirement().addList("reqCode"))
                 .components(new Components().addSecuritySchemes(
-                                HttpHeaders.AUTHORIZATION,
+                                "reqCode",
                                 new SecurityScheme()
-                                        .name(HttpHeaders.AUTHORIZATION)
+                                        .name("reqCode")
                                         .type(SecurityScheme.Type.HTTP)
-                                        .scheme("Bearer")
                                         .in(SecurityScheme.In.HEADER)
-                                        .bearerFormat("JWT")
                         )
                 );
     }

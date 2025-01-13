@@ -1,4 +1,4 @@
-package cn.graht.config;
+package cn.graht.sms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

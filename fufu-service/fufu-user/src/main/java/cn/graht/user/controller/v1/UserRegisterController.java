@@ -33,7 +33,7 @@ public class UserRegisterController {
 
     @PostMapping("/register auth")
     @Operation(summary = "注册",description = "注册成功 跳转登录")
-    @ApiResponse(responseCode = "200",description = "注册成功 返回ok")
+    @ApiResponse(responseCode = "200",description = "注册成功 返回success")
     public ResultApi register(@RequestBody RegisterDto registerDto) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(registerDto)
                         || StringUtils.isBlank(registerDto.getNickname())
@@ -48,7 +48,7 @@ public class UserRegisterController {
         ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PHONE_NUMBER_PATTERN,registerDto.getPhone()),ErrorCode.REGISTER_PARAMS_ERROR);
         ThrowUtils.throwIf(phoneCodeLength != 6,ErrorCode.REGISTER_PARAMS_ERROR);
         ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN,registerDto.getUserPassword()) || !ReUtil.isMatch(UserConstant.PASSWORD_PATTERN,registerDto.getUserPassword()),ErrorCode.REGISTER_PARAMS_ERROR);
-        ThrowUtils.throwIf(userService.register(registerDto),ErrorCode.REGISTER_PARAMS_ERROR);
+        ThrowUtils.throwIf(!userService.register(registerDto),ErrorCode.REGISTER_PARAMS_ERROR);
         return ResultUtil.ok();
     }
 }

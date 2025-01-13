@@ -19,6 +19,7 @@ public enum ErrorCode {
     REGISTER_PASSWORD_ERROR(40111,"注册参数错误","二次密码不一致"),
     REGISTER_PHONE_ERROR(40112,"手机号已被注册","手机号不可以重复注册"),
     REGISTER_NICKNAME_ERROR(40113,"昵称已被注册","该昵称已被占用"),
+    USER_PHONE_CODE_ERROR(40114,"验证码错误","手机验证码错误"),
 
     NOT_FOUND_ERROR(40400, "请求数据不存在","请求数据为空"),
     FORBIDDEN_ERROR(40300, "禁止访问","禁止访问"),

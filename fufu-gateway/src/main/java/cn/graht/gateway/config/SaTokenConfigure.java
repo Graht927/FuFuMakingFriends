@@ -29,6 +29,7 @@ public class SaTokenConfigure {
                 SaRouter.match("/**")
                         .notMatch("/fufu-sms/v1/g")
                         .notMatch("/fufu-user/v1/login auth")
+                        .notMatch("/fufu-user/v1/register auth")
                         //网关服务
                         .notMatch("/doc.html",
                                 "/swagger-ui/**",
@@ -59,10 +60,18 @@ public class SaTokenConfigure {
                         .notMatch("/fufu-search/webjars/**")
                         .notMatch("/fufu-search/v3/api-docs/**")
                         .notMatch("/fufu-search/v3/api-docs")
+                        //sms服务
+                        .notMatch("/fufu-sms/doc.html")
+                        .notMatch("/fufu-sms/swagger-ui/**")
+                        .notMatch("/fufu-sms/webjars/**")
+                        .notMatch("/fufu-sms/v3/api-docs/**")
+                        .notMatch("/fufu-sms/v3/api-docs")
+
                         .check(r->StpUtil.checkLogin());
 //                 权限认证 -- 不同模块, 校验不同权限
                 SaRouter.match("/fufu-user/**")
                         .notMatch("/fufu-user/v1/login auth")
+                        .notMatch("/fufu-user/v1/register auth")
                         //网关服务
                         .notMatch("/doc.html",
                                 "/swagger-ui/**",

@@ -1,4 +1,4 @@
-package cn.graht.config.knife4jConfig;
+package cn.graht.sms.config.knife4jConfig;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -20,7 +20,7 @@ public class Knife4jOperationCustomizer implements GlobalOperationCustomizer {
     public Operation customize(Operation operation, HandlerMethod handlerMethod) {
         List<SecurityRequirement> security = operation.getSecurity();
         if (security == null) {
-            security = List.of(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION));
+            security = List.of(new SecurityRequirement().addList("reqCode"));
             operation.setSecurity(security);
         }
         return operation;

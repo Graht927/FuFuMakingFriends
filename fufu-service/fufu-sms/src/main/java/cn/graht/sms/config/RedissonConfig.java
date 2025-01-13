@@ -1,4 +1,4 @@
-package cn.graht.springbootinit.configuration;
+package cn.graht.sms.springbootinit.configuration;
 
 import lombok.Data;
 import org.redisson.Redisson;

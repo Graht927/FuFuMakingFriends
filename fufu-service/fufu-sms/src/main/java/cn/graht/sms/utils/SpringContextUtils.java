@@ -1,4 +1,4 @@
-package cn.graht.utils;
+package cn.graht.sms.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;

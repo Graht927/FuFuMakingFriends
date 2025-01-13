@@ -3,7 +3,7 @@ package cn.graht.utils.aliSendSMS;
 import cn.hutool.core.codec.Base64;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author GRAHT
@@ -24,6 +24,8 @@ public class SMSParams {
      * 签名名称（需要替换以及只有审核后才能使用）在阿里云控制台中找到签名管理中的签名名称
      */
     private String signName;
+
+    private String reqHeaderCode;
 
 
     /**
@@ -50,6 +52,8 @@ public class SMSParams {
     }
 
     public int getCaptcha() {
-         return (int) (Math.random() * 999999) + 100;  //每次调用生成一位六位数的随机数;
+
+         return (int) ((Math.random()*9+1)*100000);  //每次调用生成一位六位数的随机数;
     }
+
 }
