@@ -13,6 +13,7 @@ public interface RedisKeyConstants {
     String SMS_REGISTER_PREFIX = "fufu:sms:register:";
 
     String USER_LOGIN_LOCK_PREFIX = "fufu:user:login.lock:";
+    String USER_LOGIN_COUNT_PREFIX = "fufu:user:login:count:";
     String USER_REGISTER_LOCK_PREFIX = "fufu:user:register.lock:";
 
     String SMS_LOCK_PREFIX = "fufu:sms:lock:";

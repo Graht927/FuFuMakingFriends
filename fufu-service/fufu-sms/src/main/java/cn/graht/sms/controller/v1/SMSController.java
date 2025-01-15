@@ -53,14 +53,17 @@ public class SMSController {
                             || !ReUtil.isMatch(UserConstant.PHONE_NUMBER_PATTERN, smsRequestParam.getPhone())
                     , ErrorCode.SMS_PARAMS_ERROR);
             int captcha = smsParams.getCaptcha();
-            SendSmsResponse sendSmsResponse = AliYunSmsUtils.sendSms(smsParams, smsTemplateCode.getTemplateCode(smsRequestParam.getTemplateCodeStr()), smsRequestParam.getPhone(), captcha);
-            if (!ObjectUtils.isEmpty(sendSmsResponse)) {
+            String templateParams;
+            if ("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())){
+                templateParams = "{\"user_nick\":\""+smsRequestParam.getUserNick()+"\",\"time\":\""+smsRequestParam.getTime()+"\",\"address\":\""+smsRequestParam.getAddress()+"\"}";
+            }else {
+                templateParams = "{\"code\":"+"\""+captcha+"\"}";
+            }
+            SendSmsResponse sendSmsResponse = AliYunSmsUtils.sendSms(smsParams, smsTemplateCode.getTemplateCode(smsRequestParam.getTemplateCodeStr()), smsRequestParam.getPhone(), templateParams);
+            if ( !("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())) && !ObjectUtils.isEmpty(sendSmsResponse) && "OK".equals(sendSmsResponse.getBody().getMessage())) {
                 String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
                 String redisValue = String.valueOf(captcha);
-                //key格式为 fufu:sms:[templateCode]:[PhoneCode]
-
                 log.info("redis添加信息: [key:{},value: {}]",redisKey,redisValue);
-
                 stringRedisTemplate.opsForValue().set(
                         redisKey,
                         redisValue,

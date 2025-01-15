@@ -25,10 +25,9 @@ public class AliYunSmsUtils {
      * @param smsParams 参数类
      * @param templateCode 模板代码
      * @param phoneNumber 手机号
-     * @param senCode        验证码
+     * @param templateParam 发送参数
      */
-    public static SendSmsResponse sendSms(SMSParams smsParams,String templateCode,String phoneNumber, int senCode){
-        String code = senCode+"";
+    public static SendSmsResponse sendSms(SMSParams smsParams,String templateCode,String phoneNumber, String templateParam){
         StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
                 .accessKeyId(smsParams.getAccessKeyId())
                 .accessKeySecret(smsParams.getAccessSecret())
@@ -46,8 +45,9 @@ public class AliYunSmsUtils {
                 .signName(smsParams.getSignName())
                 .templateCode(templateCode)
                 .phoneNumbers(phoneNumber)
-                .templateParam("{\"code\":"+"\""+code+"\"}")
+                .templateParam(templateParam)
                 .build();
+
 
         CompletableFuture<SendSmsResponse> response = client.sendSms(sendSmsRequest);
         SendSmsResponse resp = null;

@@ -34,6 +34,15 @@ public class User {
     private String avatarUrl;
 
     /**
+     * 地区 例如[山西-晋城] [山西-太原]
+     */
+    private String addr;
+    /**
+     * 地区 例如[山西-晋城] [山西-太原]
+     */
+    private String upAddr;
+
+    /**
      * 性别
      */
     private Integer gender;

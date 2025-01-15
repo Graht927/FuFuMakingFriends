@@ -16,6 +16,7 @@ public class ResultApi<T> implements Serializable {
     private String msg;
     private T data;
     private String description;
+    public ResultApi() {}
 
     public ResultApi(int code, String msg, T data,String description) {
         this.code = code;

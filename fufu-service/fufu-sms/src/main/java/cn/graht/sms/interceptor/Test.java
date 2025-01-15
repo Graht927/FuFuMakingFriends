@@ -1,4 +1,4 @@
-package cn.graht.sms.config.interceptor;
+package cn.graht.sms.interceptor;
 
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;

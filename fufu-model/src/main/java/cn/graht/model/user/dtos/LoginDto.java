@@ -22,4 +22,9 @@ public class LoginDto {
      * 密码
      */
     private String userPassword;
+    /**
+     * 地址 不需要填
+     */
+    private String addr;
 }
+

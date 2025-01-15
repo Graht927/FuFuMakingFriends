@@ -9,4 +9,8 @@ import lombok.Data;
 public class SMSRequestParam {
     private String phone;
     private String templateCodeStr;
+    private String userNick;
+    private String time;
+    private String address;
+
 }

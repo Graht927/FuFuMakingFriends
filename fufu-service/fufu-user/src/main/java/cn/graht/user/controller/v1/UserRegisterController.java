@@ -5,6 +5,8 @@ import cn.graht.common.commons.ResultApi;
 import cn.graht.common.commons.ResultUtil;
 import cn.graht.common.constant.UserConstant;
 import cn.graht.model.user.dtos.RegisterDto;
+import cn.graht.user.aop.anno.AddrToParam;
+import cn.graht.user.aop.anno.IpToParam;
 import cn.graht.user.service.UserService;
 import cn.graht.common.exception.ThrowUtils;
 import cn.hutool.core.util.ReUtil;
@@ -34,6 +36,7 @@ public class UserRegisterController {
     @PostMapping("/register auth")
     @Operation(summary = "注册",description = "注册成功 跳转登录")
     @ApiResponse(responseCode = "200",description = "注册成功 返回success")
+    @AddrToParam
     public ResultApi register(@RequestBody RegisterDto registerDto) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(registerDto)
                         || StringUtils.isBlank(registerDto.getNickname())

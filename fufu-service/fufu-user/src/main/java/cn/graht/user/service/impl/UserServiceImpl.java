@@ -24,6 +24,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 /**
@@ -43,6 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaTokenInfo login(LoginDto loginDto) {
         RLock lock = redisson.getLock(RedisKeyConstants.USER_LOGIN_LOCK_PREFIX + loginDto.getPhone());
         lock.lock();
@@ -61,7 +63,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.LOGIN_PARAMS_ERROR);
             StpUtil.login(user.getId());
             stringRedisTemplate.delete(redisKey);
-            fuFuEventPublisher.doStuffAndPublishAnEvent("user login:" + user.getId());
+            //修改当前数据库地址[addr] 上一次地址放入数据库upAddr
+            user.setUpAddr(user.getAddr());
+            user.setAddr(loginDto.getAddr());
+            ThrowUtils.throwIf(!update(user,new LambdaQueryWrapper<User>().eq(User::getId,user.getId())), ErrorCode.SYSTEM_ERROR);
+
+            if (loginDto.getAddr().equals(user.getUpAddr())) {
+                //如果 当前登录地址和上一次mysql一致
+                //redis 地址登录 + 1
+                stringRedisTemplate.opsForValue().increment(RedisKeyConstants.USER_LOGIN_COUNT_PREFIX + loginDto.getPhone());
+            } else {
+                //如果 当前登录地址和mysql不一致
+                //判断redis中的地址登录次数是否大于等于3
+                String lc = stringRedisTemplate.opsForValue().get(RedisKeyConstants.USER_LOGIN_COUNT_PREFIX + user.getPhone());
+                int loginCount = Integer.parseInt(lc == null ? "0" : lc);
+                //如果登录次数>=3 发送短信事件
+                if (loginCount >= 3) {
+                    fuFuEventPublisher.doStuffAndPublishAnEvent("RemoteLogin:" + user.getId());
+                    //将redis 地址登录清空 删除
+                    stringRedisTemplate.delete(RedisKeyConstants.USER_LOGIN_COUNT_PREFIX + user.getPhone());
+                }
+            }
             return StpUtil.getTokenInfo();
         } finally {
             lock.unlock();
@@ -105,6 +127,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setNickname(registerDto.getNickname());
             user.setPhone(registerDto.getPhone());
             user.setUserPassword(DigestUtils.md5DigestAsHex((SystemConstant.SALT + registerDto.getUserPassword()).getBytes()));
+            user.setAddr(registerDto.getAddr());
             return save(user);
         } finally {
             lock.unlock();

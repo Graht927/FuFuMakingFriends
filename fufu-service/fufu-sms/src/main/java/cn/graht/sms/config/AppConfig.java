@@ -1,6 +1,6 @@
 package cn.graht.sms.config;
 
-import cn.graht.sms.config.interceptor.SMSInterceptor;
+import cn.graht.sms.interceptor.SMSInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class FuFuEvent extends ApplicationEvent {
     private String message;
+
     public FuFuEvent(Object source, String message) {
         super(source);
         this.message = message;

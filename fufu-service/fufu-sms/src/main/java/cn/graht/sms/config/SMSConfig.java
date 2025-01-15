@@ -23,6 +23,9 @@ public class SMSConfig {
     private String loginTemplateCode;
     @Value("${ali.sms.registerTemplateCode}")
     private String registerTemplateCode;
+    @Value("${ali.sms.remoteLoginTemplateCode}")
+    private String remoteLoginTemplateCode;
+
     @Value("${ali.sms.reqHeaderCode}")
     private String reqHeaderCode;
 
@@ -41,6 +44,7 @@ public class SMSConfig {
         SMSTemplateCode smsTemplateCode = new SMSTemplateCode();
         smsTemplateCode.setLoginTemplateCode(loginTemplateCode);
         smsTemplateCode.setRegisterTemplateCode(registerTemplateCode);
+        smsTemplateCode.setRemoteLoginTemplateCode(remoteLoginTemplateCode);
         return smsTemplateCode;
     }
 }

@@ -27,4 +27,8 @@ public class RegisterDto {
      * 用户密码二次校验
      */
     private String checkPassword;
+    /**
+     * 地址 不需要填
+     */
+    private String addr;
 }
