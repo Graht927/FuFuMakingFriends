@@ -5,13 +5,16 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.constant.RedisKeyConstants;
 import cn.graht.common.constant.UserConstant;
+import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.dtos.LoginDto;
 import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
+import cn.graht.model.user.vos.UserVo;
 import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
 import cn.graht.user.service.UserService;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -75,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                         , eventParams);
             }).run();
             /*
-            已经修改为事件发布响应 优化速度 5s ->
+            已经修改为事件发布响应
             //修改当前数据库地址[addr] 上一次地址放入数据库upAddr
             user.setUpAddr(user.getAddr());
             user.setAddr(loginDto.getAddr());
@@ -148,6 +151,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
+    @Override
+    public UserVo editUserInfo(EditUserInfoDto editUserInfoDto) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editUserInfoDto), ErrorCode.PARAMS_NULL_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editUserInfoDto.getId()), ErrorCode.PARAMS_ERROR);
+        User user = getById(editUserInfoDto.getId());
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.NULL_ERROR);
+        boolean isUpdated = false;
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getNickname()) && StringUtils.isNotBlank(editUserInfoDto.getNickname())) {
+            //修改昵称
+            user.setNickname(editUserInfoDto.getNickname());
+            isUpdated = true;
+        }
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getGender()) && editUserInfoDto.getGender() == 0 || editUserInfoDto.getGender() == 1) {
+            //修改性别
+            user.setGender(editUserInfoDto.getGender());
+            isUpdated = true;
+        }
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getAvatarUrl()) && StringUtils.isNotBlank(editUserInfoDto.getAvatarUrl())) {
+            //修改头像
+            user.setAvatarUrl(editUserInfoDto.getAvatarUrl());
+            isUpdated = true;
+        }
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getProfile()) && StringUtils.isNotBlank(editUserInfoDto.getProfile())) {
+            //修改简介
+            user.setProfile(editUserInfoDto.getProfile());
+            isUpdated = true;
+        }
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getTags()) && StringUtils.isNotBlank(editUserInfoDto.getTags())) {
+            //修改标签
+            user.setTags(editUserInfoDto.getTags());
+            isUpdated = true;
+        }
+        if (ObjectUtils.isNotEmpty(editUserInfoDto.getEmail()) && StringUtils.isNotBlank(editUserInfoDto.getEmail()) && ReUtil.isMatch(UserConstant.EMAIL_PATTERN, editUserInfoDto.getEmail())) {
+            //修改邮箱
+            user.setEmail(editUserInfoDto.getEmail());
+            isUpdated = true;
+        }
+        if (isUpdated) {
+            boolean b = updateById(user);
+            ThrowUtils.throwIf(!b, ErrorCode.OPERATION_ERROR);
+        }
+        return UserVo.objToVo(user);
+    }
 }
 
 

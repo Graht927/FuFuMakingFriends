@@ -11,6 +11,7 @@ import cn.graht.user.event.FuFuEventPublisher;
 import cn.hutool.core.util.ReUtil;
 import cn.graht.common.exception.ThrowUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;

@@ -12,7 +12,11 @@ import cn.graht.utils.aliSendSMS.SMSParams;
 import cn.graht.utils.aliSendSMS.SMSTemplateCode;
 import cn.hutool.core.util.ReUtil;
 import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
@@ -29,13 +33,13 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping("/v1")
+@Slf4j
+@Tag(name = "短信发送",description = "短信Controller")
 public class SMSController {
-    private static final Logger log = LoggerFactory.getLogger(SMSController.class);
     @Resource
     private SMSParams smsParams;
     @Resource
     private SMSTemplateCode smsTemplateCode;
-
     @Resource
     private Redisson redisson;
     @Resource
@@ -43,6 +47,10 @@ public class SMSController {
 
 
     @PostMapping("/g")
+    @Operation(summary = "发送短信")
+    @ApiResponse(responseCode = "200",description = "发送成功")
+    @ApiResponse(responseCode = "10001",description = "sms参数错误")
+    @ApiResponse(responseCode = "50000",description = "系统内部错误")
     public ResultApi requestSms(@RequestBody SMSRequestParam smsRequestParam) {
         RLock lock = redisson.getLock(RedisKeyConstants.SMS_LOCK_PREFIX + smsRequestParam.getPhone());
         lock.lock();

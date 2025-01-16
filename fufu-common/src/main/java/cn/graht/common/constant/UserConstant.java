@@ -16,6 +16,10 @@ public interface UserConstant {
      * 手机号校验正则
      */
     String PHONE_NUMBER_PATTERN = "^(13[0-9]|14[5-9]|15[0-9]|166|17[0-8]|18[0-9]|19[8-9])\\d{8}$";
+    /**
+     * 邮箱校验正则
+     */
+    String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,6})+$";
 
     /**
      * 用户登录态键

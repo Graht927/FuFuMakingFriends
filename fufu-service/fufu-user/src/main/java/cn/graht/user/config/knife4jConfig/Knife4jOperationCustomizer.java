@@ -20,7 +20,10 @@ public class Knife4jOperationCustomizer implements GlobalOperationCustomizer {
     public Operation customize(Operation operation, HandlerMethod handlerMethod) {
         List<SecurityRequirement> security = operation.getSecurity();
         if (security == null) {
-            security = List.of(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION));
+            security = List.of(new SecurityRequirement()
+                    .addList(HttpHeaders.AUTHORIZATION)
+                    .addList("location")
+            );
             operation.setSecurity(security);
         }
         return operation;

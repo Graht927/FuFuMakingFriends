@@ -20,7 +20,9 @@ public class knife4jConfig {
         return new OpenAPI().info(new Info()
                         .title("user")
                         .version("v1"))
-                .addSecurityItem(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList(HttpHeaders.AUTHORIZATION)
+                        .addList("location"))
                 .components(new Components().addSecuritySchemes(
                                 HttpHeaders.AUTHORIZATION,
                                 new SecurityScheme()
@@ -30,6 +32,7 @@ public class knife4jConfig {
                                         .in(SecurityScheme.In.HEADER)
                                         .bearerFormat("JWT")
                         )
+                        .addSecuritySchemes("location", new SecurityScheme().name("location").type(SecurityScheme.Type.HTTP).in(SecurityScheme.In.HEADER))
                 );
     }
 }
