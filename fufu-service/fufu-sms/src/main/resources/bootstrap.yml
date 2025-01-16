@@ -55,5 +55,8 @@ spring:
           - data-id: sa-token-conf.yaml
             refresh: true
             group: FuFuMakingFriend
+          - data-id: fufu-app-private-conf.yaml
+            refresh: true
+            group: FuFuMakingFriend
 server:
   port: 4501

@@ -19,8 +19,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestAttributes;
@@ -34,7 +37,7 @@ import java.util.LinkedHashMap;
  * @author GRAHT
  */
 @Aspect
-@RestControllerAdvice
+@Component
 @Slf4j
 public class AddrToParamsAdvice {
     @Pointcut("execution(public * cn.graht.user.controller.*Controller.*(..))")
@@ -47,6 +50,8 @@ public class AddrToParamsAdvice {
 
     @Resource
     private TXFeignApi txFeignApi;
+    @Value("${tx.reqHeaderCode}")
+    private String reqCode;
 
     @Before("@annotation(cn.graht.user.aop.anno.AddrToParam)")
     public void doInterceptor(JoinPoint joinPoint) throws Throwable {
@@ -60,7 +65,7 @@ public class AddrToParamsAdvice {
         params.put("location", location);
         tenXunRequestParams.setParams(params);
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("reqCode", "95694e72e2d29ed3b8375474e67d7748");
+        headers.add("reqCode", DigestUtils.md5DigestAsHex((SystemConstant.SALT+reqCode).getBytes()));
         ResultApi<Object> tx = txFeignApi.tx(tenXunRequestParams, headers);
         String result = JSONUtil.toJsonStr(((LinkedHashMap<String, Object>) tx.getData()).get("result"));
         LocationData data = (LocationData) JSONUtil.toBean(result, LocationData.class);

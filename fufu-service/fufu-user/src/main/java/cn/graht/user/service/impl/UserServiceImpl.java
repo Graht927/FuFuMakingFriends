@@ -8,6 +8,7 @@ import cn.graht.common.constant.UserConstant;
 import cn.graht.model.user.dtos.LoginDto;
 import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
+import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
 import cn.graht.user.service.UserService;
@@ -26,6 +27,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
+
+import java.util.HashMap;
 
 /**
  * @author GRAHT
@@ -63,6 +66,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.LOGIN_PARAMS_ERROR);
             StpUtil.login(user.getId());
             stringRedisTemplate.delete(redisKey);
+            HashMap<String, Object> eventParams = new HashMap<>();
+            eventParams.put("user", user);
+            eventParams.put("loginDto", loginDto);
+            ((Runnable) () -> {
+                fuFuEventPublisher.doStuffAndPublishAnEvent(
+                        FuFuEventEnum.CHECK_REMOTE_LOGIN.getValue() + user.getId()
+                        , eventParams);
+            }).run();
+            /*
+            已经修改为事件发布响应 优化速度 5s ->
             //修改当前数据库地址[addr] 上一次地址放入数据库upAddr
             user.setUpAddr(user.getAddr());
             user.setAddr(loginDto.getAddr());
@@ -79,11 +92,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 int loginCount = Integer.parseInt(lc == null ? "0" : lc);
                 //如果登录次数>=3 发送短信事件
                 if (loginCount >= 3) {
-                    fuFuEventPublisher.doStuffAndPublishAnEvent("RemoteLogin:" + user.getId());
+                    fuFuEventPublisher.doStuffAndPublishAnEvent(FuFuEventEnum.REMOTE_LOGIN.getValue() + user.getId(),null);
                     //将redis 地址登录清空 删除
                     stringRedisTemplate.delete(RedisKeyConstants.USER_LOGIN_COUNT_PREFIX + user.getPhone());
                 }
             }
+            */
             return StpUtil.getTokenInfo();
         } finally {
             lock.unlock();

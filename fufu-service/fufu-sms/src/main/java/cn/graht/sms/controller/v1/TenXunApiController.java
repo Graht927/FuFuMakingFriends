@@ -27,4 +27,5 @@ public class TenXunApiController {
                 RestTemplateUtils.GateRestUrl(TenXunApiConstant.getTenXunApiConstant(params.getU()),params.getParams())
         );
     }
+
 }

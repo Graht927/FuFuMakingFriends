@@ -5,7 +5,8 @@ package cn.graht.user.event;
  */
 public enum FuFuEventEnum {
     //异地登录
-    REMOTE_LOGIN("RemoteLogin");
+    REMOTE_LOGIN("RemoteLogin:"),
+    CHECK_REMOTE_LOGIN("CheckRemoteLogin:");
     private String value;
     private FuFuEventEnum(String value) {
         this.value = value;
