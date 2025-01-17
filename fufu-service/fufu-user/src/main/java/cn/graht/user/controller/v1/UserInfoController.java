@@ -7,6 +7,7 @@ import cn.graht.common.exception.ThrowUtils;
 import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
+import cn.graht.user.mq.producer.UserUnregisterProducer;
 import cn.graht.user.service.UserService;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserInfoController {
     @Resource
     private UserService userService;
+    @Resource
+    private UserUnregisterProducer userUnregisterProducer;
 
     @GetMapping("/info/{uid}")
     @Operation(summary = "通过id获取",description = "通过id获取用户信息")
@@ -42,7 +45,7 @@ public class UserInfoController {
         return ResultUtil.ok(userVo);
     }
 
-    @PutMapping("/info}")
+    @PutMapping("/info")
     @Operation(summary = "修改用户",description = "修改用户详情")
     @ApiResponse(responseCode = "200",description = "返回信息")
     @ApiResponse(responseCode = "40000",description = "参数错误")
@@ -54,7 +57,7 @@ public class UserInfoController {
         ThrowUtils.throwIf(ObjectUtil.isEmpty(userVo),ErrorCode.NULL_ERROR);
         return ResultUtil.ok(userVo);
     }
-    @DeleteMapping("/info/{uid}")
+    /*@DeleteMapping("/info/{uid}")
     @Operation(summary = "注销用户",description = "通过id注销用户")
     @ApiResponse(responseCode = "200",description = "返回信息")
     @ApiResponse(responseCode = "40000",description = "参数错误")
@@ -64,6 +67,30 @@ public class UserInfoController {
         boolean remove = userService.remove(new LambdaQueryWrapper<User>().eq(User::getId, uid));
         ThrowUtils.throwIf(!remove,ErrorCode.NULL_ERROR);
         return ResultUtil.ok(true);
+    }*/
+
+    @DeleteMapping("/info/{uid}")
+    @Operation(summary = "注销用户", description = "通过id注销用户")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    @ApiResponse(responseCode = "40002", description = "结果为空")
+    public ResultApi<Boolean> logOutOfUser(@PathVariable String uid) {
+        ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
+        userUnregisterProducer.sendUnregisterRequest(uid);
+        return ResultUtil.ok(true);
     }
+
+    @GetMapping("/info/cancel-unregister/{uid}")
+    @Operation(summary = "取消注销用户", description = "通过id取消注销用户")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    public ResultApi<Boolean> cancelUnregisterUser(@PathVariable String uid) {
+        ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
+        // 实现取消注销逻辑，例如从消息队列中移除消息
+        boolean canceled = userService.cancelUnregisterRequest(uid);
+        ThrowUtils.throwIf(!canceled, ErrorCode.NULL_ERROR);
+        return ResultUtil.ok(true);
+    }
+
 
 }

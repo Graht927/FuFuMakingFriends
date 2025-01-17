@@ -13,6 +13,7 @@ import cn.graht.model.user.vos.UserVo;
 import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
+import cn.graht.user.mq.producer.UserUnregisterProducer;
 import cn.graht.user.service.UserService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
@@ -20,18 +21,23 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
+import org.redisson.api.RMap;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author GRAHT
@@ -66,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
             String userPassword = DigestUtils.md5DigestAsHex((SystemConstant.SALT + loginDto.getUserPassword()).getBytes());
             User user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()).eq(User::getUserPassword, userPassword));
-            ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.LOGIN_PARAMS_ERROR);
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
             StpUtil.login(user.getId());
             stringRedisTemplate.delete(redisKey);
             HashMap<String, Object> eventParams = new HashMap<>();
@@ -193,6 +199,58 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ThrowUtils.throwIf(!b, ErrorCode.OPERATION_ERROR);
         }
         return UserVo.objToVo(user);
+    }
+
+
+    @Resource //生产者
+    @Lazy //循环依赖
+    private UserUnregisterProducer userUnregisterProducer;
+    private RMap<String, Boolean> unregisterRequests;
+
+    @PostConstruct
+    private void init() {
+        String redisKey = RedisKeyConstants.USER_UNREGISTER_PREFIX + "maps";
+        unregisterRequests = redisson.getMap(redisKey);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        redisson.shutdown();
+    }
+
+    @Override
+    public void sendUnregisterRequest(String uid) {
+        ThrowUtils.throwIf(unregisterRequests.containsKey(uid), ErrorCode.USER_UNREGISTER_MQ_ERROR);
+        // 将用户ID存储到 ConcurrentHashMap 中
+        unregisterRequests.put(uid, Boolean.TRUE);
+    }
+
+    @Override
+    public boolean cancelUnregisterRequest(String userId) {
+        // 从 ConcurrentHashMap 中移除用户ID
+        return unregisterRequests.remove(userId) != null;
+    }
+
+    @Override
+    public boolean UnregisterRemoveById(String uid) {
+        long count = count(new LambdaQueryWrapper<User>().eq(User::getId, uid));
+        if (count != 1) {
+            return false;
+        }
+        RLock lock = redisson.getLock(RedisKeyConstants.USER_UNREGISTER_LOCK + uid);
+        lock.lock();
+        try {
+            if (unregisterRequests.containsKey(uid)) {
+                // 如果存在，则进行注销操作
+                unregisterRequests.remove(uid);
+                return remove(new LambdaQueryWrapper<User>().eq(User::getId, uid));
+            }else return false;
+        } catch (Exception e) {
+            unregisterRequests.put(uid, Boolean.TRUE);
+            return false;
+        } finally {
+            lock.unlock();
+        }
     }
 }
 

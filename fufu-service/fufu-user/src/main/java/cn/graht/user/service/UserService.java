@@ -19,4 +19,10 @@ public interface UserService extends IService<User> {
     boolean register(RegisterDto registerDto);
 
     UserVo editUserInfo(EditUserInfoDto editUserInfoDto);
+
+    boolean cancelUnregisterRequest(String uid);
+
+    void sendUnregisterRequest(String uid);
+
+    boolean UnregisterRemoveById(String uid);
 }

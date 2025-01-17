@@ -60,3 +60,10 @@ spring:
             group: FuFuMakingFriend
 server:
   port: 4001
+rocketmq:
+  name-server: 192.168.10.120:9876
+  producer:
+    group: user-unregister-producer-group
+  consumer:
+    group: user-unregister-consumer-group
+    topic: user-unregister-topic
