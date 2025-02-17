@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.constant.RedisKeyConstants;
 import cn.graht.common.constant.UserConstant;
+import cn.graht.common.exception.BusinessException;
 import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.dtos.LoginDto;
 import cn.graht.model.user.dtos.RegisterDto;
@@ -67,22 +68,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                             loginDto.getPhoneCode().length() != 6,
                     ErrorCode.LOGIN_PARAMS_ERROR);
             //校验手机验证码是否正确
-            String redisKey = RedisKeyConstants.SMS_LOGIN_PREFIX + loginDto.getPhone();
-            String captcha = stringRedisTemplate.opsForValue().get(redisKey);
-            ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
+            //todo 测试期间不浪费手机短信费用
+//            String redisKey = RedisKeyConstants.SMS_LOGIN_PREFIX + loginDto.getPhone();
+//            String captcha = stringRedisTemplate.opsForValue().get(redisKey);
+//            ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
+
             String userPassword = DigestUtils.md5DigestAsHex((SystemConstant.SALT + loginDto.getUserPassword()).getBytes());
             User user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()).eq(User::getUserPassword, userPassword));
             ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
             StpUtil.login(user.getId());
-            stringRedisTemplate.delete(redisKey);
+
+//            stringRedisTemplate.delete(redisKey);
             HashMap<String, Object> eventParams = new HashMap<>();
             eventParams.put("user", user);
             eventParams.put("loginDto", loginDto);
-            ((Runnable) () -> {
+            //todo 测试期间不调用tx接口
+            /*((Runnable) () -> {
                 fuFuEventPublisher.doStuffAndPublishAnEvent(
                         FuFuEventEnum.CHECK_REMOTE_LOGIN.getValue() + user.getId()
                         , eventParams);
-            }).run();
+            }).run();*/
             /*
             已经修改为事件发布响应
             //修改当前数据库地址[addr] 上一次地址放入数据库upAddr
@@ -233,8 +238,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean UnregisterRemoveById(String uid) {
+        if (!unregisterRequests.containsKey(uid)) {
+            return false;
+        }
         long count = count(new LambdaQueryWrapper<User>().eq(User::getId, uid));
         if (count != 1) {
+            unregisterRequests.remove(uid);
             return false;
         }
         RLock lock = redisson.getLock(RedisKeyConstants.USER_UNREGISTER_LOCK + uid);
@@ -245,8 +254,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 unregisterRequests.remove(uid);
                 return remove(new LambdaQueryWrapper<User>().eq(User::getId, uid));
             }else return false;
-        } catch (Exception e) {
-            unregisterRequests.put(uid, Boolean.TRUE);
+        }  catch (Exception e) {
             return false;
         } finally {
             lock.unlock();

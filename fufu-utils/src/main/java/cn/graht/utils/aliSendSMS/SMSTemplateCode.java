@@ -14,6 +14,7 @@ public class SMSTemplateCode {
     private String registerTemplateCode;
 
     private String remoteLoginTemplateCode;
+    private String unregisterTemplateCode;
 
     public String getTemplateCode(String templateCodeStr){
         if ("login".equals(templateCodeStr)) {
@@ -24,6 +25,9 @@ public class SMSTemplateCode {
         }
         if ("remoteLogin".equals(templateCodeStr)){
             return remoteLoginTemplateCode;
+        }
+        if ("unregister".equals(templateCodeStr)){
+            return unregisterTemplateCode;
         }
         return "";
     }

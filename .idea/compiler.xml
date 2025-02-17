@@ -9,15 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="fufu-test" />
         <module name="fufu-model" />
-        <module name="fufu-gateway" />
-        <module name="fufu-organize-bureau" />
+        <module name="fufu-mq-Consumer" />
         <module name="fufu-search" />
         <module name="fufu-feign-api" />
         <module name="fufu-utils" />
-        <module name="fufu-socializing" />
-        <module name="fufu-user" />
         <module name="fufu-sms" />
         <module name="fufu-common" />
+        <module name="fufu-mq-producer" />
+        <module name="fufu-gateway" />
+        <module name="fufu-organize-bureau" />
+        <module name="fufu-socializing" />
+        <module name="fufu-user" />
       </profile>
     </annotationProcessing>
   </component>
@@ -27,6 +29,8 @@
       <module name="fufu-feign-api" options="-parameters" />
       <module name="fufu-gateway" options="-parameters" />
       <module name="fufu-model" options="-parameters" />
+      <module name="fufu-mq-Consumer" options="-parameters" />
+      <module name="fufu-mq-producer" options="-parameters" />
       <module name="fufu-organize-bureau" options="-parameters" />
       <module name="fufu-search" options="-parameters" />
       <module name="fufu-sms" options="-parameters" />

@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/fufu-feign-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fufu-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fufu-model/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fufu-mq-Consumer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fufu-mq-producer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fufu-service/fufu-organize-bureau/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fufu-service/fufu-search/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fufu-service/fufu-sms/src/main/java" charset="UTF-8" />

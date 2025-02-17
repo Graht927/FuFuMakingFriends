@@ -29,6 +29,8 @@
         <module>fufu-utils</module>
         <module>fufu-test</module>
         <module>fufu-model</module>
+        <module>fufu-mq-producer</module>
+        <module>fufu-mq-Consumer</module>
     </modules>
     <scm>
         <connection/>

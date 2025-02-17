@@ -39,7 +39,8 @@ public class UserLoginController {
     @Operation(summary = "登录",description = "根据手机号和密码进行登录")
     @ApiResponse(responseCode = "200",description = "登录成功 返回token")
     @ApiResponse(responseCode = "40101",description = "用户名或密码错误")
-    @AddrToParam
+    //todo 他会调用tx的接口来将地址填充到参数里
+//    @AddrToParam
     public ResultApi login(@RequestBody LoginDto loginDto) {
         String addr = loginDto.getAddr();
         log.info("addr: {}",addr);
