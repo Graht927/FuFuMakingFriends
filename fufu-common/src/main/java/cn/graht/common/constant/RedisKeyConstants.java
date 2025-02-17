@@ -19,6 +19,11 @@ public interface RedisKeyConstants {
     String USER_UNREGISTER_PREFIX = "fufu:user:un:register:";
     String USER_UNREGISTER_LOCK = "fufu:user:un:register:lock:";
 
+
+    String PRODUCER_LOCK_PREFIX = "fufu:producer:";
+    String PRODUCER_LOCK_SUFFIX = "lock:";
+
+
     String SMS_LOCK_PREFIX = "fufu:sms:lock:";
     Integer SMS_TIMEOUT = 60*5+new Random().nextInt(500);
 }

@@ -57,17 +57,6 @@ public class UserInfoController {
         ThrowUtils.throwIf(ObjectUtil.isEmpty(userVo),ErrorCode.NULL_ERROR);
         return ResultUtil.ok(userVo);
     }
-    /*@DeleteMapping("/info/{uid}")
-    @Operation(summary = "注销用户",description = "通过id注销用户")
-    @ApiResponse(responseCode = "200",description = "返回信息")
-    @ApiResponse(responseCode = "40000",description = "参数错误")
-    @ApiResponse(responseCode = "40002",description = "结果为空")
-    public ResultApi<Boolean> logOutOfUser(@PathVariable String uid) {
-        ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
-        boolean remove = userService.remove(new LambdaQueryWrapper<User>().eq(User::getId, uid));
-        ThrowUtils.throwIf(!remove,ErrorCode.NULL_ERROR);
-        return ResultUtil.ok(true);
-    }*/
 
     @DeleteMapping("/info/{uid}")
     @Operation(summary = "注销用户", description = "通过id注销用户")
@@ -91,6 +80,14 @@ public class UserInfoController {
         ThrowUtils.throwIf(!canceled, ErrorCode.NULL_ERROR);
         return ResultUtil.ok(true);
     }
-
+    @DeleteMapping("/unregisterList/{uid}")
+    @Operation(summary = "移除注销用户", description = "通过id移除注销用户")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    public ResultApi<Boolean> removeUnregisterUser(@PathVariable String uid) {
+        ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
+        boolean removed = userService.UnregisterRemoveById(uid);
+        return ResultUtil.ok(removed);
+    }
 
 }

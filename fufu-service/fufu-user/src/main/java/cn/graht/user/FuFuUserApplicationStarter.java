@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan("cn.graht.user.mapper")
 @SpringBootApplication
 @EnableTransactionManagement
-@ImportAutoConfiguration({RocketMQAutoConfiguration.class})
 public class FuFuUserApplicationStarter {
     private static final Logger log = LoggerFactory.getLogger(FuFuUserApplicationStarter.class);
 

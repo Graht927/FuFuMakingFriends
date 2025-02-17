@@ -19,6 +19,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.slf4j.Logger;
@@ -61,13 +62,9 @@ public class SMSController {
                             || !ReUtil.isMatch(UserConstant.PHONE_NUMBER_PATTERN, smsRequestParam.getPhone())
                     , ErrorCode.SMS_PARAMS_ERROR);
             int captcha = smsParams.getCaptcha();
-            String templateParams;
-            if ("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())){
-                templateParams = "{\"user_nick\":\""+smsRequestParam.getUserNick()+"\",\"time\":\""+smsRequestParam.getTime()+"\",\"address\":\""+smsRequestParam.getAddress()+"\"}";
-            }else {
-                templateParams = "{\"code\":"+"\""+captcha+"\"}";
-            }
+            String templateParams = getTemplateParams(smsRequestParam, captcha);
             SendSmsResponse sendSmsResponse = AliYunSmsUtils.sendSms(smsParams, smsTemplateCode.getTemplateCode(smsRequestParam.getTemplateCodeStr()), smsRequestParam.getPhone(), templateParams);
+            //todo 最后删除
             if (!("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())) && !ObjectUtils.isEmpty(sendSmsResponse)) {
                 String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
                 String redisValue = String.valueOf(captcha);
@@ -93,5 +90,19 @@ public class SMSController {
             lock.unlock();
         }
         return ResultUtil.error(ErrorCode.SYSTEM_ERROR);
+    }
+
+    private static @NotNull String getTemplateParams(SMSRequestParam smsRequestParam, int captcha) {
+        String templateParams = "";
+        if ("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())){
+            templateParams = "{\"user_nick\":\""+ smsRequestParam.getUserNick()+"\",\"time\":\""+ smsRequestParam.getTime()+"\",\"address\":\""+ smsRequestParam.getAddress()+"\"}";
+        }
+        if ("login".equals(smsRequestParam.getTemplateCodeStr())){
+            templateParams = "{\"code\":"+"\""+ captcha +"\"}";
+        }
+        if ("register".equals(smsRequestParam.getTemplateCodeStr())){
+            templateParams = "{\"code\":"+"\""+ captcha +"\"}";
+        }
+        return templateParams;
     }
 }
