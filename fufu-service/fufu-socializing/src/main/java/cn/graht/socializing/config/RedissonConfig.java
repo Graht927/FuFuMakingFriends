@@ -1,4 +1,4 @@
-package cn.graht.user.config;
+package cn.graht.socializing.config;
 
 import lombok.Data;
 import org.redisson.Redisson;
