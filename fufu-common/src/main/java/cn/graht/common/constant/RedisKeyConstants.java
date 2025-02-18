@@ -6,7 +6,7 @@ public interface RedisKeyConstants {
     /**
      * 正常redisKey的过期时间
      */
-    Integer DEFAULT_TIMEOUT = 60*60*10+new Random().nextInt(1000);
+    Integer DEFAULT_TIMEOUT = 60*60*24+new Random().nextInt(1000);
 
     String SMS_TEMPLATE_CODE_PREFIX = "fufu:sms:";
     String SMS_LOGIN_PREFIX = "fufu:sms:login:";
@@ -26,4 +26,15 @@ public interface RedisKeyConstants {
 
     String SMS_LOCK_PREFIX = "fufu:sms:lock:";
     Integer SMS_TIMEOUT = 60*5+new Random().nextInt(500);
+    String THUMBSUP_KEY = "fufu:socializing:thumbsup:bitmap:";
+    String THUMBSUP_ADD_KEY = "fufu:socializing:thumbsup:haperloglog:add:";
+    String THUMBSUP_DEL_KEY = "fufu:socializing:thumbsup:haperloglog:del:";
+    String SOCIALIZING_LIKE_COUNT_KEY  = "fufu:socializing:likeCount:";
+
+    int SHARD_COUNT = 16;
+
+    static String getShardedCacheKey(Long did, String uid) {
+        int shardIndex = Math.abs(uid.hashCode() % SHARD_COUNT);
+        return RedisKeyConstants.THUMBSUP_KEY + did + ":" + shardIndex;
+    }
 }
