@@ -1,7 +1,13 @@
 package cn.graht.socializing.service;
 
+import cn.graht.model.socializing.dtos.EditFocusDto;
+import cn.graht.model.socializing.dtos.GetFansByUidDto;
+import cn.graht.model.socializing.dtos.GetFocusByUidDto;
 import cn.graht.model.socializing.pojos.Focus;
+import cn.graht.model.user.vos.UserVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author GRAHT
@@ -10,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface FocusService extends IService<Focus> {
 
+    List<UserVo> getFocusByUid(GetFocusByUidDto getFocusByUidDto);
+
+    Boolean addFocus(EditFocusDto editFocusDto);
+
+    Boolean delFocus(EditFocusDto editFocusDto);
+
+    List<UserVo> getFansByUid(GetFansByUidDto getFansByUidDto);
 }

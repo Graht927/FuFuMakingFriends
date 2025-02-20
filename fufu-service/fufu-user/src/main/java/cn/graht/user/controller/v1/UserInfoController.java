@@ -1,11 +1,13 @@
 package cn.graht.user.controller.v1;
 
 import cn.graht.common.commons.ErrorCode;
+import cn.graht.common.commons.PageQuery;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.common.commons.ResultUtil;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.pojos.User;
+import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.user.mq.producer.UserUnregisterProducer;
 import cn.graht.user.service.UserService;
@@ -18,6 +20,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author GRAHT
@@ -88,6 +92,14 @@ public class UserInfoController {
         ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
         boolean removed = userService.UnregisterRemoveById(uid);
         return ResultUtil.ok(removed);
+    }
+    @PostMapping("/initGetUserIds")
+    @Operation(summary = "获取所有用户id", description = "获取所有用户id")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    public ResultApi<UserIdsVo> getAllUserId(@RequestBody PageQuery pageQuery){
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(pageQuery),ErrorCode.PARAMS_ERROR);
+        return ResultUtil.ok(userService.getAllUserId(pageQuery));
     }
 
 }
