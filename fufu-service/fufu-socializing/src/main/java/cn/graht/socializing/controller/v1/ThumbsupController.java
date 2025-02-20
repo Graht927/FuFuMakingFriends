@@ -106,7 +106,6 @@ public class ThumbsupController {
         bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         long index = hashToIndex(uid,did);
         bitSet.clear(index);
-
         return ResultUtil.ok(true);
     }
 

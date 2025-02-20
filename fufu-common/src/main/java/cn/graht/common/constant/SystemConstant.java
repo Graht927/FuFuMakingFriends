@@ -9,4 +9,5 @@ public interface SystemConstant {
      * 加盐
      */
     static final String SALT = "#G#";
+    static final String SYSTEM_INIT_REQ_CODE = "#FuFu_User!Init-Api#";
 }

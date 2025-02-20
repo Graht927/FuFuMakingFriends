@@ -29,6 +29,7 @@ public class SaTokenConfigure {
                 SaRouter.match("/**")
                         .notMatch("/fufu-sms/v1/g")
                         .notMatch("/fufu-user/v1/login auth")
+                        .notMatch("/fufu-user/v1/initGetUserIds")
                         .notMatch("/fufu-user/v1/register auth")
                         //网关服务
                         .notMatch("/doc.html",
@@ -72,6 +73,7 @@ public class SaTokenConfigure {
                 SaRouter.match("/fufu-user/**")
                         .notMatch("/fufu-user/v1/login auth")
                         .notMatch("/fufu-user/v1/register auth")
+                        .notMatch("/fufu-user/v1/initGetUserIds")
                         //网关服务
                         .notMatch("/doc.html",
                                 "/swagger-ui/**",

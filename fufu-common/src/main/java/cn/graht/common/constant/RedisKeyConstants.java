@@ -30,6 +30,7 @@ public interface RedisKeyConstants {
     String THUMBSUP_ADD_KEY = "fufu:socializing:thumbsup:haperloglog:add:";
     String THUMBSUP_DEL_KEY = "fufu:socializing:thumbsup:haperloglog:del:";
     String SOCIALIZING_LIKE_COUNT_KEY  = "fufu:socializing:likeCount:";
+    String SOCIALIZING_FOCUS_SET_KEY = "fufu:socializing:focus:set:";
 
     int SHARD_COUNT = 16;
 

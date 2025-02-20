@@ -3,6 +3,7 @@ package cn.graht.user.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
+import cn.graht.common.commons.PageQuery;
 import cn.graht.common.constant.RedisKeyConstants;
 import cn.graht.common.constant.UserConstant;
 import cn.graht.common.exception.BusinessException;
@@ -10,6 +11,7 @@ import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.dtos.LoginDto;
 import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
+import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
@@ -19,6 +21,7 @@ import cn.graht.user.service.UserService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
@@ -38,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -55,6 +59,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private Redisson redisson;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -259,6 +265,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public UserIdsVo getAllUserId(PageQuery pageQuery) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(pageQuery), ErrorCode.PARAMS_ERROR);
+        Page<User> page = new Page<>(pageQuery.getPageNum(),pageQuery.getPageSize());
+        Page<User> userPage = userMapper.selectPage(page, null);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(userPage),ErrorCode.NULL_ERROR);
+        UserIdsVo userIdsVo = new UserIdsVo();
+        userIdsVo.setTotal(userPage.getTotal());
+        userIdsVo.setUserIds(userPage.getRecords().stream().map(user -> {
+            return user.getId();
+        }).toList());
+        return userIdsVo;
     }
 }
 
