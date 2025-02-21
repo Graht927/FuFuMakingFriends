@@ -23,4 +23,6 @@ public interface FocusService extends IService<Focus> {
     Boolean delFocus(EditFocusDto editFocusDto);
 
     List<UserVo> getFansByUid(GetFansByUidDto getFansByUidDto);
+
+    Boolean isFocus(EditFocusDto editFocusDto);
 }

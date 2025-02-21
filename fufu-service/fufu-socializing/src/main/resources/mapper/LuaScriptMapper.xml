@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.graht.socializing.mapper.LuaScriptMapper">
+
+    <resultMap id="BaseResultMap" type="cn.graht.model.luaScript.pojos.LuaScript">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="scriptName" column="scriptName" jdbcType="VARCHAR"/>
+            <result property="scriptContent" column="scriptContent" jdbcType="VARCHAR"/>
+            <result property="sha1Checksum" column="sha1Checksum" jdbcType="VARCHAR"/>
+            <result property="createdTime" column="createdTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,scriptName,scriptContent,
+        sha1Checksum,createdTime,updateTime
+    </sql>
+    <select id="getAll" resultType="cn.graht.model.luaScript.pojos.LuaScript">
+        select <include refid="Base_Column_List"/> from fufu_app.luaScript;
+    </select>
+</mapper>

@@ -1,4 +1,4 @@
-package cn.graht.sms.springbootinit.configuration;
+package cn.graht.sms.config;
 
 import lombok.Data;
 import org.redisson.Redisson;
@@ -18,11 +18,12 @@ public class RedissonConfig {
 
     private String host;
     private String port;
+    private String password;
 
     @Bean
     public Redisson redisson(){
         Config config = new Config();
-        config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port));
+        config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port)).setPassword(password);
         return (Redisson) Redisson.create(config);
     }
 }

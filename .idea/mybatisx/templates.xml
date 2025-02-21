@@ -69,16 +69,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="Comments" />
-                  <option name="tableName" value="comments" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Focus" />
-                  <option name="tableName" value="focus" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Thumbsup" />
-                  <option name="tableName" value="thumbsUp" />
+                  <option name="className" value="LuaScript" />
+                  <option name="tableName" value="luaScript" />
                 </TableUIInfo>
               </list>
             </option>
