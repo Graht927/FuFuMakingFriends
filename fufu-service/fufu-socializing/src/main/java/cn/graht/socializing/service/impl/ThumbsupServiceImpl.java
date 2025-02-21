@@ -28,12 +28,12 @@ public class ThumbsupServiceImpl extends ServiceImpl<ThumbsupMapper, Thumbsup>
     @Resource
     private ThumbsupMapper thumbsupMapper;
     @Override
-    public List<ThumbsupVo> getThubmsUpByCid(Long cid, PageQuery pageQuery) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(cid) || cid < 0L, ErrorCode.PARAMS_ERROR);
+    public List<ThumbsupVo> getThubmsUpByCid(Long dynamicId, PageQuery pageQuery) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(pageQuery), ErrorCode.PARAMS_ERROR);
         Page<Thumbsup> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
         LambdaQueryWrapper<Thumbsup> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Thumbsup::getDynamicId, cid);
+        queryWrapper.eq(Thumbsup::getDynamicId, dynamicId);
         Page<Thumbsup> res = thumbsupMapper.selectPage(page, queryWrapper);
         List<Thumbsup> records = res.getRecords();
         if (ObjectUtils.isNotEmpty(records)) {

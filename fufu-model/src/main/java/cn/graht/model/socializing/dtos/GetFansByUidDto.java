@@ -8,6 +8,6 @@ import lombok.Data;
  */
 @Data
 public class GetFansByUidDto extends PageQuery {
-    private String uid;
+    private String userId;
     private String focusId;
 }

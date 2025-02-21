@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 public class GetFocusByUidDto extends PageQuery {
     //todo 未来看看是否需要对别人开放
-    private String lookUid;
-    private String uid;
+    private String userId;
     private String focusUid;
 }

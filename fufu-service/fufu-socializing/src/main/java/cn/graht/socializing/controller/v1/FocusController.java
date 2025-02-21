@@ -37,7 +37,7 @@ public class FocusController {
     public ResultApi<List<UserVo>> getFocusByUid(@RequestBody GetFocusByUidDto getFocusByUidDto) {
         //uid当前查看的人 focusUserId查看的人
         ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto.getUid())||ObjectUtils.isEmpty(getFocusByUidDto.getFocusUid()), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto.getFocusUid())||ObjectUtils.isEmpty(getFocusByUidDto.getFocusUid()), ErrorCode.PARAMS_ERROR);
         return ResultUtil.ok(focusService.getFocusByUid(getFocusByUidDto));
     }
     //获取粉丝列表 获取别人关注我的列表
@@ -48,7 +48,7 @@ public class FocusController {
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
     public ResultApi<List<UserVo>> getFansByUid(@RequestBody GetFansByUidDto getFansByUidDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto)||ObjectUtils.isEmpty(getFansByUidDto.getUid())||ObjectUtils.isEmpty(getFansByUidDto.getFocusId()), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto)||ObjectUtils.isEmpty(getFansByUidDto.getFocusId())||ObjectUtils.isEmpty(getFansByUidDto.getFocusId()), ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto.getPageNum())||ObjectUtils.isEmpty(getFansByUidDto.getPageSize()), ErrorCode.PARAMS_ERROR);
         return ResultUtil.ok(focusService.getFansByUid(getFansByUidDto));
     }
@@ -80,6 +80,17 @@ public class FocusController {
         ThrowUtils.throwIf(!b,ErrorCode.SYSTEM_ERROR);
         return ResultUtil.ok(true);
     }
+    @PostMapping("/isFocusAndFans")
+    @Operation(summary = "是否互相关注", description = "是否互相关注")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    @ApiResponse(responseCode = "50000", description = "系统内部错误")
+    public ResultApi<Boolean> isFocusAndFans(@RequestBody EditFocusDto editFocusDto) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getFocusUserId())||ObjectUtils.isEmpty(editFocusDto.getUserId()), ErrorCode.PARAMS_ERROR);
+        Boolean b = focusService.isFocusAndFans(editFocusDto);
+        return ResultUtil.ok(b);
+    }
     @PostMapping("/isFocus")
     @Operation(summary = "是否关注", description = "是否关注")
     @ApiResponse(responseCode = "200", description = "返回信息")
@@ -91,6 +102,8 @@ public class FocusController {
         Boolean b = focusService.isFocus(editFocusDto);
         return ResultUtil.ok(b);
     }
+
+
 
 
 }

@@ -50,14 +50,14 @@ public class ThumbsupController {
         return Math.abs(combinedKey.hashCode());
     }
 
-    @PostMapping("{cid}")
-    @Operation(summary = "通过cid获取点赞信息|分页", description = "通过cid获取点赞信息")
+    @PostMapping("{dynamicId}")
+    @Operation(summary = "通过dynamicId获取点赞信息|分页", description = "通过cid获取点赞信息")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
-    public ResultApi<List<ThumbsupVo>> getThubmsUpByCid(@PathVariable Long cid, @RequestBody PageQuery pageQuery) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(cid) || cid < 0L, ErrorCode.PARAMS_ERROR);
-        List<ThumbsupVo> thubms = thumbsupService.getThubmsUpByCid(cid, pageQuery);
+    public ResultApi<List<ThumbsupVo>> getThubmsUpByCid(@PathVariable Long dynamicId, @RequestBody PageQuery pageQuery) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
+        List<ThumbsupVo> thubms = thumbsupService.getThubmsUpByCid(dynamicId, pageQuery);
         return ResultUtil.ok(thubms);
     }
 
@@ -84,52 +84,52 @@ public class ThumbsupController {
         return ResultUtil.ok(true);
     }
 
-    @DeleteMapping("/{uid}/{did}")
+    @DeleteMapping("/{uid}/{dynamicId}")
     @Operation(summary = "取消点赞", description = "取消点赞")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "50000", description = "系统内部错误")
-    public ResultApi<Boolean> deleteThumbsup(@PathVariable Long did , @PathVariable String uid) {
+    public ResultApi<Boolean> deleteThumbsup(@PathVariable Long dynamicId , @PathVariable String uid) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(uid), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(did) || did < 0L, ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
         LambdaQueryWrapper<Thumbsup> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Thumbsup::getDynamicId, did)
+        lambdaQueryWrapper.eq(Thumbsup::getDynamicId, dynamicId)
                 .eq(Thumbsup::getUserId, uid);
         boolean remove = thumbsupService.remove(lambdaQueryWrapper);
         ThrowUtils.throwIf(!remove, ErrorCode.SYSTEM_ERROR);
-        RHyperLogLog<Object> hyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_DEL_KEY + did);
+        RHyperLogLog<Object> hyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_DEL_KEY + dynamicId);
         hyperLogLog.add(uid);
         hyperLogLog.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         //更新bitmap
-        String bitmapKey = RedisKeyConstants.getShardedCacheKey(did, uid);
+        String bitmapKey = RedisKeyConstants.getShardedCacheKey(dynamicId, uid);
         RBitSet bitSet = redisson.getBitSet(bitmapKey);
         bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-        long index = hashToIndex(uid,did);
+        long index = hashToIndex(uid,dynamicId);
         bitSet.clear(index);
         return ResultUtil.ok(true);
     }
 
 
     //判断这条动态是否已经点赞
-    @GetMapping("/{did}/{uid}")
+    @GetMapping("/{dynamicId}/{uid}")
     @Operation(summary = "判断这条动态是否已经点赞", description = "判断这条动态是否已经点赞")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
-    public ResultApi<Boolean> isThumbsup(@PathVariable Long did, @PathVariable String uid) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(did) || did < 0L, ErrorCode.PARAMS_ERROR);
+    public ResultApi<Boolean> isThumbsup(@PathVariable Long dynamicId, @PathVariable String uid) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(uid), ErrorCode.PARAMS_ERROR);
         // 使用BitMap检查点赞状态
-        String bitmapKey = RedisKeyConstants.getShardedCacheKey(did, uid);
+        String bitmapKey = RedisKeyConstants.getShardedCacheKey(dynamicId, uid);
         RBitSet bitSet = redisson.getBitSet(bitmapKey);
         bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-        long index = hashToIndex(uid,did);
+        long index = hashToIndex(uid,dynamicId);
         boolean isThumbsup = bitSet.get(index);
         if (isThumbsup) {
             return ResultUtil.ok(true);
         }
 
         Long count = thumbsupService.lambdaQuery()
-                .eq(Thumbsup::getDynamicId, did)
+                .eq(Thumbsup::getDynamicId, dynamicId)
                 .eq(Thumbsup::getUserId, uid).count();
         if (count == 1) {
             bitSet.set(index);
@@ -137,19 +137,19 @@ public class ThumbsupController {
         }
         return ResultUtil.ok(false);
     }
-    @GetMapping("/s/{did}/{uid}")
+    @GetMapping("/s/{dynamicId}/{uid}")
     @Operation(summary = "获取总赞数", description = "获取总赞数")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
-    public ResultApi<Long> getThumbsupCount(@PathVariable Long did,@PathVariable String uid) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(did) || did < 0L, ErrorCode.PARAMS_ERROR);
+    public ResultApi<Long> getThumbsupCount(@PathVariable Long dynamicId,@PathVariable String uid) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(uid), ErrorCode.PARAMS_ERROR);
         //直接从redis中拿
-        RHyperLogLog<Object> addHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_ADD_KEY + did);
+        RHyperLogLog<Object> addHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_ADD_KEY + dynamicId);
         long addCount = addHyperLogLog.count();
-        RHyperLogLog<Object> delHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_DEL_KEY + did);
+        RHyperLogLog<Object> delHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_DEL_KEY + dynamicId);
         long delCount = delHyperLogLog.count();
-        ResultApi<Dynamic> dynamicById = userFeignApi.getDynamicById(did);
+        ResultApi<Dynamic> dynamicById = userFeignApi.getDynamicById(dynamicId);
         long dbCount = 0;
         Dynamic data = dynamicById.getData();
         if (!ObjectUtils.isEmpty(data)){

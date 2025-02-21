@@ -271,7 +271,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserIdsVo getAllUserId(PageQuery pageQuery) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(pageQuery), ErrorCode.PARAMS_ERROR);
         Page<User> page = new Page<>(pageQuery.getPageNum(),pageQuery.getPageSize());
-        Page<User> userPage = userMapper.selectPage(page, null);
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(User::getId);
+        Page<User> userPage = userMapper.selectPage(page, lambdaQueryWrapper);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(userPage),ErrorCode.NULL_ERROR);
         UserIdsVo userIdsVo = new UserIdsVo();
         userIdsVo.setTotal(userPage.getTotal());

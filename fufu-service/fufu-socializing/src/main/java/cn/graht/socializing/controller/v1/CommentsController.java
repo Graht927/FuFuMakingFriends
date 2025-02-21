@@ -28,8 +28,8 @@ import java.util.List;
 public class CommentsController {
     @Resource
     private CommentsService commentsService;
-    @PostMapping("{cid}")
-    @Operation(summary = "通过cid获取顶级评论信息|分页", description = "通过cid获取顶级评论信息")
+    @PostMapping("{dynamicId}")
+    @Operation(summary = "通过dynamicId获取顶级评论信息|分页", description = "通过cid获取顶级评论信息")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
@@ -37,8 +37,8 @@ public class CommentsController {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(cid) || cid < 0L, ErrorCode.PARAMS_ERROR);
         return ResultUtil.ok(commentsService.getParentCommentsByCid(cid,pageQuery));
     }
-    @PostMapping("/c/{cid}")
-    @Operation(summary = "通过cid获取子级评论信息|分页", description = "通过cid获取子级评论信息")
+    @PostMapping("/c/{dynamicId}")
+    @Operation(summary = "通过dynamicId获取子级评论信息|分页", description = "通过cid获取子级评论信息")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
@@ -59,14 +59,14 @@ public class CommentsController {
         ThrowUtils.throwIf(!save, ErrorCode.NULL_ERROR);
         return ResultUtil.ok(comments);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{cid}")
     @Operation(summary = "删除评论", description = "删除评论")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
-    public ResultApi<String> deleteComments(@PathVariable Long id) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(id)||id < 0, ErrorCode.PARAMS_ERROR);
-        boolean removeById = commentsService.removeById(id);
+    public ResultApi<String> deleteComments(@PathVariable Long cid) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(cid)||cid < 0, ErrorCode.PARAMS_ERROR);
+        boolean removeById = commentsService.removeById(cid);
         ThrowUtils.throwIf(!removeById, ErrorCode.NULL_ERROR);
         return ResultUtil.ok("删除成功!");
     }
