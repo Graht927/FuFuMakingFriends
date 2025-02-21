@@ -80,6 +80,17 @@ public class FocusController {
         ThrowUtils.throwIf(!b,ErrorCode.SYSTEM_ERROR);
         return ResultUtil.ok(true);
     }
+    @PostMapping("/isFocus")
+    @Operation(summary = "是否关注", description = "是否关注")
+    @ApiResponse(responseCode = "200", description = "返回信息")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    @ApiResponse(responseCode = "50000", description = "系统内部错误")
+    public ResultApi<Boolean> isFocus(@RequestBody EditFocusDto editFocusDto) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getFocusUserId())||ObjectUtils.isEmpty(editFocusDto.getUserId()), ErrorCode.PARAMS_ERROR);
+        Boolean b = focusService.isFocus(editFocusDto);
+        return ResultUtil.ok(b);
+    }
 
 
 }

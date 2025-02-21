@@ -2,6 +2,7 @@ package cn.graht.socializing.config;
 
 import lombok.Data;
 import org.redisson.Redisson;
+import org.redisson.client.codec.StringCodec;
 import org.redisson.config.Config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ public class RedissonConfig {
     @Bean
     public Redisson redisson(){
         Config config = new Config();
+        config.setCodec(new StringCodec());
         config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port)).setPassword(password);
         return (Redisson) Redisson.create(config);
     }

@@ -1,6 +1,7 @@
 package cn.graht.socializing.service.caffeine;
 
 import cn.graht.common.constant.CaffeineKeyConstant;
+import cn.graht.model.luaScript.pojos.LuaScript;
 import cn.graht.model.user.vos.UserVo;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -16,11 +17,15 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class CaffeineCacheService {
     private final Cache<String, UserVo> userCache;
+    private final Cache<String, String> luaScriptCache;
 
     public CaffeineCacheService(){
         this.userCache = Caffeine.newBuilder()
                 .expireAfterWrite(1, TimeUnit.HOURS) // 设置缓存过期时间
                 .maximumSize(10000) // 设置最大缓存条目数
+                .build();
+        this.luaScriptCache = Caffeine.newBuilder()
+                .maximumSize(100) // 设置最大缓存条目数
                 .build();
 
     }
@@ -36,5 +41,14 @@ public class CaffeineCacheService {
     }
     public void removeUserCacheByUser(UserVo userVo){
         userCache.invalidate(CaffeineKeyConstant.USER_CACHE_KEY+Objects.requireNonNull(userVo.getId()));
+    }
+    public void putLuaScriptCache(String key, String value){
+        luaScriptCache.put(key, value);
+    }
+    public String getLuaScriptCache(String key){
+        return luaScriptCache.getIfPresent(key);
+    }
+    public void removeLuaScriptCache(String key){
+        luaScriptCache.invalidate(key);
     }
 }
