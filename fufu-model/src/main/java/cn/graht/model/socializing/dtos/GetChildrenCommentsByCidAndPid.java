@@ -9,6 +9,6 @@ import lombok.Data;
 
 @Data
 public class GetChildrenCommentsByCidAndPid extends PageQuery {
-    private Long cid;
+    private Long dynamicId;
     private Long pid;
 }

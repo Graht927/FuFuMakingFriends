@@ -3,6 +3,7 @@ package cn.graht.socializing.boot;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.PageQuery;
 import cn.graht.common.commons.ResultApi;
+import cn.graht.common.constant.ChatServerConstant;
 import cn.graht.common.constant.RedisKeyConstants;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 import cn.graht.socializing.mapper.LuaScriptMapper;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.springframework.util.DigestUtils.md5DigestAsHex;
 
@@ -38,7 +40,7 @@ import static org.springframework.util.DigestUtils.md5DigestAsHex;
 @Slf4j
 @Order(1)
 @Component
-public class RunOnlyOneMethod implements CommandLineRunner{
+public class RunOnlyOneMethod implements CommandLineRunner {
 
     @Resource
     private Redisson redisson;
@@ -59,13 +61,13 @@ public class RunOnlyOneMethod implements CommandLineRunner{
     public void run(String... args) {
         RLock lock = null;
         int retryCount = 0;
-        while (retryCount < MAX_RETRIES){
+        while (retryCount < MAX_RETRIES) {
             try {
                 lock = redisson.getLock(INIT_REDISSON_LOCK_KEY);
                 lock.lock();
                 start();
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 retryCount++;
                 log.error("初始化失败: 准备重试 (尝试次数: {})", retryCount, e);
                 if (retryCount >= MAX_RETRIES) {
@@ -80,14 +82,15 @@ public class RunOnlyOneMethod implements CommandLineRunner{
                     log.error("重试期间线程被中断", ex);
                     throw new RuntimeException(ex);
                 }
-            }finally {
+            } finally {
                 if (lock != null && lock.isHeldByCurrentThread()) {
                     lock.unlock();
                 }
             }
         }
     }
-    private void start() throws Exception{
+
+    private void start() throws Exception {
         log.info("执行初始化开始");
         int pageSize = 1;
         int page = 1;
@@ -107,7 +110,7 @@ public class RunOnlyOneMethod implements CommandLineRunner{
         long pages = total / pageSize;
         while (page < pages) {
             page++;
-            PageQuery pageQuery1 = new PageQuery(pageSize,page);
+            PageQuery pageQuery1 = new PageQuery(pageSize, page);
             HttpHeaders headers1 = new HttpHeaders();
             headers.add("reqCode", md5DigestAsHex((SystemConstant.SALT + SystemConstant.SYSTEM_INIT_REQ_CODE).getBytes()));
             ResultApi<UserIdsVo> allUserId1 = userFeignApi.getAllUserId(pageQuery1, headers);
@@ -125,21 +128,23 @@ public class RunOnlyOneMethod implements CommandLineRunner{
     }
 
     @DS("app")
-    private void initLuaScriptToCaffeineCache(){
-        //初始化lua脚本到caffeine缓存中
+    private void initLuaScriptToCaffeineCache() {
         log.info("Initializing Lua scripts into Caffeine cache...");
         List<LuaScript> scripts = luaScriptMapper.getAll();
         for (LuaScript script : scripts) {
             //加载到redis中获取sha1校验码 存回redis
             String s = loadScriptToRedis(script.getScriptContent());
-            LambdaQueryWrapper<LuaScript> eq = new LambdaQueryWrapper<LuaScript>().eq(LuaScript::getId, script.getId());
-            script.setSha1Checksum(s);
-            luaScriptMapper.update(script, eq);
+            if (script.getSha1Checksum().contains("WaitInit") && !script.getSha1Checksum().equals(s)) {
+                LambdaQueryWrapper<LuaScript> eq = new LambdaQueryWrapper<LuaScript>().eq(LuaScript::getId, script.getId());
+                script.setSha1Checksum(s);
+                luaScriptMapper.update(script, eq);
+            }
             caffeineCacheService.putLuaScriptCache(script.getScriptName(), script.getScriptContent());
-            log.info("Loaded Lua script name: {} sha1: {}", script.getScriptName(),script.getSha1Checksum());
+            log.info("Loaded Lua script name: {} sha1: {}", script.getScriptName(), script.getSha1Checksum());
         }
         log.info("Loaded {} Lua scripts into cache", scripts.size());
     }
+
     private String loadScriptToRedis(String scriptContent) {
         try {
             RScript script = redisson.getScript();
@@ -149,6 +154,7 @@ public class RunOnlyOneMethod implements CommandLineRunner{
             throw new RuntimeException("Failed to load Lua script", e);
         }
     }
+
     private void initRedisFocusUserVo(String uid) {
         //异步
         UserVo userVo = getUserFromCacheOrFeign(uid);
@@ -185,20 +191,20 @@ public class RunOnlyOneMethod implements CommandLineRunner{
         switch (abs) {
             case 0:
                 RScoredSortedSet<String> set1 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
-                set1.add(System.currentTimeMillis(),focusId);
+                set1.add(System.currentTimeMillis(), focusId);
 
                 break;
             case 1:
                 RScoredSortedSet<String> set2 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":2");
-                set2.add(System.currentTimeMillis(),focusId);
+                set2.add(System.currentTimeMillis(), focusId);
                 break;
             case 2:
                 RScoredSortedSet<String> set3 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":3");
-                set3.add(System.currentTimeMillis(),focusId);
+                set3.add(System.currentTimeMillis(), focusId);
                 break;
             case 3:
                 RScoredSortedSet<String> set4 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":4");
-                set4.add(System.currentTimeMillis(),focusId);
+                set4.add(System.currentTimeMillis(), focusId);
                 break;
         }
     }

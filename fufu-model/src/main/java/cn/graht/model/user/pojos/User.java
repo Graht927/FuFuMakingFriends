@@ -16,7 +16,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户id(uuid)
+     * 用户id(雪花算法)
      */
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;

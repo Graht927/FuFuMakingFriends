@@ -1,5 +1,6 @@
 package cn.graht.socializing.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.common.constant.RedisKeyConstants;
@@ -13,6 +14,7 @@ import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.mapper.FocusMapper;
 import cn.graht.socializing.service.FocusService;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RScript;
-import org.redisson.api.RSet;
-import org.redisson.api.RSortedSet;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -52,28 +52,19 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
 
     @Override
     public List<UserVo> getFocusByUid(GetFocusByUidDto getFocusByUidDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto.getUid())
-                        || ObjectUtils.isEmpty(getFocusByUidDto.getFocusUid())
-                , ErrorCode.PARAMS_ERROR);
+        checkAuth(getFocusByUidDto);
         Page<Focus> page = new Page<>(getFocusByUidDto.getPageNum(), getFocusByUidDto.getPageSize());
         LambdaQueryWrapper<Focus> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Focus::getUserId, getFocusByUidDto.getFocusUid());
-        UserVo data1 = getUserFromCacheOrFeign(getFocusByUidDto.getUid());
         UserVo data2 = getUserFromCacheOrFeign(getFocusByUidDto.getFocusUid());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(data1), ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(data2), ErrorCode.PARAMS_ERROR);
         Object eval = redisson.getScript().eval(
                 RScript.Mode.READ_ONLY,
                 caffeineCacheService.getLuaScriptCache(LuaConstant.SOCIALIZING_GET_FOCUSES_LUA_SCRIPT),
                 RScript.ReturnType.INTEGER,
                 Collections.singletonList(getFocusByUidDto.getFocusUid()),
-                String.valueOf(getFocusByUidDto.getPageNum()+1), String.valueOf(getFocusByUidDto.getPageSize()));
-        log.info("Eval result: {}", eval);
-        log.info("FocusUid: {}", getFocusByUidDto.getFocusUid());
-        log.info("PageNum: {}", getFocusByUidDto.getPageNum());
-        log.info("PageSize: {}", getFocusByUidDto.getPageSize());
-
+                getFocusByUidDto.getPageNum(), getFocusByUidDto.getPageSize()
+        );
         if (eval == null) {
             log.warn("Eval returned null. Check Lua script and Redis data.");
         } else {
@@ -95,16 +86,12 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
 
     @Override
     public Boolean addFocus(EditFocusDto editFocusDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getUserId())
-                        || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())
-                , ErrorCode.PARAMS_ERROR);
-        //查看关注者与被关注者是否存在
-        //被关注者
+        checkAuth(editFocusDto);
         UserVo focusUserVo = getUserFromCacheOrFeign(editFocusDto.getFocusUserId());
-        //关注者
-        UserVo userVo = getUserFromCacheOrFeign(editFocusDto.getUserId());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo) || ObjectUtils.isEmpty(userVo), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
+        if (isFocus(editFocusDto)) {
+            return true;
+        }
         Focus focus = new Focus();
         focus.setUserId(editFocusDto.getUserId());
         focus.setFocusId(editFocusDto.getFocusUserId());
@@ -116,13 +103,12 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
 
     @Override
     public Boolean delFocus(EditFocusDto editFocusDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getUserId())
-                        || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())
-                , ErrorCode.PARAMS_ERROR);
-        UserVo userVo = getUserFromCacheOrFeign(editFocusDto.getUserId());
+        checkAuth(editFocusDto);
         UserVo focusUserVo = getUserFromCacheOrFeign(editFocusDto.getFocusUserId());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(userVo) || ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
+        if (!isFocus(editFocusDto)) {
+            return true;
+        }
         boolean remove = remove(new LambdaQueryWrapper<Focus>().eq(Focus::getUserId, editFocusDto.getUserId())
                 .eq(Focus::getFocusId, editFocusDto.getFocusUserId()));
         if (remove) {
@@ -133,16 +119,10 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
 
     @Override
     public List<UserVo> getFansByUid(GetFansByUidDto getFansByUidDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto) || ObjectUtils.isEmpty(getFansByUidDto.getUid()) || ObjectUtils.isEmpty(getFansByUidDto.getFocusId()), ErrorCode.PARAMS_ERROR);
-        //我
-        UserVo userVo = getUserFromCacheOrFeign(getFansByUidDto.getUid());
-        //他
+        checkAuth(getFansByUidDto);
         UserVo focusUserVo = getUserFromCacheOrFeign(getFansByUidDto.getFocusId());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(userVo), ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
         Page<Focus> page = new Page<>(getFansByUidDto.getPageNum(), getFansByUidDto.getPageSize());
-        //redis
-        //mysql
         Page<Focus> focusPage = focusMapper.selectPage(page, new LambdaQueryWrapper<Focus>().eq(Focus::getFocusId, getFansByUidDto.getFocusId()));
         if (ObjectUtils.isEmpty(focusPage) || ObjectUtils.isEmpty(focusPage.getRecords())) {
             return List.of();
@@ -156,25 +136,29 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
     }
 
     @Override
-    public Boolean isFocus(EditFocusDto editFocusDto) {
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getUserId())
-                        || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())
-                , ErrorCode.PARAMS_ERROR);
-        UserVo userVo = getUserFromCacheOrFeign(editFocusDto.getUserId());
+    public Boolean isFocusAndFans(EditFocusDto editFocusDto) {
+        checkAuth(editFocusDto);
         UserVo focusUserVo = getUserFromCacheOrFeign(editFocusDto.getFocusUserId());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(userVo) || ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
+        return isFocusAndFansMethod(editFocusDto);
+    }
+
+    @Override
+    public Boolean isFocus(EditFocusDto editFocusDto) {
+       checkAuth(editFocusDto);
+        UserVo focusUserVo = getUserFromCacheOrFeign(editFocusDto.getFocusUserId());
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
         return isFocusMethod(editFocusDto);
     }
 
-    private boolean isFocusMethod(EditFocusDto editFocusDto) {
+    private Boolean isFocusMethod(EditFocusDto editFocusDto) {
         String userKey = editFocusDto.getUserId();
         String focusUserKey = editFocusDto.getFocusUserId();
         // 执行 Lua 脚本
         try {
             return (Long) redisson.getScript().eval(
                     RScript.Mode.READ_ONLY,
-                    caffeineCacheService.getLuaScriptCache(LuaConstant.SOCIALIZING_IF_FOCUS_LUA_SCRIPT),
+                    caffeineCacheService.getLuaScriptCache(LuaConstant.SOCIALIZING_IS_FOCUS_LUA_SCRIPT),
                     RScript.ReturnType.INTEGER,
                     Arrays.asList(userKey, focusUserKey)
             ) == 1;
@@ -183,25 +167,63 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
         }
     }
 
+    private boolean isFocusAndFansMethod(EditFocusDto editFocusDto) {
+        String userKey = editFocusDto.getUserId();
+        String focusUserKey = editFocusDto.getFocusUserId();
+        // 执行 Lua 脚本
+        try {
+            return (Long) redisson.getScript().eval(
+                    RScript.Mode.READ_ONLY,
+                    caffeineCacheService.getLuaScriptCache(LuaConstant.SOCIALIZING_IS_FOCUS_AND_FANS_LUA_SCRIPT),
+                    RScript.ReturnType.INTEGER,
+                    Arrays.asList(userKey, focusUserKey)
+            ) == 1;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute Lua script", e);
+        }
+    }
+    private void checkAuth(Object param){
+        if (param instanceof EditFocusDto editFocusDto) {
+            ThrowUtils.throwIf(StpUtil.getLoginId().equals(editFocusDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto)
+                            || ObjectUtils.isEmpty(editFocusDto.getUserId())
+                            || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())
+                    , ErrorCode.PARAMS_ERROR);
+        }
+        if (param instanceof GetFansByUidDto getFansByUidDto) {
+            ThrowUtils.throwIf(StpUtil.getLoginId().equals(getFansByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto)
+                            || ObjectUtils.isEmpty(getFansByUidDto.getUserId())
+                            || ObjectUtils.isEmpty(getFansByUidDto.getFocusId())
+                    , ErrorCode.PARAMS_ERROR);
+        }
+        if (param instanceof GetFocusByUidDto getFocusByUidDto) {
+            ThrowUtils.throwIf(StpUtil.getLoginId().equals(getFocusByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto)
+                            || ObjectUtils.isEmpty(getFocusByUidDto.getUserId())
+                    , ErrorCode.PARAMS_ERROR);
+        }
+    }
+
     private void setFocusToRedis(String uid, String focusId) {
         int abs = Math.abs(focusId.hashCode() % 4);
         switch (abs) {
             case 0:
                 RScoredSortedSet<String> set1 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
-                set1.add(System.currentTimeMillis(),focusId);
+                set1.add(System.currentTimeMillis(), focusId);
 
                 break;
             case 1:
                 RScoredSortedSet<String> set2 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":2");
-                set2.add(System.currentTimeMillis(),focusId);
+                set2.add(System.currentTimeMillis(), focusId);
                 break;
             case 2:
                 RScoredSortedSet<String> set3 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":3");
-                set3.add(System.currentTimeMillis(),focusId);
+                set3.add(System.currentTimeMillis(), focusId);
                 break;
             case 3:
                 RScoredSortedSet<String> set4 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":4");
-                set4.add(System.currentTimeMillis(),focusId);
+                set4.add(System.currentTimeMillis(), focusId);
                 break;
         }
     }
