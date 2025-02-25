@@ -8,6 +8,11 @@ public interface RedisKeyConstants {
      */
     Integer DEFAULT_TIMEOUT = 60*60*24+new Random().nextInt(1000);
 
+
+    String LOCK_UPDATE_TEAM = "fufu:organizeBureau:team:update:";
+    String LOCK_SEND_JOIN_TEAM = "fufu:organizeBureau:team:send_join_team:";
+    String LOCK_USER_MATCH = "fufu:organizeBureau:team:user_match:";
+
     String SMS_TEMPLATE_CODE_PREFIX = "fufu:sms:";
     String SMS_LOGIN_PREFIX = "fufu:sms:login:";
     String SMS_REGISTER_PREFIX = "fufu:sms:register:";

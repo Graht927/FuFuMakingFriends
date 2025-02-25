@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.graht.organizeBureau.mapper.UserTeamMapper">
+
+    <resultMap id="BaseResultMap" type="cn.graht.model.organizeBureau.pojos.UserTeam">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="userId" jdbcType="BIGINT"/>
+            <result property="teamId" column="teamId" jdbcType="BIGINT"/>
+            <result property="joinTime" column="joinTime" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,userId,teamId,
+        joinTime,createTime,updateTime,
+        isDelete
+    </sql>
+    <sql id="UserColumnList">
+        id,username,userAccount,
+        avatarUrl,gender,
+        phone,email,userStatus,
+        userRole,tags
+    </sql>
+    <select id="checkOldUser" resultType="cn.graht.model.organizeBureau.pojos.UserTeam">
+        select <include refid="Base_Column_List"/> from user_team where teamId = #{teamId} and userId = #{userId} and isDelete = 1;
+    </select>
+    <update id="modifyIsDel">
+        update user_team
+        set isDelete = 0
+        where id = #{userTeamId};
+    </update>
+    <select id="findUserTeamByTeamId" resultType="cn.graht.model.user.pojos.User">
+        select <include refid="UserColumnList"/> from user where  id in (select userId from user_team where teamId = #{teamId} and isDelete = 0);
+    </select>
+</mapper>
