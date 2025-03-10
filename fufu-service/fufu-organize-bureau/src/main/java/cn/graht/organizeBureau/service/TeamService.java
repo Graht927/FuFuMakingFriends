@@ -4,8 +4,8 @@ import cn.graht.model.organizeBureau.dtos.TeamQuery;
 import cn.graht.model.organizeBureau.dtos.TeamQuitRequest;
 import cn.graht.model.organizeBureau.dtos.TeamSendJoinRequest;
 import cn.graht.model.organizeBureau.dtos.TeamUpdateRequest;
-import cn.graht.model.organizeBureau.pojos.Team;
-import cn.graht.model.organizeBureau.vos.TeamUserVo;
+import cn.graht.model.organizeBureau.pojos.Activity;
+import cn.graht.model.organizeBureau.vos.ActivityUserVo;
 import cn.graht.model.user.pojos.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,22 +16,22 @@ import java.util.List;
 * @author graht
 * @description 针对表【team(队伍)】的数据库操作Service
 */
-public interface TeamService extends IService<Team> {
+public interface TeamService extends IService<Activity> {
 
     /**
      *  创建队伍
-     * @param team
+     * @param activity
      * @param user
      * @return
      */
-    long addTeam(Team team, User user);
+    long addTeam(Activity activity, User user);
 
     /**
      *  分页查询队伍
      * @param teamQuery
      * @return
      */
-    List<TeamUserVo> listTeamByPage(TeamQuery teamQuery, HttpServletRequest request);
+    List<ActivityUserVo> listTeamByPage(TeamQuery teamQuery, HttpServletRequest request);
 
     /**
      *  修改队伍
@@ -70,21 +70,21 @@ public interface TeamService extends IService<Team> {
      * @param loginUser
      * @return
      */
-    List<TeamUserVo> getCreateTeamByUser(User loginUser);
+    List<ActivityUserVo> getCreateTeamByUser(User loginUser);
 
     /**
      *  获取当前用户创建的队伍  已过期的
      * @param loginUser
      * @return
      */
-    List<TeamUserVo> getExpireTeamByUser(User loginUser);
+    List<ActivityUserVo> getExpireTeamByUser(User loginUser);
 
     /**
      * 获取当前用户已加入的队伍
      * @param loginUser
      * @return
      */
-    List<TeamUserVo> getAddTeamByUser(User loginUser);
+    List<ActivityUserVo> getAddTeamByUser(User loginUser);
 
     /**
      * 通过id来获取队伍详细信息
@@ -92,7 +92,7 @@ public interface TeamService extends IService<Team> {
      * @param loginUser
      * @return
      */
-    TeamUserVo getTeamInfoByTid(long teamId,User loginUser);
+    ActivityUserVo getTeamInfoByTid(long teamId, User loginUser);
 
     /**
      * 删除已过期的房间

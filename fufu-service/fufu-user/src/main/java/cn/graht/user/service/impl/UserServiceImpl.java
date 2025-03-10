@@ -140,11 +140,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             int nicknameLength = registerDto.getNickname().length();
             int phoneCodeLength = registerDto.getPhoneCode().length();
             ThrowUtils.throwIf(nicknameLength < 3 || nicknameLength > 8, ErrorCode.REGISTER_PARAMS_ERROR);
-            ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PHONE_NUMBER_PATTERN, registerDto.getPhone()), ErrorCode.REGISTER_PARAMS_ERROR);
+            ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PHONE_NUMBER_PATTERN, registerDto.getPhone())
+                    , ErrorCode.REGISTER_PARAMS_ERROR);
             ThrowUtils.throwIf(phoneCodeLength != 6, ErrorCode.REGISTER_PARAMS_ERROR);
-            ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN, registerDto.getUserPassword()) || !ReUtil.isMatch(UserConstant.PASSWORD_PATTERN, registerDto.getUserPassword()), ErrorCode.REGISTER_PARAMS_ERROR);
+            ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN, registerDto.getUserPassword()) ||
+                    !ReUtil.isMatch(UserConstant.PASSWORD_PATTERN, registerDto.getUserPassword()), ErrorCode.REGISTER_PARAMS_ERROR);
             //判断二次密码是否一致
             ThrowUtils.throwIf(!registerDto.getUserPassword().equals(registerDto.getCheckPassword()), ErrorCode.REGISTER_PASSWORD_ERROR);
+
             //判断该手机号是否已注册
             long phoneCount = count(new LambdaQueryWrapper<User>().eq(User::getPhone, registerDto.getPhone()));
             ThrowUtils.throwIf(phoneCount == 1, ErrorCode.REGISTER_PHONE_ERROR);
@@ -232,7 +235,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void sendUnregisterRequest(String uid) {
         ThrowUtils.throwIf(unregisterRequests.containsKey(uid), ErrorCode.USER_UNREGISTER_MQ_ERROR);
-        // 将用户ID存储到 ConcurrentHashMap 中
         unregisterRequests.put(uid, Boolean.TRUE);
     }
 

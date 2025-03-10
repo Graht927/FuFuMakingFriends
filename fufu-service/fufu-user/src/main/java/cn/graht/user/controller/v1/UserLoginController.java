@@ -42,6 +42,13 @@ public class UserLoginController {
     //todo 他会调用tx的接口来将地址填充到参数里
 //    @AddrToParam
     public ResultApi login(@RequestBody LoginDto loginDto) {
+        checkParam(loginDto);
+        SaTokenInfo saTokenInfo = userService.login(loginDto);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(saTokenInfo),ErrorCode.NULL_ERROR);
+        return ResultUtil.ok(saTokenInfo);
+    }
+
+    private void checkParam(LoginDto loginDto){
         String addr = loginDto.getAddr();
         log.info("addr: {}",addr);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(loginDto)
@@ -52,9 +59,6 @@ public class UserLoginController {
         ThrowUtils.throwIf(phoneCode.length() != 6,ErrorCode.LOGIN_PARAMS_ERROR);
         String userPassword = loginDto.getUserPassword();
         ThrowUtils.throwIf(!ReUtil.isMatch(UserConstant.PASSWORD_PATTERN,userPassword),ErrorCode.LOGIN_PARAMS_ERROR);
-        SaTokenInfo saTokenInfo = userService.login(loginDto);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(saTokenInfo),ErrorCode.NULL_ERROR);
-        return ResultUtil.ok(saTokenInfo);
     }
 
 }

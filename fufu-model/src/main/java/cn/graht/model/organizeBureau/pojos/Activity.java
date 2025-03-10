@@ -10,9 +10,9 @@ import java.util.Date;
  * 队伍
  * @TableName team
  */
-@TableName(value ="team")
+@TableName(value ="activity")
 @Data
-public class Team implements Serializable {
+public class Activity implements Serializable {
     /**
      * id
      */
@@ -35,9 +35,13 @@ public class Team implements Serializable {
     private Integer maxNum;
 
     /**
-     * 0 - 公开 1 - 加密
+     * 当前人数
      */
-    private Integer status;
+    private Integer currentNum;
+    /**
+     * 活动地址
+     */
+    private String address;
 
     /**
      * 创建人  队长
@@ -45,18 +49,22 @@ public class Team implements Serializable {
     private String userId;
 
     /**
+     * 押金
+     */
+    private Double deposit;
+
+    /**
      * 过期时间
      */
     private Date expireTime;
     /**
-     * 队伍头像
+     * 开始时间
      */
-    private String teamAvatarUrl;
-
+    private Date startTime;
     /**
-     * 如果加密|密码
+     * 活动图片
      */
-    private String password;
+    private String teamImage;
 
     /**
      * 创建时间

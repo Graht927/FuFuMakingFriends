@@ -8,19 +8,18 @@ import cn.graht.common.exception.BusinessException;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.feignApi.user.UserFeignApi;
 import cn.graht.model.organizeBureau.dtos.*;
-import cn.graht.model.organizeBureau.pojos.Team;
-import cn.graht.model.organizeBureau.vos.TeamUserVo;
+import cn.graht.model.organizeBureau.pojos.Activity;
+import cn.graht.model.organizeBureau.vos.ActivityUserVo;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.organizeBureau.service.TeamService;
 import cn.hutool.core.util.ObjectUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jodd.util.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +32,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/v1/team")
+@Tag(name = "活动|组局", description = "活动|组局Controller")
 @Slf4j
 public class TeamController {
     @Resource
@@ -47,9 +47,9 @@ public class TeamController {
     public ResultApi<Long> addTeam(@RequestBody TeamAddRequest teamAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(Objects.isNull(teamAddRequest), ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
-        Team team = new Team();
-        BeanUtils.copyProperties(teamAddRequest,team);
-        long teamId = teamService.addTeam(team,loginUser);
+        Activity activity = new Activity();
+        BeanUtils.copyProperties(teamAddRequest,activity);
+        long teamId = teamService.addTeam(activity,loginUser);
         //插入失败
         return ResultUtil.ok(teamId);
     }
@@ -59,18 +59,18 @@ public class TeamController {
     @ApiResponse(responseCode = "200", description = "Team")
     @ApiResponse(responseCode = "40000", description = "请求参数错误")
     @ApiResponse(responseCode = "40002", description = "请求结果为空")
-    public ResultApi<Team> getTeam(long id) {
+    public ResultApi<Activity> getTeam(long id) {
         ThrowUtils.throwIf(id < 0,ErrorCode.PARAMS_ERROR);
-        Team team = teamService.getById(id);
+        Activity team = teamService.getById(id);
         ThrowUtils.throwIf(Objects.isNull(team),ErrorCode.NULL_ERROR);
         return ResultUtil.ok(team);
     }
     @GetMapping("/list")
-    public ResultApi<List<TeamUserVo> > listTeamByPage(TeamQuery teamQuery, HttpServletRequest request) {
-        if (Objects.isNull(teamQuery)) {throw new BusinessException(ErrorCode.PARAMS_ERROR);}
-        Team team = new Team();
+    public ResultApi<List<ActivityUserVo> > listTeamByPage(TeamQuery teamQuery, HttpServletRequest request) {
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(teamQuery),ErrorCode.PARAMS_ERROR);
+        Activity team = new Activity();
         BeanUtils.copyProperties(teamQuery,team);
-        List<TeamUserVo> teamUserVos = teamService.listTeamByPage(teamQuery,request);
+        List<ActivityUserVo> teamUserVos = teamService.listTeamByPage(teamQuery,request);
         return ResultUtil.ok(teamUserVos);
     }
     @PostMapping("/update")
@@ -101,7 +101,7 @@ public class TeamController {
     @ApiResponse(responseCode = "200", description = "boolean")
     @ApiResponse(responseCode = "40000", description = "请求参数错误")
     @ApiResponse(responseCode = "50000", description = "系统内部错误")
-    public ResultApi<Boolean> quitTeam(@RequestBody TeamQuitRequest teamQuitRequest, HttpServletRequest request) {
+    public ResultApi<Boolean> quitTeam(@RequestBody TeamQuitRequest teamQuitRequest) {
         ThrowUtils.throwIf(Objects.isNull(teamQuitRequest),ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
         boolean result = teamService.quitTeam(teamQuitRequest,loginUser);
@@ -113,7 +113,7 @@ public class TeamController {
     @ApiResponse(responseCode = "200", description = "boolean")
     @ApiResponse(responseCode = "40000", description = "请求参数错误")
     @ApiResponse(responseCode = "50000", description = "系统内部错误")
-    public ResultApi<Boolean> deleteTeam(long tid,HttpServletRequest request) {
+    public ResultApi<Boolean> deleteTeam(long tid) {
         ThrowUtils.throwIf(tid < 0,ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
         Boolean result  = teamService.deleteTeam(tid,loginUser);
@@ -121,35 +121,35 @@ public class TeamController {
     }
 
     @GetMapping("/getCreateTeam")
-    public ResultApi<List<TeamUserVo>> getCreateTeamByUser(HttpServletRequest request) {
+    public ResultApi<List<ActivityUserVo>> getCreateTeamByUser() {
         User loginUser = getLoginUser();
-        List<TeamUserVo> teamUserVos = teamService.getCreateTeamByUser(loginUser);
+        List<ActivityUserVo> teamUserVos = teamService.getCreateTeamByUser(loginUser);
         return ResultUtil.ok(teamUserVos);
     }
     @GetMapping("/getExpireTeam")
-    public ResultApi<List<TeamUserVo>> getExpireTeamByUser(HttpServletRequest request) {
+    public ResultApi<List<ActivityUserVo>> getExpireTeamByUser() {
         User loginUser = getLoginUser();
         if (Objects.isNull(loginUser)) {throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);}
-        List<TeamUserVo> teamUserVos = teamService.getExpireTeamByUser(loginUser);
+        List<ActivityUserVo> teamUserVos = teamService.getExpireTeamByUser(loginUser);
         return ResultUtil.ok(teamUserVos);
     }
     @GetMapping("/getAddTeam")
-    public ResultApi<List<TeamUserVo>> getAddTeamByUser(HttpServletRequest request) {
+    public ResultApi<List<ActivityUserVo>> getAddTeamByUser() {
         User loginUser = getLoginUser();
         if (Objects.isNull(loginUser)) {throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);}
-        List<TeamUserVo> teamUserVos = teamService.getAddTeamByUser(loginUser);
+        List<ActivityUserVo> teamUserVos = teamService.getAddTeamByUser(loginUser);
         return ResultUtil.ok(teamUserVos);
     }
     @GetMapping("/info")
-    public ResultApi<TeamUserVo> getTeamInfoByTid(long teamId,HttpServletRequest request) {
+    public ResultApi<ActivityUserVo> getTeamInfoByTid(long teamId) {
         if (teamId<0) throw new BusinessException(ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
         if (Objects.isNull(loginUser)) {throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);}
-        TeamUserVo teamUserVo = teamService.getTeamInfoByTid(teamId,loginUser);
+        ActivityUserVo teamUserVo = teamService.getTeamInfoByTid(teamId,loginUser);
         return ResultUtil.ok(teamUserVo);
     }
     @PostMapping("/delExpireTeam")
-    public ResultApi<Boolean> delExpireTeam(@RequestBody(required = true) Long teamId,HttpServletRequest request) {
+    public ResultApi<Boolean> delExpireTeam(@RequestBody(required = true) Long teamId) {
         if (teamId<0) throw new BusinessException(ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
         if (Objects.isNull(loginUser)) {throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);}
