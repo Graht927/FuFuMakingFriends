@@ -15,7 +15,7 @@ import java.util.List;
  * @author GRAHT
  */
 @Data
-public class TeamUserVo implements Serializable {
+public class ActivityUserVo implements Serializable {
     /**
      * id
      */
@@ -35,12 +35,18 @@ public class TeamUserVo implements Serializable {
      * 最大人数
      */
     private Integer maxNum;
-
     /**
-     * 0 - 公开 1 - 加密
+     * 当前人数
      */
-    private Integer status;
-
+    private Integer currentNum;
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+    /**
+     * 押金
+     */
+    private Double deposit;
 
     /**
      * 创建人  队长
@@ -49,8 +55,11 @@ public class TeamUserVo implements Serializable {
     /**
      * 队伍头像
      */
-    private String teamAvatarUrl;
-
+    private List<String> teamImage;
+    /**
+     * 队伍地址
+     */
+    private String address;
     /**
      * 过期时间
      */

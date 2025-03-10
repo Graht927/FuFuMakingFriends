@@ -23,22 +23,20 @@ public class TeamQuery extends PageQuery implements Serializable {
      * 描述
      */
     private String description;
+
     /**
-     * 最大人数
+     * 队伍地址
      */
-    private Integer maxNum;
+    private String address;
     /**
-     * 0 - 公开 1 - 加密
+     * 开始时间
      */
-    private Integer status;
+    private Date startTime;
     /**
      * 创建人  队长
      */
     private String userId;
-    /**
-     * 如果加密|密码
-     */
-    private String password;
+
     /**
      * 过期时间
      */

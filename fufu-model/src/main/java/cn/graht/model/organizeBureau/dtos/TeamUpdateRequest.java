@@ -20,16 +20,20 @@ public class TeamUpdateRequest implements Serializable {
      */
     private String description;
     /**
+     * 地址
+     */
+    private String address;
+    /**
+     * 当前人数
+     */
+    private Integer currentNum;
+    /**
      * 最大人数
      */
     private Integer maxNum;
     /**
-     * 0 - 公开 1 - 私有 2 - 加密
+     * 押金
      */
-    private Integer status;
-    /**
-     * 如果加密|密码
-     */
-    private String password;
+    private Double deposit;
 
 }

@@ -3,7 +3,7 @@ package cn.graht.organizeBureau.service.impl;
 
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.exception.BusinessException;
-import cn.graht.model.organizeBureau.pojos.UserTeam;
+import cn.graht.model.organizeBureau.pojos.UserActivity;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.organizeBureau.mapper.UserTeamMapper;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 * @description 针对表【user_team(用户队伍关系)】的数据库操作Service实现
 */
 @Service
-public class UserTeamServiceImpl extends ServiceImpl<UserTeamMapper, UserTeam>
+public class UserTeamServiceImpl extends ServiceImpl<UserTeamMapper, UserActivity>
     implements UserTeamService {
 
     @Resource
@@ -41,8 +41,8 @@ public class UserTeamServiceImpl extends ServiceImpl<UserTeamMapper, UserTeam>
     }
 
     @Override
-    public UserTeam checkOldUser(long teamId, String userId) {
-        UserTeam userTeam = userTeamMapper.checkOldUser(teamId,userId);
+    public UserActivity checkOldUser(long teamId, String userId) {
+        UserActivity userTeam = userTeamMapper.checkOldUser(teamId,userId);
         return Objects.isNull(userTeam) ? null : userTeam;
     }
 

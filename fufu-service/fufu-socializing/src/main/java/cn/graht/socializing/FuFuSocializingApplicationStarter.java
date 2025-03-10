@@ -1,8 +1,5 @@
 package cn.graht.socializing;
 
-import cn.graht.common.commons.ErrorCode;
-import cn.graht.common.exception.ThrowUtils;
-import cn.graht.socializing.boot.RunOnlyOneMethod;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
