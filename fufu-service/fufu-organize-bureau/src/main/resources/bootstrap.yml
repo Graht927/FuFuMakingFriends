@@ -15,7 +15,7 @@ spring:
         file-extension: yaml
         refresh-enabled: true
         prefix: ${spring.application.name}
-        group: test
+        group: FuFuMakingFriend
         shared-configs:
           - data-id: redis-conf.yaml
             refresh: true

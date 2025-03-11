@@ -10,7 +10,7 @@ import java.util.Date;
  * 用户队伍关系
  * @TableName user_team
  */
-@TableName(value ="user_team")
+@TableName(value ="user_activity")
 @Data
 public class UserActivity implements Serializable {
     /**

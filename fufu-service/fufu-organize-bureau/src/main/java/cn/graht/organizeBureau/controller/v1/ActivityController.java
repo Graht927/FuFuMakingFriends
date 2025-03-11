@@ -12,8 +12,9 @@ import cn.graht.model.organizeBureau.pojos.Activity;
 import cn.graht.model.organizeBureau.vos.ActivityUserVo;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
-import cn.graht.organizeBureau.service.TeamService;
+import cn.graht.organizeBureau.service.ActivityService;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,21 +35,22 @@ import java.util.Objects;
 @RequestMapping("/v1/team")
 @Tag(name = "活动|组局", description = "活动|组局Controller")
 @Slf4j
-public class TeamController {
+public class ActivityController {
     @Resource
     private UserFeignApi userFeignApi;
     @Resource
-    private TeamService teamService;
+    private ActivityService teamService;
 
     @PostMapping("/add")
     @Operation(summary = "创建队伍", description = "创建队伍")
     @ApiResponse(responseCode = "200", description = "boolean")
     @ApiResponse(responseCode = "40000", description = "请求参数错误")
-    public ResultApi<Long> addTeam(@RequestBody TeamAddRequest teamAddRequest, HttpServletRequest request) {
+    public ResultApi<Long> addTeam(@RequestBody TeamAddRequest teamAddRequest) {
         ThrowUtils.throwIf(Objects.isNull(teamAddRequest), ErrorCode.PARAMS_ERROR);
         User loginUser = getLoginUser();
         Activity activity = new Activity();
         BeanUtils.copyProperties(teamAddRequest,activity);
+        activity.setTeamImage(JSONUtil.toJsonStr(teamAddRequest.getTeamImage()));
         long teamId = teamService.addTeam(activity,loginUser);
         //插入失败
         return ResultUtil.ok(teamId);
@@ -162,10 +164,9 @@ public class TeamController {
         ThrowUtils.throwIf(ObjectUtil.isEmpty(userInfo)||ObjectUtil.isEmpty(userInfo.getData()), ErrorCode.NOT_LOGIN_ERROR);
         UserVo loginUser = userInfo.getData();
         User user = new User();
-        BeanUtils.copyProperties(user,loginUser);
+        BeanUtils.copyProperties(loginUser,user);
         return user;
     }
-
 
      /*@PostMapping("/update")
     public ResultApi<Boolean> updateTeam(@RequestBody Team team) {

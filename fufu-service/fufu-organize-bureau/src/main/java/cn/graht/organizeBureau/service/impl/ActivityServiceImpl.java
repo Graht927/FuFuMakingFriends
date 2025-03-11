@@ -3,7 +3,6 @@ package cn.graht.organizeBureau.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.constant.RedisKeyConstants;
-import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.constant.UserConstant;
 import cn.graht.common.exception.BusinessException;
 import cn.graht.common.exception.ThrowUtils;
@@ -17,9 +16,9 @@ import cn.graht.model.organizeBureau.vos.ActivityUserVo;
 import cn.graht.model.organizeBureau.pojos.UserActivity;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
-import cn.graht.organizeBureau.mapper.TeamMapper;
-import cn.graht.organizeBureau.service.TeamService;
-import cn.graht.organizeBureau.service.UserTeamService;
+import cn.graht.organizeBureau.mapper.ActivityMapper;
+import cn.graht.organizeBureau.service.ActivityService;
+import cn.graht.organizeBureau.service.UserActivityService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -36,7 +35,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.DigestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -48,16 +46,16 @@ import java.util.stream.Collectors;
  * @description 针对表【team(队伍)】的数据库操作Service实现
  */
 @Service
-public class TeamServiceImpl extends
-        ServiceImpl<TeamMapper, Activity>
-        implements TeamService {
+public class ActivityServiceImpl extends
+        ServiceImpl<ActivityMapper, Activity>
+        implements ActivityService {
 
     @Resource
-    private UserTeamService userTeamService;
+    private UserActivityService userTeamService;
     @Resource
     private UserFeignApi userFeignApi;
     @Resource
-    private TeamMapper teamMapper;
+    private ActivityMapper teamMapper;
     @Resource
     private Redisson redisson;
 
@@ -69,34 +67,31 @@ public class TeamServiceImpl extends
                         || StringUtils.isBlank(activity.getName()) || activity.getName().length() >= 20
                         || StringUtils.isBlank(activity.getDescription())
                         || ObjectUtils.isEmpty(activity.getMaxNum()) || activity.getMaxNum() < 0
-                        || ObjectUtils.isEmpty(activity.getCurrentNum()) || activity.getCurrentNum() < 0
                         || ObjectUtils.isEmpty(activity.getExpireTime())
                         || StringUtils.isBlank(activity.getTeamImage())
                         || StringUtils.isBlank(activity.getAddress())
                 , ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.NOT_LOGIN_ERROR);
-        final String userId = user.getId();
+        String loginId = (String) StpUtil.getLoginId();
         //校验信息
         int maxNum = Optional.ofNullable(activity.getMaxNum()).orElse(0);
         ThrowUtils.throwIf(maxNum < 1 || maxNum > 15, ErrorCode.PARAMS_ERROR, "队伍人数不满足要求");
 
         Date expireTime = activity.getExpireTime();
-        if (new Date().after(expireTime)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "过期时间 > 当前时间");
-        }
+        Date startTime = activity.getStartTime();
+        ThrowUtils.throwIf(new Date().after(expireTime) || expireTime.after(startTime),ErrorCode.PARAMS_ERROR,"过期时间 < 当前时间 或 开始时间 < 过期时间");
         //todo 有bug 并发安全
-        long count = count(new QueryWrapper<Activity>().eq("userId", userId));
+        long count = count(new QueryWrapper<Activity>().eq("userId", loginId));
         if (count >= 5)
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "当前队伍数量已经是最大值，如需新建请查看vip");
         activity.setId(null);
-        activity.setUserId(userId);
+        activity.setUserId(loginId);
         boolean save = save(activity);
         ThrowUtils.throwIf(!save, ErrorCode.PARAMS_ERROR, "创建活动失败");
         Long teamId = activity.getId();
         UserActivity userTeam = new UserActivity();
-        userTeam.setUserId(userId);
+        userTeam.setUserId(loginId);
         userTeam.setTeamId(teamId);
-        userTeam.setJoinTime(new Date());
         boolean save1 = userTeamService.save(userTeam);
         ThrowUtils.throwIf(!save1, ErrorCode.PARAMS_ERROR, "创建活动失败");
         return activity.getId();
@@ -145,15 +140,15 @@ public class TeamServiceImpl extends
         if (userId != null) {
             queryWrapper.eq(Activity::getUserId, userId);
         }
-        User loginUser = (User) StpUtil.getLoginId();
+        String loginId = (String) StpUtil.getLoginId();
         IPage<Activity> page1 = teamMapper.selectPage(page, queryWrapper);
         List<Activity> records = page1.getRecords();
         return records.stream().filter(team -> {
             if (team.getExpireTime().before(new Date())) {
                 return false;
             }
-            if (!Objects.isNull(loginUser)) {
-                if (team.getUserId().equals(loginUser.getId())) {
+            if (StringUtils.isNotBlank(loginId)) {
+                if (team.getUserId().equals(loginId)) {
                     return false;
                 }
             }
@@ -172,9 +167,9 @@ public class TeamServiceImpl extends
             teamUserVo.setTeamImage(Arrays.asList(teamImage.split(",")));
             return teamUserVo;
         }).collect(Collectors.toList()).stream().filter(teamUserVo -> {
-            if (!Objects.isNull(loginUser)) {
+            if (!Objects.isNull(loginId)) {
                 for (UserVo teamUserInfo : teamUserVo.getTeamUserInfos()) {
-                    if (teamUserInfo.getId().equals(loginUser.getId())) {
+                    if (teamUserInfo.getId().equals(loginId)) {
                         return false;
                     }
                 }
@@ -283,6 +278,7 @@ public class TeamServiceImpl extends
     }
 
     @Override
+    //todo 分布式事务
     @Transactional(rollbackFor = Exception.class)
     public boolean quitTeam(TeamQuitRequest teamQuitRequest, User loginUser) {
         if (Objects.isNull(loginUser)) throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
@@ -328,7 +324,7 @@ public class TeamServiceImpl extends
                 .eq(UserActivity::getUserId, loginUser.getId()));
         if (!b) throw new BusinessException(ErrorCode.NULL_ERROR);
         //todo 获取当前队伍中的人数 退押金
-        return b;
+        return true;
     }
 
     @Override

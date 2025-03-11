@@ -41,6 +41,10 @@ public class UserVo {
      * 地区 例如[山西-晋城] [山西-太原]
      */
     private String upAddr;
+    /**
+     * 生日
+     */
+    private Date birthday;
 
     /**
      * 性别

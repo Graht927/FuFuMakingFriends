@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.graht.socializing.mapper.PrivateChatMessageMapper">
+
+    <resultMap id="BaseResultMap" type="cn.graht.model.socializing.pojos.PrivateChatMessage">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="sessionId" column="sessionId" jdbcType="INTEGER"/>
+            <result property="senderId" column="senderId" jdbcType="VARCHAR"/>
+            <result property="receiverId" column="receiverId" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="messageType" column="messageType" jdbcType="VARCHAR"/>
+            <result property="sendTime" column="sendTime" jdbcType="TIMESTAMP"/>
+            <result property="isRead" column="isRead" jdbcType="TINYINT"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,sessionId,senderId,
+        receiverId,content,messageType,
+        sendTime,isRead,updateTime,
+        isDelete
+    </sql>
+</mapper>

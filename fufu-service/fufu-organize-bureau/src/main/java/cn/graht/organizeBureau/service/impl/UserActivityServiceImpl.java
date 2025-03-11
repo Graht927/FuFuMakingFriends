@@ -6,8 +6,8 @@ import cn.graht.common.exception.BusinessException;
 import cn.graht.model.organizeBureau.pojos.UserActivity;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
-import cn.graht.organizeBureau.mapper.UserTeamMapper;
-import cn.graht.organizeBureau.service.UserTeamService;
+import cn.graht.organizeBureau.mapper.UserActivityMapper;
+import cn.graht.organizeBureau.service.UserActivityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 
 /**
 * @author graht
-* @description 针对表【user_team(用户队伍关系)】的数据库操作Service实现
+* @description 针对表【user_activity(用户队伍关系)】的数据库操作Service实现
 */
 @Service
-public class UserTeamServiceImpl extends ServiceImpl<UserTeamMapper, UserActivity>
-    implements UserTeamService {
+public class UserActivityServiceImpl extends ServiceImpl<UserActivityMapper, UserActivity>
+    implements UserActivityService {
 
     @Resource
-    private UserTeamMapper userTeamMapper;
+    private UserActivityMapper userTeamMapper;
 
     @Override
     public List<UserVo> findUserTeamByTeamId(long teamId) {

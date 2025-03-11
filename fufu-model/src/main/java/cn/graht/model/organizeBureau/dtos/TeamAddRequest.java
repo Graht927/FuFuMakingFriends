@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class TeamAddRequest implements Serializable {
@@ -22,16 +23,14 @@ public class TeamAddRequest implements Serializable {
     private Integer maxNum;
 
     /**
-     * 0 - 公开 1 - 加密
-     */
-    private Integer status;
-    /**
      * 过期时间
      */
     private Date expireTime;
     /**
-     * 如果加密|密码
+     * 过期时间
      */
-    private String password;
-
+    private Date startTime;
+    private String address;
+    private List<String> teamImage;
+    private Double deposit;
 }

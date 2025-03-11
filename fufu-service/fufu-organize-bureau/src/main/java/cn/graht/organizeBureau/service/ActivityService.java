@@ -16,7 +16,7 @@ import java.util.List;
 * @author graht
 * @description 针对表【team(队伍)】的数据库操作Service
 */
-public interface TeamService extends IService<Activity> {
+public interface ActivityService extends IService<Activity> {
 
     /**
      *  创建队伍
