@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * 队伍
- * @TableName team
+ * @TableName activity
  */
 @TableName(value ="activity")
 @Data

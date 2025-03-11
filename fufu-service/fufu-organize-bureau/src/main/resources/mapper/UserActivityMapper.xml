@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.graht.organizeBureau.mapper.UserTeamMapper">
+<mapper namespace="cn.graht.organizeBureau.mapper.UserActivityMapper">
 
     <resultMap id="BaseResultMap" type="cn.graht.model.organizeBureau.pojos.UserActivity">
             <id property="id" column="id" jdbcType="BIGINT"/>
@@ -20,13 +20,14 @@
         isDelete
     </sql>
     <sql id="UserColumnList">
-        id,username,userAccount,
-        avatarUrl,gender,
-        phone,email,userStatus,
-        userRole,tags
+        id,nickname,phone,birthday,
+        avatarUrl,gender,userPassword,
+        email,userStatus,createTime,
+        updateTime,isDelete,userRole,
+        tags,profile
     </sql>
     <select id="checkOldUser" resultType="cn.graht.model.organizeBureau.pojos.UserActivity">
-        select <include refid="Base_Column_List"/> from user_team where teamId = #{teamId} and userId = #{userId} and isDelete = 1;
+        select <include refid="Base_Column_List"/> from user_activity where teamId = #{teamId} and userId = #{userId} and isDelete = 1;
     </select>
     <update id="modifyIsDel">
         update user_activity

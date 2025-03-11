@@ -9,7 +9,7 @@ import java.util.List;
 * @author graht
 * @description 针对表【team(队伍)】的数据库操作Mapper
 */
-public interface TeamMapper extends BaseMapper<Activity> {
+public interface ActivityMapper extends BaseMapper<Activity> {
     /**
      *  获取当前用户加入的所有team
      * @param userId

@@ -11,7 +11,7 @@ import java.util.List;
 * @author graht
 * @description 针对表【user_team(用户队伍关系)】的数据库操作Mapper
 */
-public interface UserTeamMapper extends BaseMapper<UserActivity> {
+public interface UserActivityMapper extends BaseMapper<UserActivity> {
     /**
      * 通过关联表获取队友
      * @param teamId

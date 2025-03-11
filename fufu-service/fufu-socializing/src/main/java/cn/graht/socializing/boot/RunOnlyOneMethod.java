@@ -160,9 +160,9 @@ public class RunOnlyOneMethod implements CommandLineRunner {
         UserVo userVo = getUserFromCacheOrFeign(uid);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(userVo), ErrorCode.SYSTEM_ERROR);
         RScoredSortedSet<String> set1 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
-        RScoredSortedSet<String> set2 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
-        RScoredSortedSet<String> set3 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
-        RScoredSortedSet<String> set4 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
+        RScoredSortedSet<String> set2 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":2");
+        RScoredSortedSet<String> set3 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":3");
+        RScoredSortedSet<String> set4 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":4");
         Page<Focus> focusPage = focusMapper.selectPage(new Page<>(1, 100), new LambdaQueryWrapper<Focus>().eq(Focus::getUserId, uid));
         if (focusPage.getTotal() == 0 || focusPage.getTotal() == (set1.size() + set2.size() + set3.size() + set4.size())) {
             return;
@@ -191,19 +191,30 @@ public class RunOnlyOneMethod implements CommandLineRunner {
         switch (abs) {
             case 0:
                 RScoredSortedSet<String> set1 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":1");
+                if (set1.contains(focusId)) {
+                    break;
+                }
                 set1.add(System.currentTimeMillis(), focusId);
-
                 break;
             case 1:
                 RScoredSortedSet<String> set2 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":2");
+                if (set2.contains(focusId)) {
+                    break;
+                }
                 set2.add(System.currentTimeMillis(), focusId);
                 break;
             case 2:
                 RScoredSortedSet<String> set3 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":3");
+                if (set3.contains(focusId)) {
+                    break;
+                }
                 set3.add(System.currentTimeMillis(), focusId);
                 break;
             case 3:
                 RScoredSortedSet<String> set4 = redisson.getScoredSortedSet(RedisKeyConstants.SOCIALIZING_FOCUS_ZSET_KEY + uid + ":4");
+                if (set4.contains(focusId)) {
+                    break;
+                }
                 set4.add(System.currentTimeMillis(), focusId);
                 break;
         }

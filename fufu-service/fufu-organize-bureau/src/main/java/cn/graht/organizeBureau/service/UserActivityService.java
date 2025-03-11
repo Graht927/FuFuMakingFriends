@@ -10,7 +10,7 @@ import java.util.List;
 * @author graht
 * @description 针对表【user_activity(用户队伍关系)】的数据库操作Service
 */
-public interface UserTeamService extends IService<UserActivity> {
+public interface UserActivityService extends IService<UserActivity> {
     List<UserVo> findUserTeamByTeamId(long timeId);
 
     /**

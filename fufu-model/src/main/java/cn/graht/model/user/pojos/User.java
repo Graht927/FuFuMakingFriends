@@ -54,6 +54,10 @@ public class User implements Serializable {
      * 密码
      */
     private String userPassword;
+    /**
+     * 生日
+     */
+    private Date birthday;
 
     /**
      * 邮箱
