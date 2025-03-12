@@ -25,10 +25,11 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,nickname,phone,birthday,
-        avatarUrl,gender,userPassword,
-        email,userStatus,createTime,
-        updateTime,isDelete,userRole,
-        tags,profile
+        id,nickname,phone,
+        addr,upAddr,avatarUrl,
+        gender,userPassword,email,
+        userStatus,createTime,updateTime,
+        isDelete,userRole,tags,
+        profile,birthday
     </sql>
 </mapper>

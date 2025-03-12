@@ -11,4 +11,5 @@ public class SystemNoticeFocusContent {
     private String focusUserId;
     private String focusUserName;
     private String focusUserAvatar;
+    private String type;
 }

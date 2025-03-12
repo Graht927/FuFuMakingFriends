@@ -8,6 +8,7 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="dynamicId" column="dynamicId" jdbcType="INTEGER"/>
             <result property="userId" column="userId" jdbcType="VARCHAR"/>
+            <result property="userId2" column="userId2" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
@@ -15,7 +16,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,dynamicId,userId,
+        id,dynamicId,userId,userId2,
         type,createTime,updateTime,
         isDelete
     </sql>

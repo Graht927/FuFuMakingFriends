@@ -90,7 +90,7 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
         UserVo focusUserVo = getUserFromCacheOrFeign(editFocusDto.getFocusUserId());
         ThrowUtils.throwIf(ObjectUtils.isEmpty(focusUserVo), ErrorCode.PARAMS_ERROR);
         if (isFocus(editFocusDto)) {
-            return true;
+            return false;
         }
         Focus focus = new Focus();
         focus.setUserId(editFocusDto.getUserId());
@@ -184,7 +184,7 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
     }
     private void checkAuth(Object param){
         if (param instanceof EditFocusDto editFocusDto) {
-            ThrowUtils.throwIf(StpUtil.getLoginId().equals(editFocusDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(!StpUtil.getLoginId().equals(editFocusDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
             ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto)
                             || ObjectUtils.isEmpty(editFocusDto.getUserId())
                             || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())

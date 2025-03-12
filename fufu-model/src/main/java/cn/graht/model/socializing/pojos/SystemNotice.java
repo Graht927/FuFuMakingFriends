@@ -24,6 +24,10 @@ public class SystemNotice {
      * 用户Id
      */
     private String userId;
+    /**
+     * 用户Id2
+     */
+    private String userId2;
 
     /**
      * 内容
