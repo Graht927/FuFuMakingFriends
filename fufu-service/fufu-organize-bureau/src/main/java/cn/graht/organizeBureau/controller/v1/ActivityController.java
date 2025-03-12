@@ -52,6 +52,7 @@ public class ActivityController {
         BeanUtils.copyProperties(teamAddRequest,activity);
         activity.setTeamImage(JSONUtil.toJsonStr(teamAddRequest.getTeamImage()));
         long teamId = teamService.addTeam(activity,loginUser);
+        //todo  创建群聊房间 RocketMQ => 异步调下游服务【socializing 的创建群聊会话】【uid等于当前登录的用户id|名称为当前队伍名称|】 。。。
         //插入失败
         return ResultUtil.ok(teamId);
     }

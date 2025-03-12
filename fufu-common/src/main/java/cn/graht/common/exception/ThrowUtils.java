@@ -6,7 +6,7 @@ import cn.graht.common.commons.ErrorCode;
 /**
  * 抛异常工具类
  *
- * @author graht
+ * @author GRAHT
  */
 public class ThrowUtils {
 

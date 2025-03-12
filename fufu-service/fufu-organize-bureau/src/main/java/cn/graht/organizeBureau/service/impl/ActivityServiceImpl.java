@@ -42,7 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author graht
+ * @author GRAHT
  * @description 针对表【team(队伍)】的数据库操作Service实现
  */
 @Service

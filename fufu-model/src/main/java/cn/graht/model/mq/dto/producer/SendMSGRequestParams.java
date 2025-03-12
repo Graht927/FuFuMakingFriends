@@ -26,7 +26,6 @@ public class SendMSGRequestParams {
     @Data
     @Schema(description = "消息内容对象")
     @Builder
-
     public static class MSGContentParams {
 
         @Schema(description = "用户id")
@@ -35,5 +34,7 @@ public class SendMSGRequestParams {
         private String nickname;
         @Schema(description = "手机号")
         private String phone;
+        @Schema(description = "消息内容")
+        private String content;
     }
 }

@@ -24,7 +24,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import static cn.graht.user.event.FuFuEventEnum.*;
-
+/**
+ * @author GRAHT
+ */
 @Component
 @Slf4j
 public class FuFuEventListener implements ApplicationListener<FuFuEvent> {

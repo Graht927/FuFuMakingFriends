@@ -5,7 +5,7 @@ import cn.graht.common.commons.ErrorCode;
 
 /**
  *  自定义异常
- * @author graht
+ * @author GRAHT
  */
 public class BusinessException extends RuntimeException{
     private final String description;

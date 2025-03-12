@@ -8,12 +8,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 通知表
- * @TableName notice
+ * 动态通知表
+ * @TableName dynamic_notice
  */
-@TableName(value ="notice")
+@TableName(value ="dynamic_notice")
 @Data
-public class Notice {
+public class DynamicNotice {
     /**
      * id
      */
@@ -62,7 +62,7 @@ public class Notice {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Notice other = (Notice) that;
+        DynamicNotice other = (DynamicNotice) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getDynamicId() == null ? other.getDynamicId() == null : this.getDynamicId().equals(other.getDynamicId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))

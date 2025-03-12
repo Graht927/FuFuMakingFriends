@@ -108,6 +108,18 @@
                         <target>17</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jxr</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!-- Spring Boot 打包插件 -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>

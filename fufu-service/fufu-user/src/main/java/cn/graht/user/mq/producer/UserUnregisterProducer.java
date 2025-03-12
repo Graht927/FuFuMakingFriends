@@ -37,7 +37,7 @@ public class UserUnregisterProducer {
                 .from("user-service")
                 .content(SendMSGRequestParams.MSGContentParams.builder().uid(userId).build())
                 .topic(ProducerTopics.USER_UNREGISTER_TOPIC)
-                .timeout(3000).delayLevel(1).build();
+                .timeout(3000).delayLevel(2).build();
         HttpHeaders headers = new HttpHeaders();
         String reqCode = DigestUtils.md5DigestAsHex((SystemConstant.SALT + reqHeaderCode).getBytes());
         ThrowUtils.throwIf(StringUtils.isBlank(reqCode), ErrorCode.PARAMS_ERROR);

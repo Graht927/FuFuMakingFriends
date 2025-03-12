@@ -41,7 +41,6 @@ public class FsUtils {
     private static void check(Class<?> type, Object o, Boolean b, String name) {
         if (type.equals(String.class)) {
             String str = (String) o;
-            //如果他是String类型的话就判断是否为空
             ThrowUtils.throwIf(StringUtils.isBlank(str), ErrorCode.PARAMS_ERROR);
         } else if (type.equals(Integer.class)) {
             Integer integer = (Integer) o;

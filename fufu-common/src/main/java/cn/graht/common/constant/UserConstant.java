@@ -3,7 +3,7 @@ package cn.graht.common.constant;
 /**
  * 用户常量
  *
- * @author graht
+ * @author GRAHT
  */
 public interface UserConstant {
 

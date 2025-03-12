@@ -23,7 +23,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
+/**
+ * @author GRAHT
+ */
 @Service
 @Slf4j
 @RocketMQMessageListener(topic = ProducerTopics.USER_UNREGISTER_TOPIC, consumerGroup = "fufu-consumer-group")
