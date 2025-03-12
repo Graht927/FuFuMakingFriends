@@ -11,7 +11,9 @@ import org.redisson.api.RSetCache;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
-
+/**
+ * @author GRAHT
+ */
 @Component
 public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
 

@@ -1,10 +1,10 @@
 package cn.graht.socializing.service.impl;
 
-import cn.graht.model.socializing.pojos.Notice;
-import cn.graht.socializing.service.NoticeService;
+import cn.graht.model.socializing.pojos.DynamicNotice;
+import cn.graht.socializing.service.DynamicNoticeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import cn.graht.socializing.mapper.NoticeMapper;
+import cn.graht.socializing.mapper.DynamicNoticeMapper;
 
 /**
 * @author Graht
@@ -12,8 +12,8 @@ import cn.graht.socializing.mapper.NoticeMapper;
 * @createDate 2025-03-11 09:55:40
 */
 @Service
-public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
-    implements NoticeService {
+public class DynamicNoticeServiceImpl extends ServiceImpl<DynamicNoticeMapper, DynamicNotice>
+    implements DynamicNoticeService {
 
 }
 

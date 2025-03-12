@@ -2,7 +2,7 @@ package cn.graht.common.commons;
 
 /**
  * 错误码
- * @author graht
+ * @author GRAHT
  */
 public enum ErrorCode {
     SUCCESS(20000,"响应成功","success"),

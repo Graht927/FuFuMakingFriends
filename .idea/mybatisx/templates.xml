@@ -69,28 +69,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="GroupChatMember" />
-                  <option name="tableName" value="group_chat_member" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="GroupChatMessage" />
-                  <option name="tableName" value="group_chat_message" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="GroupChatSession" />
-                  <option name="tableName" value="group_chat_session" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Notice" />
-                  <option name="tableName" value="notice" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="PrivateChatMessage" />
-                  <option name="tableName" value="private_chat_Message" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="PrivateChatSession" />
-                  <option name="tableName" value="private_chat_session" />
+                  <option name="className" value="SystemNotice" />
+                  <option name="tableName" value="system_notice" />
                 </TableUIInfo>
               </list>
             </option>

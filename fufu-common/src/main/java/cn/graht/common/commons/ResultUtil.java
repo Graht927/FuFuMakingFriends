@@ -2,7 +2,7 @@ package cn.graht.common.commons;
 
 /**
  * 返回工具类
- * @author graht
+ * @author GRAHT
  */
 public class ResultUtil {
     /**

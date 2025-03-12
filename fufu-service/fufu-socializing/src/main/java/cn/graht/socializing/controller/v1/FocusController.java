@@ -8,6 +8,9 @@ import cn.graht.model.socializing.dtos.EditFocusDto;
 import cn.graht.model.socializing.dtos.GetFansByUidDto;
 import cn.graht.model.socializing.dtos.GetFocusByUidDto;
 import cn.graht.model.user.vos.UserVo;
+import cn.graht.socializing.enums.NoticeType;
+import cn.graht.socializing.event.FuFuEventEnum;
+import cn.graht.socializing.event.FuFuEventPublisher;
 import cn.graht.socializing.service.FocusService;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +20,7 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *  @author GRAHT
@@ -27,6 +31,8 @@ import java.util.List;
 public class FocusController {
     @Resource
     private FocusService focusService;
+    @Resource
+    private FuFuEventPublisher fuFuEventPublisher;
 
     //获取的是我关注的列表
     @PostMapping("/getFocus")
@@ -63,7 +69,10 @@ public class FocusController {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getFocusUserId())||ObjectUtils.isEmpty(editFocusDto.getUserId()), ErrorCode.PARAMS_ERROR);
         Boolean b = focusService.addFocus(editFocusDto);
         if (b) {
-            //todo 发送mq给user发送消息
+            //调用事件给被关注者发送通知
+            String focusUserId = editFocusDto.getFocusUserId();
+            fuFuEventPublisher.doStuffAndPublishAnEvent(FuFuEventEnum.SYSTEM_NOTICE.getValue(), Map.of("userId", focusUserId,
+                    "type", NoticeType.FOCUS.getValue(), "focusUserId", editFocusDto.getUserId()));
             return ResultUtil.ok(true);
         }
         return ResultUtil.error(ErrorCode.SYSTEM_ERROR);

@@ -6,7 +6,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-
+/**
+ * @author GRAHT
+ */
 @Component
 public class FuFuEventPublisher {
     @Resource

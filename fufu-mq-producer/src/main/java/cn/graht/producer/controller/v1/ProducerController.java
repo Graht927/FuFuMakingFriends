@@ -9,6 +9,7 @@ import cn.graht.common.exception.ThrowUtils;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.redisson.Redisson;
@@ -27,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/v1")
+@Slf4j
 public class ProducerController {
 
-    private static final Logger log = LoggerFactory.getLogger(ProducerController.class);
     @Resource
     private RocketMQTemplate rocketMQTemplate;
 
