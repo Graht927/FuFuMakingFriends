@@ -2,6 +2,7 @@ package cn.graht.consumer.service;
 
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.ResultApi;
+import cn.graht.common.constant.GroupConsumers;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
@@ -13,12 +14,9 @@ import cn.graht.model.user.vos.UserVo;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
-import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ import org.springframework.util.DigestUtils;
  */
 @Service
 @Slf4j
-@RocketMQMessageListener(topic = ProducerTopics.USER_UNREGISTER_TOPIC, consumerGroup = "fufu-consumer-group")
+@RocketMQMessageListener(topic = ProducerTopics.USER_UNREGISTER_TOPIC, consumerGroup = GroupConsumers.GROUP_CONSUMER_UNREGISTRY_USER)
 public class UserUnregisterConsumer implements RocketMQListener<String> {
 
     @Resource

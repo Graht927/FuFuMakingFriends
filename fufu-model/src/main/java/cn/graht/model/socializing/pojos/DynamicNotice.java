@@ -19,6 +19,10 @@ public class DynamicNotice {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
+    /**
+     * 用户Id2
+     */
+    private String userId2;
 
     /**
      * 动态Id

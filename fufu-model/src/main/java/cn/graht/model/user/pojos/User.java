@@ -32,18 +32,19 @@ public class User implements Serializable {
     private String phone;
 
     /**
+     *
+     */
+    private String addr;
+
+    /**
+     *
+     */
+    private String upAddr;
+
+    /**
      * 用户头像
      */
     private String avatarUrl;
-
-    /**
-     * 地区 例如[山西-晋城] [山西-太原]
-     */
-    private String addr;
-    /**
-     * 地区 例如[山西-晋城] [山西-太原]
-     */
-    private String upAddr;
 
     /**
      * 性别
@@ -54,10 +55,6 @@ public class User implements Serializable {
      * 密码
      */
     private String userPassword;
-    /**
-     * 生日
-     */
-    private Date birthday;
 
     /**
      * 邮箱
@@ -82,7 +79,6 @@ public class User implements Serializable {
     /**
      * 是否删除
      */
-    @TableLogic
     private Integer isDelete;
 
     /**
@@ -100,6 +96,11 @@ public class User implements Serializable {
      */
     private String profile;
 
+    /**
+     * 生日
+     */
+    private Date birthday;
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -113,19 +114,22 @@ public class User implements Serializable {
         }
         User other = (User) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
-            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getAvatarUrl() == null ? other.getAvatarUrl() == null : this.getAvatarUrl().equals(other.getAvatarUrl()))
-            && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
-            && (this.getUserPassword() == null ? other.getUserPassword() == null : this.getUserPassword().equals(other.getUserPassword()))
-            && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
-            && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()))
-            && (this.getUserRole() == null ? other.getUserRole() == null : this.getUserRole().equals(other.getUserRole()))
-            && (this.getTags() == null ? other.getTags() == null : this.getTags().equals(other.getTags()))
-            && (this.getProfile() == null ? other.getProfile() == null : this.getProfile().equals(other.getProfile()));
+                && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
+                && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
+                && (this.getAddr() == null ? other.getAddr() == null : this.getAddr().equals(other.getAddr()))
+                && (this.getUpAddr() == null ? other.getUpAddr() == null : this.getUpAddr().equals(other.getUpAddr()))
+                && (this.getAvatarUrl() == null ? other.getAvatarUrl() == null : this.getAvatarUrl().equals(other.getAvatarUrl()))
+                && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
+                && (this.getUserPassword() == null ? other.getUserPassword() == null : this.getUserPassword().equals(other.getUserPassword()))
+                && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
+                && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+                && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()))
+                && (this.getUserRole() == null ? other.getUserRole() == null : this.getUserRole().equals(other.getUserRole()))
+                && (this.getTags() == null ? other.getTags() == null : this.getTags().equals(other.getTags()))
+                && (this.getProfile() == null ? other.getProfile() == null : this.getProfile().equals(other.getProfile()))
+                && (this.getBirthday() == null ? other.getBirthday() == null : this.getBirthday().equals(other.getBirthday()));
     }
 
     @Override
@@ -135,6 +139,8 @@ public class User implements Serializable {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getNickname() == null) ? 0 : getNickname().hashCode());
         result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
+        result = prime * result + ((getAddr() == null) ? 0 : getAddr().hashCode());
+        result = prime * result + ((getUpAddr() == null) ? 0 : getUpAddr().hashCode());
         result = prime * result + ((getAvatarUrl() == null) ? 0 : getAvatarUrl().hashCode());
         result = prime * result + ((getGender() == null) ? 0 : getGender().hashCode());
         result = prime * result + ((getUserPassword() == null) ? 0 : getUserPassword().hashCode());
@@ -146,6 +152,7 @@ public class User implements Serializable {
         result = prime * result + ((getUserRole() == null) ? 0 : getUserRole().hashCode());
         result = prime * result + ((getTags() == null) ? 0 : getTags().hashCode());
         result = prime * result + ((getProfile() == null) ? 0 : getProfile().hashCode());
+        result = prime * result + ((getBirthday() == null) ? 0 : getBirthday().hashCode());
         return result;
     }
 
@@ -158,6 +165,8 @@ public class User implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", nickname=").append(nickname);
         sb.append(", phone=").append(phone);
+        sb.append(", addr=").append(addr);
+        sb.append(", upAddr=").append(upAddr);
         sb.append(", avatarUrl=").append(avatarUrl);
         sb.append(", gender=").append(gender);
         sb.append(", userPassword=").append(userPassword);
@@ -169,6 +178,7 @@ public class User implements Serializable {
         sb.append(", userRole=").append(userRole);
         sb.append(", tags=").append(tags);
         sb.append(", profile=").append(profile);
+        sb.append(", birthday=").append(birthday);
         sb.append("]");
         return sb.toString();
     }

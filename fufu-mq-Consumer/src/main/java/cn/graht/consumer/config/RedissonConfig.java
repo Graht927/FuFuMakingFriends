@@ -1,6 +1,8 @@
 package cn.graht.consumer.config;
 
+import io.netty.util.internal.StringUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.config.Config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,11 +20,16 @@ public class RedissonConfig {
 
     private String host;
     private String port;
+    private String password;
 
     @Bean
     public Redisson redisson(){
         Config config = new Config();
-        config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port));
+        if (StringUtils.isNotBlank(password)){
+            config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port)).setPassword(password);
+
+        }else config.useSingleServer().setAddress(String.format("redis://%s:%s", host, port));
+
         return (Redisson) Redisson.create(config);
     }
 }

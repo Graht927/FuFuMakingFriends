@@ -68,6 +68,7 @@ public class FocusController {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto), ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto.getFocusUserId())||ObjectUtils.isEmpty(editFocusDto.getUserId()), ErrorCode.PARAMS_ERROR);
         Boolean b = focusService.addFocus(editFocusDto);
+        ThrowUtils.throwIf(!b,ErrorCode.SYSTEM_ERROR,"你已关注该用户");
         if (b) {
             //调用事件给被关注者发送通知
             String focusUserId = editFocusDto.getFocusUserId();

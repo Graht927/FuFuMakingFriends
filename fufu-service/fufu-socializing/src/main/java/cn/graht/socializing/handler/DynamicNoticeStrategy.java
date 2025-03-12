@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * @author GRAHT
  */
-@Component("dynamic:notice")
+@Component("dynamic:notice:")
 public class DynamicNoticeStrategy implements FuFuEventStrategy{
     @Override
     public void handle(Map<String, String> param) {

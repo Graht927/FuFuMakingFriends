@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author GRAHT
  */
-@Component("system:notice")
+@Component("system:notice:")
 public class SystemNoticeStrategy implements FuFuEventStrategy{
     @Resource
     private CaffeineCacheService caffeineCacheService;
@@ -58,6 +58,7 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
             systemNoticeFocusContent.setFocusUserId(focusUserId);
             systemNoticeFocusContent.setFocusUserName(userVo.getNickname());
             systemNoticeFocusContent.setFocusUserAvatar(userVo.getAvatarUrl());
+            systemNoticeFocusContent.setType(NoticeType.FOCUS.getValue());
             systemNoticeDto.setType(NoticeType.FOCUS.getValue());
             systemNoticeDto.setContent(JSONUtil.toJsonStr(systemNoticeFocusContent));
             SendMSGRequestParams.MSGContentParams content = SendMSGRequestParams.MSGContentParams.builder()

@@ -24,9 +24,6 @@ import org.springframework.util.DigestUtils;
 public class DynamicNoticeProducer {
 
     @Resource
-    private RocketMQTemplate rocketMQTemplate;
-
-    @Resource
     private ApplicationContext applicationContext;
     @Resource
     private ProducerApi producerApi;

@@ -21,8 +21,6 @@ import org.springframework.util.DigestUtils;
 @ConditionalOnBean(UserService.class)
 public class UserUnregisterProducer {
 
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
 
     @Resource
     private ApplicationContext applicationContext;
