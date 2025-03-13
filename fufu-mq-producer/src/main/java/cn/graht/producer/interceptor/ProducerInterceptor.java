@@ -22,7 +22,7 @@ public class ProducerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //判断req路径
-        if ("/v1/producer/sendMsg".equals(request.getRequestURI())) {
+        if ("/v1/producer/sendMsg".equals(request.getRequestURI()) || "v1/producer/sendMsgAsync".equals(request.getRequestURI())) {
             String reqCode = request.getHeader("reqCode");
             ThrowUtils.throwIf(StringUtils.isBlank(reqHeaderCode), ErrorCode.FORBIDDEN_ERROR);
             ThrowUtils.throwIf(!DigestUtils.md5DigestAsHex((SystemConstant.SALT + reqHeaderCode).getBytes()).equals(reqCode), ErrorCode.FORBIDDEN_ERROR);
