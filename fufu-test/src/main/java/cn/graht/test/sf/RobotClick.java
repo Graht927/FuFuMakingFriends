@@ -16,62 +16,35 @@ public class RobotClick {
             int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
             int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
+            // 定义点击位置为屏幕左下角
             int x = 0;
             int y = screenHeight - 1;
             // 创建Robot对象
             Robot robot = new Robot();
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             Random random = new Random();
-            // 模拟鼠标按下和释放的持续时间
-            try {
-                int pressDuration = 10 + random.nextInt(20); // 随机按下持续时间10到30毫秒
-                Thread.sleep(pressDuration);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+            // 点击屏幕左下角1000次
+            for (int i = 0; i < 1000; i++) {
+                // 移动鼠标到指定位置
+                robot.mouseMove(x, y);
+
+                // 模拟鼠标按下和释放
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.delay(10);
+                // 释放鼠标左键
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                // 模拟按下随机按键
+                int keyCode = KeyEvent.getExtendedKeyCodeForChar((char) (random.nextInt(26) + 'a'));
+                robot.keyPress(keyCode);
+                robot.delay(10); // 按键按下持续时间
+                robot.keyRelease(keyCode);
+
+                // 添加随机延迟
+                int delay = 100 + random.nextInt(200); // 随机延迟100到300毫秒
+                robot.delay(delay);
             }
-
-            // 释放鼠标左键
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            // 定义要按下的按键
-            int keyCode = KeyEvent.VK_ENTER; // 例如，按下Enter键
-
-            // 连续按下键盘按键
-            continuousKeyPress(robot, keyCode, 10); // 按下10次
         } catch (AWTException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * 连续按下指定键盘按键的方法
-     * @param robot Robot对象
-     * @param keyCode 按键码
-     * @param count 按下次数
-     */
-    public static void continuousKeyPress(Robot robot, int keyCode, int count) {
-        Random random = new Random();
-        for (int i = 0; i < count; i++) {
-            // 按下键盘按键
-            robot.keyPress(keyCode);
-
-            // 模拟按键按下和释放的持续时间
-            try {
-                int pressDuration = 10 + random.nextInt(20); // 随机按下持续时间10到30毫秒
-                Thread.sleep(pressDuration);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            // 释放键盘按键
-            robot.keyRelease(keyCode);
-
-            // 添加随机延迟
-            try {
-                int delay = 100 + random.nextInt(200); // 随机延迟100到300毫秒
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

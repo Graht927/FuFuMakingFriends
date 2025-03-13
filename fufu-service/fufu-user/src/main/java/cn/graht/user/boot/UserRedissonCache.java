@@ -1,5 +1,6 @@
 package cn.graht.user.boot;
 
+import cn.graht.common.constant.RedisKeyConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 用户缓存
+ * @author GRAHT
+ */
 @Service
 @Slf4j
 public class UserRedissonCache {
@@ -26,7 +31,7 @@ public class UserRedissonCache {
     public void init() {
         userShards = new RMapCache[SHARD_COUNT];
         for (int i = 0; i < SHARD_COUNT; i++) {
-            userShards[i] = redisson.getMapCache("userShard:" + i);
+            userShards[i] = redisson.getMapCache(RedisKeyConstants.USER_CACHE_SHARD + i);
             // 设置分片的最大容量和淘汰策略
             userShards[i].trySetMaxSize(SHARD_MAX_SIZE);
         }
