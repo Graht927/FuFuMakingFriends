@@ -20,6 +20,7 @@ public interface RedisKeyConstants {
     String USER_LOGIN_LOCK_PREFIX = "fufu:user:login.lock:";
     String USER_LOGIN_COUNT_PREFIX = "fufu:user:login:count:";
     String USER_REGISTER_LOCK_PREFIX = "fufu:user:register.lock:";
+    String USER_CACHE_SHARD = "fufu:user:cache:shard:";
 
     String USER_UNREGISTER_PREFIX = "fufu:user:un:register:";
     String USER_UNREGISTER_LOCK = "fufu:user:un:register:lock:";
