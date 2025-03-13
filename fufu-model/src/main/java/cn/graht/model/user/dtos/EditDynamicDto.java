@@ -29,4 +29,7 @@ public class EditDynamicDto {
      * 封面图片
      */
     private String coverImages;
+    private Integer likeCount;
+    private Integer commentCount;
+    private Integer forwardCount;
 }

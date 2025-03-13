@@ -7,7 +7,7 @@ package cn.graht.socializing.enums;
 
 public enum NoticeType {
     FOCUS("focus"),
-    THUMBS_UO("thumbsUp"),
+    THUMBS_UP("thumbsUp"),
     SYSTEM("system"),
     CREATE_ACTIVITY("createActivity"),;
     private String value;

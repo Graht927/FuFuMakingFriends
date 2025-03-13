@@ -13,6 +13,7 @@ import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
+import cn.graht.user.boot.UserRedissonCache;
 import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
@@ -20,6 +21,7 @@ import cn.graht.user.mq.producer.UserUnregisterProducer;
 import cn.graht.user.service.UserService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,6 +37,7 @@ import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +64,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private UserRedissonCache userRedissonCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -175,8 +180,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserVo editUserInfo(EditUserInfoDto editUserInfoDto) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(editUserInfoDto), ErrorCode.PARAMS_NULL_ERROR);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(editUserInfoDto.getId()), ErrorCode.PARAMS_ERROR);
-        User user = getById(editUserInfoDto.getId());
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.NULL_ERROR);
+        String user1 = userRedissonCache.getUser(editUserInfoDto.getId());
+        User user = null;
+        User userVo = null;
+        if (StringUtils.isNotBlank(user1)){
+               userVo = JSONUtil.toBean(user1, User.class);
+               user = new User();
+               BeanUtils.copyProperties(userVo,user);
+        }else {
+            user = getById(editUserInfoDto.getId());
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.NULL_ERROR);
+        }
         boolean isUpdated = false;
         if (ObjectUtils.isNotEmpty(editUserInfoDto.getNickname()) && StringUtils.isNotBlank(editUserInfoDto.getNickname())) {
             //修改昵称
@@ -212,7 +226,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             boolean b = updateById(user);
             ThrowUtils.throwIf(!b, ErrorCode.OPERATION_ERROR);
         }
-        return UserVo.objToVo(user);
+        UserVo userVo1 = UserVo.objToVo(user);
+        userRedissonCache.addUser(userVo1.getId(), JSONUtil.toJsonStr(userVo1));
+        return userVo1;
     }
 
 

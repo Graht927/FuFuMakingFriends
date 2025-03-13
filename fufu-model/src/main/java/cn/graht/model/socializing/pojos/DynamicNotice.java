@@ -38,6 +38,10 @@ public class DynamicNotice {
      * 通知类型
      */
     private String type;
+    /**
+     * 通知内容
+     */
+    private String content;
 
     /**
      * 创建时间

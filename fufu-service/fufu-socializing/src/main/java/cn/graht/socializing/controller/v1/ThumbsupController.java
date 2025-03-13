@@ -5,16 +5,16 @@ import cn.graht.common.commons.PageQuery;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.common.commons.ResultUtil;
 import cn.graht.common.constant.RedisKeyConstants;
-import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.feignApi.user.UserFeignApi;
-import cn.graht.model.socializing.dtos.AddCommentsDto;
 import cn.graht.model.socializing.dtos.AddThumbsupDto;
-import cn.graht.model.socializing.pojos.Comments;
 import cn.graht.model.socializing.pojos.Thumbsup;
 import cn.graht.model.socializing.vos.ThumbsupVo;
+import cn.graht.model.user.dtos.EditDynamicDto;
 import cn.graht.model.user.pojos.Dynamic;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.graht.socializing.enums.NoticeType;
+import cn.graht.socializing.event.FuFuEventEnum;
+import cn.graht.socializing.event.FuFuEventPublisher;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import cn.graht.socializing.service.ThumbsupService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,6 +45,8 @@ public class ThumbsupController {
     private UserFeignApi userFeignApi;
     @Resource
     private Redisson redisson;
+    @Resource
+    private FuFuEventPublisher fuFuEventPublisher;
 
     private long hashToIndex(String uid, Long did) {
         String combinedKey = did +":"+ uid;
@@ -81,6 +84,14 @@ public class ThumbsupController {
         bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         long index = hashToIndex(thumbsup.getUserId(), thumbsup.getDynamicId());
         bitSet.set(index);
+        fuFuEventPublisher.doStuffAndPublishAnEvent(FuFuEventEnum.DYNAMIC_NOTICE.getValue(),
+                Map.of("type", NoticeType.THUMBS_UP.getValue(),"userId2",thumbsup.getUserId(),"dynamicId",thumbsup.getDynamicId().toString()));
+        //更新 动态的likeCount
+        EditDynamicDto editDynamicDto = new EditDynamicDto();
+        Dynamic dynamic = userFeignApi.getDynamicById(thumbsup.getDynamicId()).getData();
+        editDynamicDto.setId(dynamic.getId());
+        editDynamicDto.setLikeCount(dynamic.getLikeCount() + 1);
+        userFeignApi.updateDynamic(thumbsup.getDynamicId(), editDynamicDto);
         return ResultUtil.ok(true);
     }
 
@@ -106,6 +117,12 @@ public class ThumbsupController {
         bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         long index = hashToIndex(uid,dynamicId);
         bitSet.clear(index);
+        //更新 动态的likeCount
+        EditDynamicDto editDynamicDto = new EditDynamicDto();
+        Dynamic dynamic = userFeignApi.getDynamicById(dynamicId).getData();
+        editDynamicDto.setId(dynamic.getId());
+        editDynamicDto.setLikeCount(dynamic.getLikeCount() - 1);
+        userFeignApi.updateDynamic(dynamicId, editDynamicDto);
         return ResultUtil.ok(true);
     }
 

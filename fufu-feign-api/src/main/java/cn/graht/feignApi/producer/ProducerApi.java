@@ -16,4 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface ProducerApi {
     @PostMapping("/v1/producer/sendMsg")
     ResultApi<Object> sendMsg(@RequestBody SendMSGRequestParams params, @RequestHeader MultiValueMap<String, String> headers);
+    @PostMapping("/v1/producer/sendMsgAsync")
+    ResultApi<Object> sendMsgAsync(@RequestBody SendMSGRequestParams params, @RequestHeader MultiValueMap<String, String> headers);
+
 }

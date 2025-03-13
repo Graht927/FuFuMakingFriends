@@ -14,13 +14,16 @@ import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.mapper.FocusMapper;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
+import cn.graht.socializing.utils.UserRedissonCache;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.api.*;
 import org.springframework.boot.CommandLineRunner;
@@ -52,6 +55,8 @@ public class RunOnlyOneMethod implements CommandLineRunner {
     private UserFeignApi userFeignApi;
     @Resource
     private LuaScriptMapper luaScriptMapper;
+    @Resource
+    private UserRedissonCache userRedissonCache;
 
     private final String INIT_REDISSON_LOCK_KEY = "fufu:socializing:init:data:lock:";
     private final Integer MAX_RETRIES = 10;
@@ -247,7 +252,12 @@ public class RunOnlyOneMethod implements CommandLineRunner {
         if (ObjectUtils.isNotEmpty(userVo)) {
             return userVo;
         }
-        //todo redis读取
+        String user = userRedissonCache.getUser(userId);
+        if (StringUtils.isNotBlank(user)) {
+            userVo = JSONUtil.toBean(user, UserVo.class);
+            caffeineCacheService.putUserCache(userId, userVo);
+            return userVo;
+        }
         //如果redis中不存在 调用feign 并且将结果存储到redis中
         ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(userId);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(userInfo)

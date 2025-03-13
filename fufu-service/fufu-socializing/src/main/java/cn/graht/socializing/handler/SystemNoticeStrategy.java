@@ -13,6 +13,7 @@ import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.enums.NoticeType;
 import cn.graht.socializing.model.SystemNoticeFocusContent;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
+import cn.graht.socializing.utils.UserRedissonCache;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import jakarta.annotation.Resource;
@@ -39,6 +40,8 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
     private String reqHeaderCode;
     @Value("${spring.application.name}")
     private String serviceName;
+    @Resource
+    private UserRedissonCache userRedissonCache;
     @Override
     public void handle(Map<String, String> param) {
         //处理逻辑
@@ -88,8 +91,12 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
         if (ObjectUtils.isNotEmpty(userVo)) {
             return userVo;
         }
-        //todo redis读取 初始化User 根据userId分片 4片 均匀分配到redis中 设置每个分片的最大数量 lru算法淘汰策略
-
+        String user = userRedissonCache.getUser(userId);
+        if (StringUtils.isNotBlank(user)) {
+            userVo = JSONUtil.toBean(user, UserVo.class);
+            caffeineCacheService.putUserCache(userId, userVo);
+            return userVo;
+        }
         //如果redis中不存在 调用feign 并且将结果存储到redis中
         ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(userId);
         ThrowUtils.throwIf(ObjectUtils.isEmpty(userInfo)

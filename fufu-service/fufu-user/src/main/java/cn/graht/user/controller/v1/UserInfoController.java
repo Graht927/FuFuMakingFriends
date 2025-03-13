@@ -9,9 +9,11 @@ import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
+import cn.graht.user.boot.UserRedissonCache;
 import cn.graht.user.mq.producer.UserUnregisterProducer;
 import cn.graht.user.service.UserService;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +37,8 @@ public class UserInfoController {
     private UserService userService;
     @Resource
     private UserUnregisterProducer userUnregisterProducer;
+    @Resource
+    private UserRedissonCache userRedissonCache;
 
     @GetMapping("/info/{uid}")
     @Operation(summary = "通过id获取",description = "通过id获取用户信息")
@@ -43,9 +47,15 @@ public class UserInfoController {
     @ApiResponse(responseCode = "40002",description = "结果为空")
     public ResultApi<UserVo> getUserInfo(@PathVariable @Schema(description = "用户id") String uid) {
         ThrowUtils.throwIf(StringUtils.isBlank(uid), ErrorCode.PARAMS_ERROR);
+        String user1 = userRedissonCache.getUser(uid);
+        if (StringUtils.isNotBlank(user1)) {
+            UserVo userVo = JSONUtil.toBean(user1, UserVo.class);
+            return ResultUtil.ok(userVo);
+        }
         User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getId, uid));
         ThrowUtils.throwIf(ObjectUtil.isEmpty(user),ErrorCode.NULL_ERROR);
         UserVo userVo = UserVo.objToVo(user);
+        userRedissonCache.addUser(uid, JSONUtil.toJsonStr(userVo));
         return ResultUtil.ok(userVo);
     }
 
