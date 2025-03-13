@@ -18,7 +18,7 @@
 ###### :
 ```shell
 fufu-gateway
-	-javaagent:C:\Users\43070\Desktop\bs\Code\env\apache-skywalking-agent-9.3.0\skywalking-agent.jar -Dskywalking.agent.service_name=fufu-sms -Dskywalking.collector.backend_service=127.0.0.1:11800 -Xms128m -Xmx256m -XX:InitialCodeCacheSize=64m -XX:ReservedCodeCacheSize=256m -XX:+UseG1GC
+	-javaagent:C:\Users\43070\Desktop\bs\Code\env\apache-skywalking-agent-9.3.0\skywalking-agent.jar -Dskywalking.agent.service_name=fufu-gateway -Dskywalking.collector.backend_service=127.0.0.1:11800 -Xms128m -Xmx256m -XX:InitialCodeCacheSize=64m -XX:ReservedCodeCacheSize=256m -XX:+UseG1GC
 fufu-mq-consumer
 	-javaagent:C:\Users\43070\Desktop\bs\Code\env\apache-skywalking-agent-9.3.0\skywalking-agent.jar -Dskywalking.agent.service_name=fufu-mq-consumer -Dskywalking.collector.backend_service=127.0.0.1:11800 -Xms128m -Xmx256m -XX:InitialCodeCacheSize=64m -XX:ReservedCodeCacheSize=128m -XX:+UseG1GC
 fufu-mq-producer
