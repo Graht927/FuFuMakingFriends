@@ -4,6 +4,7 @@ import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.constant.SystemConstant;
+import cn.graht.common.enums.MessageDelayLevelEnum;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.feignApi.producer.ProducerApi;
 import cn.graht.feignApi.user.UserFeignApi;
@@ -11,8 +12,8 @@ import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import cn.graht.model.socializing.dtos.DynamicNoticeDto;
 import cn.graht.model.user.pojos.Dynamic;
 import cn.graht.model.user.vos.UserVo;
-import cn.graht.socializing.enums.NoticeType;
-import cn.graht.socializing.model.DynamicNoticeThumbsUpContent;
+import cn.graht.common.enums.NoticeType;
+import cn.graht.model.socializing.pojos.notice.DynamicNoticeThumbsUpContent;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
 import cn.graht.socializing.utils.UserRedissonCache;
 import cn.hutool.json.JSONUtil;
@@ -80,7 +81,7 @@ public class DynamicNoticeStrategy implements FuFuEventStrategy {
                     .from(serviceName)
                     .topic(ProducerTopics.DYNAMIC_NOTICE_TOPIC)
                     .content(content)
-                    .delayLevel(1)
+                    .delayLevel(MessageDelayLevelEnum.L1.getLevel())
                     .timeout(1000)
                     .build();
             ThrowUtils.throwIf(ObjectUtils.isEmpty(sendMSGRequestParams), ErrorCode.PARAMS_ERROR);

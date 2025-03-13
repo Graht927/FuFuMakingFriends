@@ -12,7 +12,7 @@ import cn.graht.model.socializing.pojos.Thumbsup;
 import cn.graht.model.socializing.vos.ThumbsupVo;
 import cn.graht.model.user.dtos.EditDynamicDto;
 import cn.graht.model.user.pojos.Dynamic;
-import cn.graht.socializing.enums.NoticeType;
+import cn.graht.common.enums.NoticeType;
 import cn.graht.socializing.event.FuFuEventEnum;
 import cn.graht.socializing.event.FuFuEventPublisher;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

@@ -8,7 +8,7 @@ import cn.graht.model.socializing.dtos.EditFocusDto;
 import cn.graht.model.socializing.dtos.GetFansByUidDto;
 import cn.graht.model.socializing.dtos.GetFocusByUidDto;
 import cn.graht.model.user.vos.UserVo;
-import cn.graht.socializing.enums.NoticeType;
+import cn.graht.common.enums.NoticeType;
 import cn.graht.socializing.event.FuFuEventEnum;
 import cn.graht.socializing.event.FuFuEventPublisher;
 import cn.graht.socializing.service.FocusService;

@@ -3,6 +3,7 @@ package cn.graht.user.mq.producer;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.constant.SystemConstant;
+import cn.graht.common.enums.MessageDelayLevelEnum;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.feignApi.producer.ProducerApi;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
@@ -28,14 +29,16 @@ public class UserUnregisterProducer {
     private ProducerApi producerApi;
     @Value("${fufu.reqHeaderCode}")
     private String reqHeaderCode;
+    @Value("${spring.application.name}")
+    private String fromServiceName;
     public void sendUnregisterRequest(String userId) {
         UserService userService = applicationContext.getBean(UserService.class);
         userService.sendUnregisterRequest(userId);
         SendMSGRequestParams params = SendMSGRequestParams.builder()
-                .from("user-service")
+                .from(fromServiceName)
                 .content(SendMSGRequestParams.MSGContentParams.builder().uid(userId).build())
                 .topic(ProducerTopics.USER_UNREGISTER_TOPIC)
-                .timeout(3000).delayLevel(2).build();
+                .timeout(3000).delayLevel(MessageDelayLevelEnum.L8.getLevel()).build();
         HttpHeaders headers = new HttpHeaders();
         String reqCode = DigestUtils.md5DigestAsHex((SystemConstant.SALT + reqHeaderCode).getBytes());
         ThrowUtils.throwIf(StringUtils.isBlank(reqCode), ErrorCode.PARAMS_ERROR);
