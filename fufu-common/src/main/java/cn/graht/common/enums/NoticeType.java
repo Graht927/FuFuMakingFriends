@@ -1,4 +1,4 @@
-package cn.graht.socializing.enums;
+package cn.graht.common.enums;
 
 /**
  * @author GRAHT
