@@ -3,6 +3,7 @@ package cn.graht.socializing.mq.producer;
 import cn.graht.common.commons.ErrorCode;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.constant.SystemConstant;
+import cn.graht.common.enums.MessageDelayLevelEnum;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.feignApi.producer.ProducerApi;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
@@ -36,7 +37,7 @@ public class DynamicNoticeProducer {
                 .from(fromServiceName)
                 .content(SendMSGRequestParams.MSGContentParams.builder().uid(userId).build())
                 .topic(ProducerTopics.USER_UNREGISTER_TOPIC)
-                .timeout(3000).delayLevel(1).build();
+                .timeout(3000).delayLevel(MessageDelayLevelEnum.L1.getLevel()).build();
         HttpHeaders headers = new HttpHeaders();
         String reqCode = DigestUtils.md5DigestAsHex((SystemConstant.SALT + reqHeaderCode).getBytes());
         ThrowUtils.throwIf(StringUtils.isBlank(reqCode), ErrorCode.PARAMS_ERROR);
