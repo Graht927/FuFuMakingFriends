@@ -1,5 +1,5 @@
 ## 说明文档
-> 这个项目是一个基于SpringCloudAlibaba的基础项目
+> 这个项目是一个基于SpringCloudAlibaba 实现的社交系统
 #### 技术类型:
     1. SpringCloud -- 2023.0.1
     2. SpringCloudAlibaba -- 2023.0.1.0
