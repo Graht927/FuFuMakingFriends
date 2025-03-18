@@ -87,7 +87,7 @@ public class PrivateChatController {
     @Operation(summary = "创建私聊消息", description = "创建私聊消息")
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
-    public ResultApi<Boolean> createMessage(@RequestBody CreateMessageDto messageDto) {
+    public ResultApi<Integer> createMessage(@RequestBody CreateMessageDto messageDto) {
         PrivateChatMessage message = new PrivateChatMessage();
         BeanUtils.copyProperties(messageDto, message);
         Integer sessionId = message.getSessionId();
@@ -97,7 +97,7 @@ public class PrivateChatController {
         boolean save = privateChatMessageService.save(message);
         one.setLastMessageTime(message.getSendTime());
         privateChatSessionService.update(one,queryWrapper);
-        return ResultUtil.ok();
+        return ResultUtil.ok(message.getId());
     }
 
     @GetMapping("/message/{id}")

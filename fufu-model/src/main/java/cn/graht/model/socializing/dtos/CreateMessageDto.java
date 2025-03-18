@@ -33,14 +33,4 @@ public class CreateMessageDto {
      * 消息类型
      */
     private String messageType;
-
-    /**
-     * 发送时间
-     */
-    private Date sendTime;
-
-    /**
-     * 是否已读 0 为否
-     */
-    private Integer isRead;
 }

@@ -23,7 +23,7 @@ create table user
     profile      varchar(512)                       null comment '个人简介',
     birthday     datetime                           not null comment '生日'
 )
-    comment '用户';
+comment '用户';
 
 #动态表
 drop table if exists dynamic;
@@ -240,15 +240,15 @@ use `fufu_app`;
 
 DROP TABLE IF EXISTS `luaScript`;
 CREATE TABLE `luaScript` (
-                             `id` bigint NOT NULL AUTO_INCREMENT,
-                             `scriptName` varchar(64) NOT NULL,
-                             `scriptContent` text NOT NULL,
-                             `sha1Checksum` varchar(40) NOT NULL,
-                             `createdTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                             `updateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                             PRIMARY KEY (`id`),
-                             UNIQUE KEY `scriptName` (`scriptName`),
-                             UNIQUE KEY `sha1Checksum` (`sha1Checksum`)
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `scriptName` varchar(64) NOT NULL,
+    `scriptContent` text NOT NULL,
+    `sha1Checksum` varchar(40) NOT NULL,
+    `createdTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `scriptName` (`scriptName`),
+    UNIQUE KEY `sha1Checksum` (`sha1Checksum`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='lua脚本';
 LOCK TABLES `luaScript` WRITE;
 INSERT INTO `luaScript` VALUES (1,'SocializingIsFocusAndFansLuaScript','local user_id = KEYS[1]\nlocal focus_user_id = KEYS[2]\n\nlocal user_keys = {}\nfor i = 1, 4 do\n    table.insert(user_keys, \"fufu:socializing:focus:zset:\" .. user_id .. \":\" .. i)\nend\n\nlocal focus_keys = {}\nfor i = 1, 4 do\n    table.insert(focus_keys, \"fufu:socializing:focus:zset:\" .. focus_user_id .. \":\" .. i)\nend\n\nlocal user_contains_focus = false\nfor _, key in ipairs(user_keys) do\n    if redis.call(\"ZSCORE\", key, focus_user_id) then\n        user_contains_focus = true\n        break\n    end\nend\n\nif not user_contains_focus then\n    return 0\nend\n\nlocal focus_contains_user = false\nfor _, key in ipairs(focus_keys) do\n    if redis.call(\"ZSCORE\", key, user_id) then\n        focus_contains_user = true\n        break\n    end\nend\n\nif not focus_contains_user then\n    return 0\nend\nreturn 1','79cb1814f86350da8e2f5779841b2bc582bbdb22','2025-02-20 02:27:35','2025-02-21 01:39:23'),(2,'SocializingGetFocusListLuaScript','local user_id = KEYS[1]\nlocal pageSize = tonumber(ARGV[1])\nlocal pageNumber = tonumber(ARGV[2])\nlocal skip = (pageNumber - 1) * pageSize\n\nlocal user_keys = {}\nfor i = 1, 4 do\n    table.insert(user_keys, \"fufu:socializing:focus:zset:\" .. user_id .. \":\" .. i)\nend\n\nlocal pagedResult = {}\nlocal totalCollected = 0\n\nfor _, key in ipairs(user_keys) do\n    local count = redis.call(\"ZCARD\", key)\n    if count <= skip then\n        skip = skip - count\n    else\n        local start_index = skip\n        local stop_index = skip + pageSize - 1 - totalCollected\n        local members = redis.call(\"ZRANGE\", key, start_index, stop_index)\n        for _, member in ipairs(members) do\n            table.insert(pagedResult, member)\n            totalCollected = totalCollected + 1\n            if totalCollected >= pageSize then\n                return pagedResult\n            end\n        end\n        skip = 0\n    end\nend\n\nreturn pagedResult','0aa9c11a8993ef733540e0c596108e6d05b1939f','2025-02-20 08:42:00','2025-02-24 02:59:02'),(3,'SocializingIsFocusLuaScript','local user_id = KEYS[1]\nlocal focus_user_id = KEYS[2]\n\nlocal user_keys = {}\nfor i = 1, 4 do\n    table.insert(user_keys, \"fufu:socializing:focus:zset:\" .. user_id .. \":\" .. i)\nend\n\nlocal user_contains_focus = false\nfor _, key in ipairs(user_keys) do\n    if redis.call(\"ZSCORE\", key, focus_user_id) then\n        user_contains_focus = true\n        break\n    end\nend\n\nif not user_contains_focus then\n    return 0\nend\n\nreturn 1','c55f7a354ea8b1bcf5f7056900dec074c3cfd799','2025-02-21 01:34:19','2025-02-21 01:39:23');

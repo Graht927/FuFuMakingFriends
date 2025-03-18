@@ -2,54 +2,80 @@ package cn.graht.socializing.chatServer.server;
 
 import cn.graht.socializing.chatServer.handler.ChatServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author GRAHT
  */
+@Component
+@Slf4j
+@Order(99)
 public class ChatServer {
-
     private final int port;
+    @Resource
+    private  ChatServerHandler chatServerHandler;
 
-    public ChatServer(int port) {
-        this.port = port;
+    public ChatServer() {
+        this.port = 29999;
+    }
+    @PostConstruct
+    public void init(){
+        CompletableFuture.runAsync(() -> {
+                    try {
+                        ChatServer.this.run();
+                    } catch (Exception e) {
+                        log.error("chat-server start failed", e);
+                        throw new RuntimeException(e);
+                    }
+                }).thenRun(() -> log.info("chat-server started"))
+                .exceptionally(e -> {
+                    log.error("chat-server start failed", e);
+                    return null;
+                });
     }
 
-    public void start() throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // 负责接收连接
-        EventLoopGroup workerGroup = new NioEventLoopGroup(); // 负责处理数据
-
+    public void run() throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel ch) {
-                            // 添加编码解码器和自定义处理器
-                            ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new StringEncoder());
-                            ch.pipeline().addLast(new ChatServerHandler());
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast(new HttpServerCodec());
+                            pipeline.addLast(new ChunkedWriteHandler());
+                            pipeline.addLast(new HttpObjectAggregator(8192));
+                            pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+                            pipeline.addLast(chatServerHandler);
                         }
-                    });
+                    })
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            // 绑定端口并启动服务器
-            ChannelFuture future = bootstrap.bind(port).sync();
-            System.out.println("Chat server started on port " + port);
-            future.channel().closeFuture().sync();
+            ChannelFuture f = b.bind(port).sync();
+            f.channel().closeFuture().sync();
         } finally {
-            bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        new ChatServer(8080).start();
     }
 }

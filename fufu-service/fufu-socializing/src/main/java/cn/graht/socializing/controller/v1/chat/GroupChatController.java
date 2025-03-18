@@ -160,19 +160,20 @@ public class GroupChatController {
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
-    public ResultApi<Boolean> createMessage(@RequestBody CreateGroupMessageDto messageDto) {
+    public ResultApi<Integer> createMessage(@RequestBody CreateGroupMessageDto messageDto) {
         GroupChatMessage message = new GroupChatMessage();
         BeanUtils.copyProperties(messageDto, message);
         boolean save = groupChatMessageService.save(message);
         ThrowUtils.throwIf(!save, ErrorCode.SYSTEM_ERROR);
+        GroupChatMessage byId = groupChatMessageService.getById(message.getId());
         LambdaQueryWrapper<GroupChatSession> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(GroupChatSession::getId, messageDto.getGroupId());
         GroupChatSession one = groupChatSessionService.getOne(queryWrapper);
         ThrowUtils.throwIf(ObjectUtil.isEmpty(one), ErrorCode.PARAMS_ERROR);
-        one.setLastMessageTime(message.getSendTime());
+        one.setLastMessageTime(byId.getSendTime());
         boolean update = groupChatSessionService.update(one, queryWrapper);
-        ThrowUtils.throwIf(!update, ErrorCode.SYSTEM_ERROR);
-        return ResultUtil.ok(true);
+        if (!update) return ResultUtil.ok(-1);
+        return ResultUtil.ok(message.getId());
     }
 
     @GetMapping("/message/{id}")
