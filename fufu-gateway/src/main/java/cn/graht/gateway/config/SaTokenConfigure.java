@@ -31,6 +31,7 @@ public class SaTokenConfigure {
                         .notMatch("/fufu-user/v1/login auth")
                         .notMatch("/fufu-user/v1/initGetUserIds")
                         .notMatch("/fufu-user/v1/register auth")
+                        .notMatch("/fufu-user/v1/checkPhoneCode/**")
                         //网关服务
                         .notMatch("/doc.html",
                                 "/swagger-ui/**",
@@ -74,6 +75,7 @@ public class SaTokenConfigure {
                         .notMatch("/fufu-user/v1/login auth")
                         .notMatch("/fufu-user/v1/register auth")
                         .notMatch("/fufu-user/v1/initGetUserIds")
+                        .notMatch("/fufu-user/v1/checkPhoneCode/**")
                         //网关服务
                         .notMatch("/doc.html",
                                 "/swagger-ui/**",

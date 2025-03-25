@@ -85,7 +85,8 @@ public class ThumbsupController {
         long index = hashToIndex(thumbsup.getUserId(), thumbsup.getDynamicId());
         bitSet.set(index);
         fuFuEventPublisher.doStuffAndPublishAnEvent(FuFuEventEnum.DYNAMIC_NOTICE.getValue(),
-                Map.of("type", NoticeType.THUMBS_UP.getValue(),"userId2",thumbsup.getUserId(),"dynamicId",thumbsup.getDynamicId().toString()));
+                Map.of("type", NoticeType.THUMBS_UP.getValue(),
+                        "userId2",thumbsup.getUserId(),"dynamicId",thumbsup.getDynamicId().toString()));
         //更新 动态的likeCount
         EditDynamicDto editDynamicDto = new EditDynamicDto();
         Dynamic dynamic = userFeignApi.getDynamicById(thumbsup.getDynamicId()).getData();
@@ -154,13 +155,12 @@ public class ThumbsupController {
         }
         return ResultUtil.ok(false);
     }
-    @GetMapping("/s/{dynamicId}/{uid}")
+    @GetMapping("/s/{dynamicId}")
     @Operation(summary = "获取总赞数", description = "获取总赞数")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
-    public ResultApi<Long> getThumbsupCount(@PathVariable Long dynamicId,@PathVariable String uid) {
+    public ResultApi<Long> getThumbsupCount(@PathVariable Long dynamicId) {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicId) || dynamicId < 0L, ErrorCode.PARAMS_ERROR);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(uid), ErrorCode.PARAMS_ERROR);
         //直接从redis中拿
         RHyperLogLog<Object> addHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_ADD_KEY + dynamicId);
         long addCount = addHyperLogLog.count();

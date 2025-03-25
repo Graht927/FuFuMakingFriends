@@ -35,6 +35,11 @@ public class Dynamic {
     private String images;
 
     /**
+     * 标签
+     */
+    private String title;
+
+    /**
      * 封面图片
      */
     private String coverImages;

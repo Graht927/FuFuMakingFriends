@@ -37,8 +37,8 @@ public class CommentsController {
         ThrowUtils.throwIf(ObjectUtils.isEmpty(cid) || cid < 0L, ErrorCode.PARAMS_ERROR);
         return ResultUtil.ok(commentsService.getParentCommentsByCid(cid,pageQuery));
     }
-    @PostMapping("/c/{dynamicId}")
-    @Operation(summary = "通过dynamicId获取子级评论信息|分页", description = "通过cid获取子级评论信息")
+    @PostMapping("/c/{cid}")
+    @Operation(summary = "通过cid获取子级评论信息|分页", description = "通过cid获取子级评论信息")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")

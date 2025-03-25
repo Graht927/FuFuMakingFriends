@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.graht.common.constant.SystemConstant;
 import cn.graht.common.exception.ThrowUtils;
+import io.netty.util.internal.StringUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
@@ -75,21 +76,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         SaTokenInfo tokenInfo = null;
         try {
             ThrowUtils.throwIf(ObjectUtils.isEmpty(loginDto) ||
-                            StringUtils.isAnyBlank(loginDto.getUserPassword(), loginDto.getPhone()) ||
+                            StringUtils.isAnyBlank(loginDto.getPhone()) ||
                             loginDto.getPhoneCode().length() != 6,
                     ErrorCode.LOGIN_PARAMS_ERROR);
             //校验手机验证码是否正确
-            //todo 测试期间不浪费手机短信费用
-//            String redisKey = RedisKeyConstants.SMS_LOGIN_PREFIX + loginDto.getPhone();
-//            String captcha = stringRedisTemplate.opsForValue().get(redisKey);
-//            ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
-
-            String userPassword = DigestUtils.md5DigestAsHex((SystemConstant.SALT + loginDto.getUserPassword()).getBytes());
-            User user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()).eq(User::getUserPassword, userPassword));
-            ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
+            String redisKey = RedisKeyConstants.SMS_LOGIN_PREFIX + loginDto.getPhone();
+            String captcha = stringRedisTemplate.opsForValue().get(redisKey);
+            ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
+            User user = null;
+            if (StringUtils.isNotBlank(loginDto.getUserPassword())){
+                String userPassword = DigestUtils.md5DigestAsHex((SystemConstant.SALT + loginDto.getUserPassword()).getBytes());
+                user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()).eq(User::getUserPassword, userPassword));
+                ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
+            }else {
+                user = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, loginDto.getPhone()));
+                ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
+            }
             StpUtil.login(user.getId());
-
-//            stringRedisTemplate.delete(redisKey);
+            stringRedisTemplate.delete(redisKey);
             HashMap<String, Object> eventParams = new HashMap<>();
             eventParams.put("user", user);
             eventParams.put("loginDto", loginDto);
@@ -141,6 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                             || StringUtils.isBlank(registerDto.getPhoneCode())
                             || StringUtils.isBlank(registerDto.getUserPassword())
                             || StringUtils.isBlank(registerDto.getCheckPassword())
+                            || ObjectUtils.isEmpty(registerDto.getBirthday())
                     , ErrorCode.LOGIN_PARAMS_ERROR);
             int nicknameLength = registerDto.getNickname().length();
             int phoneCodeLength = registerDto.getPhoneCode().length();
@@ -157,8 +162,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             long phoneCount = count(new LambdaQueryWrapper<User>().eq(User::getPhone, registerDto.getPhone()));
             ThrowUtils.throwIf(phoneCount == 1, ErrorCode.REGISTER_PHONE_ERROR);
             //判断nickname是否已存在
-            long nicknameCount = count(new LambdaQueryWrapper<User>().eq(User::getNickname, registerDto.getNickname()));
-            ThrowUtils.throwIf(nicknameCount == 1, ErrorCode.REGISTER_PHONE_ERROR);
+           /* long nicknameCount = count(new LambdaQueryWrapper<User>().eq(User::getNickname, registerDto.getNickname()));
+            ThrowUtils.throwIf(nicknameCount == 1, ErrorCode.REGISTER_NICKNAME_ERROR);*/
             //否 => 判断验证码是否正确
             String redisKey = RedisKeyConstants.SMS_REGISTER_PREFIX + registerDto.getPhone();
             String captcha = stringRedisTemplate.opsForValue().get(redisKey);
@@ -170,6 +175,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setPhone(registerDto.getPhone());
             user.setUserPassword(DigestUtils.md5DigestAsHex((SystemConstant.SALT + registerDto.getUserPassword()).getBytes()));
             user.setAddr(registerDto.getAddr());
+            user.setBirthday(registerDto.getBirthday());
+            user.setAvatarUrl("/2025/03/23/f7afe779-8cf0-4253-a1a5-a918f4e61256.jpg");
             return save(user);
         } finally {
             lock.unlock();

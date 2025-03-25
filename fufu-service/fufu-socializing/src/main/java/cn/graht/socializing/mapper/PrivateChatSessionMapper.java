@@ -1,7 +1,10 @@
 package cn.graht.socializing.mapper;
 
 import cn.graht.model.socializing.pojos.PrivateChatSession;
+import cn.graht.model.socializing.vos.TempPrivateSessionVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
 * @author Graht
@@ -11,6 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface PrivateChatSessionMapper extends BaseMapper<PrivateChatSession> {
 
+    List<TempPrivateSessionVo> selectListByUserId(String userId);
 }
 
 

@@ -3,6 +3,8 @@ package cn.graht.model.user.dtos;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author GRAHT
  */
@@ -34,6 +36,9 @@ public class RegisterDto {
      */
     @Schema(description = "用户密码二次校验")
     private String checkPassword;
+
+    @Schema(description = "生日")
+    private Date birthday;
     /**
      * 地址 不需要填
      */

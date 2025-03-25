@@ -19,4 +19,21 @@
         lastMessageTime,createTime,updateTime,
         isDelete
     </sql>
+    <select id="selectListByUserId" resultType="cn.graht.model.socializing.vos.TempPrivateSessionVo">
+        select a.id,
+               a.lastMessageTime,
+               b.content  lastMessageContent,
+               CASE
+                   WHEN a.userId1 = #{userId} THEN a.userId2
+                   ELSE a.userId1
+                   END AS uid
+        from private_chat_session a
+                 left join private_chat_Message b
+                           on a.id = b.sessionId
+                               and b.isDelete = 0
+                               and a.lastMessageTime = b.sendTime
+        where a.isDelete = 0
+          and (a.userId1 = #{userId}
+            or a.userId2 = #{userId})
+    </select>
 </mapper>

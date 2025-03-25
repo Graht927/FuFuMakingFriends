@@ -25,6 +25,13 @@ public class EditDynamicDto {
      * 图片
      */
     private List<String> images;
+
+    /**
+     * 标签
+     */
+    @Schema(description = "标签")
+    private String title;
+
     /**
      * 封面图片
      */

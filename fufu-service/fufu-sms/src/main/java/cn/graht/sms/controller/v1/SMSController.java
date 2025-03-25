@@ -74,6 +74,7 @@ public class SMSController {
                         redisValue,
                         RedisKeyConstants.SMS_TIMEOUT,
                         TimeUnit.SECONDS);
+                return ResultUtil.ok();
             }
             if ( !("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())) && !ObjectUtils.isEmpty(sendSmsResponse) && "OK".equals(sendSmsResponse.getBody().getMessage())) {
                 String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
@@ -89,7 +90,7 @@ public class SMSController {
         } finally {
             lock.unlock();
         }
-        return ResultUtil.error(ErrorCode.SYSTEM_ERROR);
+        return ResultUtil.ok("发送成功");
     }
 
     private static @NotNull String getTemplateParams(SMSRequestParam smsRequestParam, int captcha) {

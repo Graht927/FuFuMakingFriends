@@ -44,7 +44,8 @@ public class UserRegisterController {
                         || StringUtils.isBlank(registerDto.getPhoneCode())
                         || StringUtils.isBlank(registerDto.getUserPassword())
                         || StringUtils.isBlank(registerDto.getCheckPassword())
-                , ErrorCode.LOGIN_PARAMS_ERROR);
+                        || ObjectUtils.isEmpty(registerDto.getBirthday())
+                , ErrorCode.REGISTER_PARAMS_ERROR);
         int nicknameLength = registerDto.getNickname().length();
         int phoneCodeLength = registerDto.getPhoneCode().length();
         ThrowUtils.throwIf(nicknameLength<3||nicknameLength>8,ErrorCode.REGISTER_PARAMS_ERROR);

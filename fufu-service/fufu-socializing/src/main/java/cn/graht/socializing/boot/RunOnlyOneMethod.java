@@ -97,7 +97,7 @@ public class RunOnlyOneMethod implements CommandLineRunner {
 
     private void start() throws Exception {
         log.info("执行初始化开始");
-        int pageSize = 1;
+        int pageSize = 100;
         int page = 1;
         PageQuery pageQuery = new PageQuery(pageSize, page);
         //获取全部用户uid
@@ -108,6 +108,7 @@ public class RunOnlyOneMethod implements CommandLineRunner {
                 || ObjectUtils.isEmpty(allUserId.getData())
                 || allUserId.getCode() != ErrorCode.SUCCESS.getCode(), ErrorCode.PARAMS_ERROR);
         List<String> userIds = allUserId.getData().getUserIds();
+        log.info("获取到用户: {}", userIds);
         ((Runnable) () -> {
             userIds.forEach(this::initRedisFocusUserVo);
         }).run();
@@ -123,6 +124,7 @@ public class RunOnlyOneMethod implements CommandLineRunner {
                     || ObjectUtils.isEmpty(allUserId1.getData())
                     || allUserId1.getCode() != ErrorCode.SUCCESS.getCode(), ErrorCode.PARAMS_ERROR);
             List<String> userIds1 = allUserId1.getData().getUserIds();
+            log.info("获取到用户: {}", userIds1);
             ((Runnable) () -> {
                 userIds1.forEach(this::initRedisFocusUserVo);
             }).run();

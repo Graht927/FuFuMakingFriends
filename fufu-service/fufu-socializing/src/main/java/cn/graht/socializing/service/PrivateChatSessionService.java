@@ -1,7 +1,10 @@
 package cn.graht.socializing.service;
 
 import cn.graht.model.socializing.pojos.PrivateChatSession;
+import cn.graht.model.socializing.vos.SessionVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author Graht
@@ -10,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PrivateChatSessionService extends IService<PrivateChatSession> {
 
+    List<SessionVo> selectListByUserId(String userId);
 }

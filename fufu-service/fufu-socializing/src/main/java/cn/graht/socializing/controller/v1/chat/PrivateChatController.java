@@ -8,8 +8,10 @@ import cn.graht.common.commons.ResultUtil;
 import cn.graht.common.exception.ThrowUtils;
 import cn.graht.model.socializing.dtos.CreateMessageDto;
 import cn.graht.model.socializing.dtos.CreatePrivateSessionDto;
+import cn.graht.model.socializing.pojos.GroupChatMember;
 import cn.graht.model.socializing.pojos.PrivateChatMessage;
 import cn.graht.model.socializing.pojos.PrivateChatSession;
+import cn.graht.model.socializing.vos.SessionVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.service.PrivateChatMessageService;
 import cn.graht.socializing.service.PrivateChatSessionService;
@@ -47,6 +49,18 @@ public class PrivateChatController {
         PrivateChatSession session1 = new PrivateChatSession();
         BeanUtils.copyProperties(session, session1);
         return ResultUtil.ok(privateChatSessionService.save(session1));
+    }
+
+    @GetMapping("/session/all/{userId}")
+    @Operation(summary = "获取用户所有会话", description = "获取用户会话列表")
+    @ApiResponse(responseCode = "200", description = "SessionVos")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    @ApiResponse(responseCode = "40002", description = "结果为空")
+    public ResultApi<List<SessionVo>> getSessionList(@PathVariable String userId) {
+        LambdaQueryWrapper<GroupChatMember> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(GroupChatMember::getUserId, userId);
+        List<SessionVo> list = privateChatSessionService.selectListByUserId(userId);
+        return ResultUtil.ok(list);
     }
 
 
@@ -88,6 +102,9 @@ public class PrivateChatController {
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     public ResultApi<Integer> createMessage(@RequestBody CreateMessageDto messageDto) {
+        String loginId = (String) StpUtil.getLoginId();
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(loginId), ErrorCode.NOT_LOGIN_ERROR);
+        ThrowUtils.throwIf(loginId.equals(messageDto.getSenderId()), ErrorCode.PARAMS_ERROR);
         PrivateChatMessage message = new PrivateChatMessage();
         BeanUtils.copyProperties(messageDto, message);
         Integer sessionId = message.getSessionId();
@@ -95,7 +112,10 @@ public class PrivateChatController {
         queryWrapper.eq(PrivateChatSession::getId, sessionId);
         PrivateChatSession one = privateChatSessionService.getOne(queryWrapper);
         boolean save = privateChatMessageService.save(message);
-        one.setLastMessageTime(message.getSendTime());
+        ThrowUtils.throwIf(!save, ErrorCode.SYSTEM_ERROR);
+        PrivateChatMessage one1 = privateChatMessageService.lambdaQuery().eq(PrivateChatMessage::getId, message.getId()).one();
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(one1), ErrorCode.NULL_ERROR);
+        one.setLastMessageTime(one1.getSendTime());
         privateChatSessionService.update(one,queryWrapper);
         return ResultUtil.ok(message.getId());
     }
@@ -126,8 +146,10 @@ public class PrivateChatController {
         LambdaQueryWrapper<PrivateChatSession> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(PrivateChatSession::getId, sessionId);
         PrivateChatSession one = privateChatSessionService.getOne(queryWrapper);
-        ThrowUtils.throwIf(ObjectUtil.isEmpty(one), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(one)|| !(one.getUserId1().equals(loginId) || one.getUserId2().equals(loginId)), ErrorCode.PARAMS_ERROR);
         Page<PrivateChatMessage> privateChatMessagePage = new Page<>(pageQuery.getPageSize(), pageQuery.getPageNum());
         return ResultUtil.ok(privateChatMessageService.lambdaQuery().eq(PrivateChatMessage::getSessionId, sessionId).page(privateChatMessagePage).getRecords());
     }
+
+
 }

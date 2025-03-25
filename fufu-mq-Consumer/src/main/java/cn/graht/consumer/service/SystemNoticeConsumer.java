@@ -5,7 +5,7 @@ import cn.graht.common.commons.ResultApi;
 import cn.graht.common.constant.GroupConsumers;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.exception.ThrowUtils;
-import cn.graht.feignApi.socializing.NoticeFeignApi;
+import cn.graht.feignApi.socializing.SocializingFeignApi;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import cn.graht.model.socializing.dtos.SystemNoticeDto;
 import cn.hutool.json.JSONUtil;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class SystemNoticeConsumer implements RocketMQListener<String> {
 
     @Resource
-    private NoticeFeignApi noticeFeignApi;
+    private SocializingFeignApi noticeFeignApi;
 
     @Override
     public void onMessage(String message) {

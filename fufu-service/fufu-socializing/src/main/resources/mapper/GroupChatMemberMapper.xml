@@ -19,4 +19,21 @@
         joinTime,role,updateTime,
         isDelete
     </sql>
+    <select id="selectListByUid" resultType="cn.graht.model.socializing.vos.TempGroupSessionVo">
+        select group_chat_session.id,
+               group_chat_session.name,
+               group_chat_session.lastMessageTime,
+               group_chat_session.avatarUrl,
+               group_chat_message.content lastMessageContent,
+               group_chat_message.senderId senderId
+        from group_chat_session
+                 left join group_chat_message on group_chat_message.sendTime = group_chat_session.lastMessageTime
+            and group_chat_message.isDelete = 0
+            and group_chat_message.groupId = group_chat_session.id
+        where group_chat_session.id in
+              (select groupId
+               from group_chat_member
+               where userId = #{userId} and group_chat_member.isDelete = 0)
+          and group_chat_session.isDelete = 0;
+    </select>
 </mapper>

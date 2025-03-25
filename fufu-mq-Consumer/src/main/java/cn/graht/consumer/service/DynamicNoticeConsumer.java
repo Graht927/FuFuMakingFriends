@@ -5,10 +5,9 @@ import cn.graht.common.commons.ResultApi;
 import cn.graht.common.constant.GroupConsumers;
 import cn.graht.common.constant.ProducerTopics;
 import cn.graht.common.exception.ThrowUtils;
-import cn.graht.feignApi.socializing.NoticeFeignApi;
+import cn.graht.feignApi.socializing.SocializingFeignApi;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import cn.graht.model.socializing.dtos.DynamicNoticeDto;
-import cn.graht.model.socializing.dtos.SystemNoticeDto;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ import java.util.Map;
 @RocketMQMessageListener(topic = ProducerTopics.DYNAMIC_NOTICE_TOPIC, consumerGroup = GroupConsumers.GROUP_CONSUMER_DYNAMIC_NOTICE)
 public class DynamicNoticeConsumer implements RocketMQListener<String> {
     @Resource
-    private NoticeFeignApi noticeFeignApi;
+    private SocializingFeignApi noticeFeignApi;
 
     @Override
     public void onMessage(String message) {

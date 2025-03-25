@@ -33,4 +33,10 @@ public class CreateDynamicDto {
     @Schema(description = "封面图片")
     private String coverImages;
 
+    /**
+     * 标签
+     */
+    @Schema(description = "标签")
+    private String title;
+
 }

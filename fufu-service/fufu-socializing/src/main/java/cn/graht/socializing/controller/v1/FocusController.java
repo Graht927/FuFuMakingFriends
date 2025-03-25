@@ -78,7 +78,7 @@ public class FocusController {
         }
         return ResultUtil.error(ErrorCode.SYSTEM_ERROR);
     }
-    @PostMapping("/del")
+    @DeleteMapping
     @Operation(summary = "取消关注", description = "取消关注")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")

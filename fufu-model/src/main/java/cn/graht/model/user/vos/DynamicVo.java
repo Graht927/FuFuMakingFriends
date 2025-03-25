@@ -3,6 +3,7 @@ package cn.graht.model.user.vos;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class DynamicVo {
@@ -16,21 +17,25 @@ public class DynamicVo {
      */
     private String userId;
 
-
     /**
      * 动态内容
      */
     private String content;
 
     /**
+     * 标签
+     */
+    private String title;
+
+    /**
      * 图片
      */
-    private String images;
+    private List<String> images;
 
     /**
      * 封面图片
      */
-    private String coverImages;
+    private String image;
 
     /**
      * 点赞数
@@ -38,18 +43,15 @@ public class DynamicVo {
     private Integer likeCount;
 
     /**
-     * 评论数
-     */
-    private Integer commentCount;
-
-    /**
-     * 转发数
-     */
-    private Integer forwardCount;
-
-    /**
      * 创建|发布时间
      */
     private Date createTime;
+
+    private final Integer size = 26;
+    private final String model = "dynamic";
+
+    private Boolean isLike;
+
+    private UserDynamicVo author;
 
 }
