@@ -10,9 +10,10 @@ import lombok.Data;
 public class NoticeVo {
     private Integer id;
 
-    private String uid;
+    private String userId;
     private String type;
     private String content;
+    private String userId2;
 
     private String dynamicId;
     private String coverImage;

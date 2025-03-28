@@ -44,6 +44,8 @@ public class DynamicNoticeConsumer implements RocketMQListener<String> {
             noticeDto.setCoverImages(info.get("coverImages"));
             HashMap<String,String> map = new HashMap<>();
             map.put("coverImages",info.get("coverImages"));
+            map.put("dynamicId",info.get("dynamicId"));
+            map.put("userId2Id",info.get("userId2Id"));
             map.put("userId2Name",info.get("userId2Name"));
             map.put("userId2Avatar",info.get("userId2Avatar"));
             map.put("message","点赞了你的动态");

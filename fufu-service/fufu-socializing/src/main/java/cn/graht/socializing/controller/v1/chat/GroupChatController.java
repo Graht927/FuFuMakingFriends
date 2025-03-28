@@ -13,10 +13,13 @@ import cn.graht.model.socializing.dtos.EditGroupChatMemberDto;
 import cn.graht.model.socializing.pojos.GroupChatMember;
 import cn.graht.model.socializing.pojos.GroupChatMessage;
 import cn.graht.model.socializing.pojos.GroupChatSession;
+import cn.graht.model.socializing.vos.MessageVo;
 import cn.graht.model.socializing.vos.SessionVo;
+import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.service.GroupChatMemberService;
 import cn.graht.socializing.service.GroupChatMessageService;
 import cn.graht.socializing.service.GroupChatSessionService;
+import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,6 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -44,6 +48,9 @@ public class GroupChatController {
 
     @Resource
     private GroupChatMessageService groupChatMessageService;
+
+    @Resource
+    private UserToolUtils userToolUtils;
 
     @PostMapping("/session")
     @Operation(summary = "创建群聊会话", description = "创建群聊会话")
@@ -212,13 +219,24 @@ public class GroupChatController {
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
-    public ResultApi<List<GroupChatMessage>> getMessagesBySessionId(@PathVariable Integer sessionId,@RequestBody PageQuery pageQuery) {
+    public ResultApi<List<MessageVo>> getMessagesBySessionId(@PathVariable Integer sessionId, @RequestBody PageQuery pageQuery) {
         String loginId = (String) StpUtil.getLoginId();
         List<GroupChatMember> list = groupChatMemberService.lambdaQuery().eq(GroupChatMember::getGroupId, sessionId).list();
         ThrowUtils.throwIf(list.stream().noneMatch(groupChatMember -> groupChatMember.getUserId().equals(loginId)),ErrorCode.NO_AUTH);
         Page<GroupChatMessage> groupChatMessagePage = new Page<>(pageQuery.getPageSize(), pageQuery.getPageNum());
-        List<GroupChatMessage> records = groupChatMessageService.lambdaQuery().eq(GroupChatMessage::getGroupId, sessionId).page(groupChatMessagePage).getRecords();
-        return ResultUtil.ok(records);
+        List<GroupChatMessage> records = groupChatMessageService.lambdaQuery().eq(GroupChatMessage::getGroupId, sessionId).orderByDesc(GroupChatMessage::getSendTime)
+                .page(groupChatMessagePage).getRecords();
+        List<MessageVo> res = records.stream().map(t -> {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId(t.getId());
+            messageVo.setMessage(t.getContent());
+            UserVo user = userToolUtils.getUserFromCacheOrFeign(t.getSenderId());
+            messageVo.setSenderAvatar(user.getAvatarUrl());
+            messageVo.setIsSelf(t.getSenderId().equals(loginId));
+            messageVo.setSendTime(t.getSendTime());
+            return messageVo;
+        }).toList();
+        return ResultUtil.ok(res);
     }
 
 

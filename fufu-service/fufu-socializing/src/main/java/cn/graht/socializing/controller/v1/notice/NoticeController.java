@@ -31,7 +31,7 @@ public class NoticeController {
 
     @Resource
     private NoticeService noticeService;
-    @PostMapping("/{uid}}")
+    @PostMapping("/{uid}")
     @Operation(summary = "获取用户通知|分页", description = "获取用户通知|分页")
     @ApiResponse(responseCode = "200", description = "返回信息")
     @ApiResponse(responseCode = "40000", description = "参数错误")
@@ -42,5 +42,15 @@ public class NoticeController {
         String loginId = (String) StpUtil.getLoginId();
         ThrowUtils.throwIf(!loginId.equals(uid), ErrorCode.NO_AUTH);
         return ResultUtil.ok(noticeService.getAllNotice(uid, pageQuery));
+    }
+    @GetMapping("/{uid}/{pageSize}")
+    @Operation(summary = "获取总页数", description = "总页数")
+    @ApiResponse(responseCode = "200", description = "返回总页数")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    public ResultApi<Integer> getNotice(@PathVariable String uid, @PathVariable Long pageSize) {
+        ThrowUtils.throwIf(ObjectUtil.isEmpty(uid), ErrorCode.PARAMS_ERROR);
+        String loginId = (String) StpUtil.getLoginId();
+        ThrowUtils.throwIf(!loginId.equals(uid), ErrorCode.NO_AUTH);
+        return ResultUtil.ok(noticeService.getCountPage(uid, pageSize));
     }
 }

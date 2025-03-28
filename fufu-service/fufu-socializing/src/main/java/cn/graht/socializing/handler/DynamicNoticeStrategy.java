@@ -11,11 +11,13 @@ import cn.graht.feignApi.user.UserFeignApi;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import cn.graht.model.socializing.dtos.DynamicNoticeDto;
 import cn.graht.model.user.pojos.Dynamic;
+import cn.graht.model.user.vos.DynamicVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.common.enums.NoticeType;
 import cn.graht.model.socializing.pojos.notice.DynamicNoticeThumbsUpContent;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
 import cn.graht.socializing.utils.UserRedissonCache;
+import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import jakarta.annotation.Resource;
@@ -44,6 +46,8 @@ public class DynamicNoticeStrategy implements FuFuEventStrategy {
     private String serviceName;
     @Resource
     private UserRedissonCache userRedissonCache;
+    @Resource
+    private UserToolUtils userToolUtils;
     @Override
     public void handle(Map<String, String> param) {
         //处理逻辑
@@ -53,9 +57,9 @@ public class DynamicNoticeStrategy implements FuFuEventStrategy {
             //谁点赞了谁的动态
             String userId2 = param.get("userId2");
             String dynamicId = param.get("dynamicId");
-            UserVo userVo = getUserFromCacheOrFeign(userId2);
+            UserVo userVo = userToolUtils.getUserFromCacheOrFeign(userId2);
             DynamicNoticeDto dynamicNoticeDto = new DynamicNoticeDto();
-            ResultApi<Dynamic> dynamicById = userFeignApi.getDynamicById(Long.parseLong(dynamicId));
+            ResultApi<DynamicVo> dynamicById = userFeignApi.getDynamicById(Long.parseLong(dynamicId));
             ThrowUtils.throwIf(ObjectUtils.isEmpty(dynamicById)
                     || ObjectUtils.isEmpty(dynamicById.getData())
                     || dynamicById.getCode() != ErrorCode.SUCCESS.getCode(), ErrorCode.PARAMS_ERROR);
@@ -67,7 +71,7 @@ public class DynamicNoticeStrategy implements FuFuEventStrategy {
             dynamicNoticeThumbsUpContent.setUserId2Name(userVo.getNickname());
             dynamicNoticeThumbsUpContent.setUserId2Avatar(userVo.getAvatarUrl());
             dynamicNoticeThumbsUpContent.setUserId2(userId2);
-            dynamicNoticeThumbsUpContent.setCoverImages(dynamicById.getData().getCoverImages());
+            dynamicNoticeThumbsUpContent.setCoverImages(dynamicById.getData().getImage());
             dynamicNoticeThumbsUpContent.setType(NoticeType.THUMBS_UP.getValue());
             dynamicNoticeDto.setType(NoticeType.THUMBS_UP.getValue());
             dynamicNoticeDto.setContent(JSONUtil.toJsonStr(dynamicNoticeThumbsUpContent));
@@ -91,26 +95,5 @@ public class DynamicNoticeStrategy implements FuFuEventStrategy {
             headers.add("reqCode", reqCode);
             producerApi.sendMsgAsync(sendMSGRequestParams, headers);
         }
-    }
-    private UserVo getUserFromCacheOrFeign(String userId) {
-        UserVo userVo = null;
-        userVo = caffeineCacheService.getUserCache(userId);
-        if (ObjectUtils.isNotEmpty(userVo)) {
-            return userVo;
-        }
-        String user = userRedissonCache.getUser(userId);
-        if (StringUtils.isNotBlank(user)) {
-            userVo = JSONUtil.toBean(user, UserVo.class);
-            caffeineCacheService.putUserCache(userId, userVo);
-            return userVo;
-        }
-        //如果redis中不存在 调用feign 并且将结果存储到redis中
-        ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(userId);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(userInfo)
-                || ObjectUtils.isEmpty(userInfo.getData())
-                || userInfo.getCode() != ErrorCode.SUCCESS.getCode(), ErrorCode.PARAMS_ERROR);
-        userVo = userInfo.getData();
-        caffeineCacheService.putUserCache(userId, userVo);
-        return userVo;
     }
 }

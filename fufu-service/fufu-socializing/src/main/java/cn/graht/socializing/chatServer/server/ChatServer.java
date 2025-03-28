@@ -29,13 +29,14 @@ import java.util.concurrent.CompletableFuture;
 public class ChatServer {
     private final int port;
     @Resource
-    private  ChatServerHandler chatServerHandler;
+    private ChatServerHandler chatServerHandler;
 
     public ChatServer() {
         this.port = 29999;
     }
+
     @PostConstruct
-    public void init(){
+    public void init() {
         CompletableFuture.runAsync(() -> {
                     try {
                         ChatServer.this.run();

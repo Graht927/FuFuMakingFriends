@@ -9,10 +9,13 @@ import cn.graht.model.socializing.dtos.CreateGroupMessageDto;
 import cn.graht.model.socializing.dtos.CreateMessageDto;
 import cn.graht.model.socializing.pojos.GroupChatMember;
 import cn.graht.model.socializing.pojos.PrivateChatSession;
+import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.controller.v1.chat.GroupChatController;
 import cn.graht.socializing.controller.v1.chat.PrivateChatController;
 import cn.graht.socializing.service.GroupChatMemberService;
+import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -28,6 +31,7 @@ import org.redisson.api.RSetCache;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +62,10 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
     @Resource
     private PrivateChatController privateChatController;
 
+    @Resource
+    private UserToolUtils userToolUtils;
+    private static final AttributeKey<String> USER_ID_ATTR = AttributeKey.valueOf("userId");
+
 
     /**
      * 处理接收到的WebSocket消息。
@@ -71,24 +79,35 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         String message = msg.text();
+        if (StringUtils.startsWith(message,"online:")){
+            String[] split = message.split(":");
+            if (split.length != 3) return;
+            String userId = split[1];
+            String channelId = split[2];
+            ctx.channel().attr(USER_ID_ATTR).set(userId);
+            setOnlineUser(userId,ctx);
+            log.info("User registry redis by channel");
+            return;
+        }
+        log.info("Received WebSocket message: {}", message);
         String[] parts = message.split(":");
         if (parts.length != 4) {
             System.out.println("Invalid message format.");
             return;
         }
-        //todo 后期把发送者统一改为 当前登录用户
+        // todo 后期把发送者统一改为 当前登录用户
         String senderId = parts[0];
         String type = parts[1];
         String sessionId = parts[2];
         String content = parts[3];
         // 续期发送者的过期时间 [当前登录用户的Id 续期]
-        renewUserExpiry(senderId);
+        renewUserExpiry(senderId,ctx);
         if (ChatTypeEnum.PRIVATE.getCode().toString().equals(type)) {
             ResultApi<PrivateChatSession> privateSession = privateChatController.getSession(Integer.parseInt(sessionId));
             ThrowUtils.throwIf(Objects.isNull(privateSession) || Objects.isNull(privateSession.getData()), ErrorCode.SYSTEM_ERROR);
             PrivateChatSession p_session = privateSession.getData();
             if (senderId.equals(p_session.getUserId1())) {
-                //给userId2发消息
+                // 给userId2发消息
                 CreateMessageDto createMessageDto = new CreateMessageDto();
                 createMessageDto.setSessionId(Integer.parseInt(sessionId));
                 createMessageDto.setSenderId(senderId);
@@ -99,10 +118,17 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
                 ThrowUtils.throwIf(Objects.isNull(isAnd) || isAnd.getData() == -1, ErrorCode.SYSTEM_ERROR);
                 if (getOnlineUserNodeId(senderId)) {
                     // 如果接收者在线，将消息发送到对应的节点
-                    sendMessageToNode(isAnd.getData(), p_session.getUserId2(), content);
+                    Map<String,String> param = new HashMap<>();
+                    param.put("messageId",isAnd.getData().toString());
+                    param.put("senderId",senderId);
+                    UserVo userVo1 = userToolUtils.getUserFromCacheOrFeign(senderId);
+                    param.put("senderAvatar",userVo1.getAvatarUrl());
+                    param.put("message",content);
+                    param.put("messageType","text");
+                    sendMessageToNode(p_session.getUserId2(), param);
                 }
             } else if (senderId.equals(p_session.getUserId2())) {
-                //给userId1发消息
+                // 给userId1发消息
                 CreateMessageDto createMessageDto = new CreateMessageDto();
                 createMessageDto.setSessionId(Integer.parseInt(sessionId));
                 createMessageDto.setSenderId(senderId);
@@ -113,13 +139,20 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
                 ThrowUtils.throwIf(Objects.isNull(isAnd) || isAnd.getData() == -1, ErrorCode.SYSTEM_ERROR);
                 if (getOnlineUserNodeId(senderId)) {
                     // 如果接收者在线，将消息发送到对应的节点
-                    sendMessageToNode(isAnd.getData(), p_session.getUserId1(), content);
+                    Map<String,String> param = new HashMap<>();
+                    param.put("messageId",isAnd.getData().toString());
+                    param.put("senderId",senderId);
+                    UserVo userVo1 = userToolUtils.getUserFromCacheOrFeign(senderId);
+                    param.put("senderAvatar",userVo1.getAvatarUrl());
+                    param.put("message",content);
+                    param.put("messageType","text");
+                    sendMessageToNode(p_session.getUserId1(), param);
                 }
             } else {
                 log.error("message send fail");
             }
         } else if (ChatTypeEnum.GROUP.getCode().toString().equals(type)) {
-            //写入消息到数据库
+            // 写入消息到数据库
             CreateGroupMessageDto createGroupMessageDto = new CreateGroupMessageDto();
             createGroupMessageDto.setGroupId(Integer.parseInt(sessionId));
             createGroupMessageDto.setSenderId(senderId);
@@ -133,12 +166,20 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
             list.forEach(groupChatMember -> {
                 if (!groupChatMember.getUserId().equals(senderId)) {
                     if (getOnlineUserNodeId(groupChatMember.getUserId())) {
-                        sendMessageToNode(message1.getData(), groupChatMember.getUserId(), content);
+                        UserVo userVo = userToolUtils.getUserFromCacheOrFeign(groupChatMember.getUserId());
+                        String senderAvatar = userVo.getAvatarUrl();
+                        Map<String,String> param = new HashMap<>();
+                        param.put("messageId",message1.getData().toString());
+                        param.put("senderId",senderId);
+                        UserVo userVo1 = userToolUtils.getUserFromCacheOrFeign(senderId);
+                        param.put("senderAvatar",userVo1.getAvatarUrl());
+                        param.put("message",content);
+                        param.put("messageType","text");
+                        sendMessageToNode(groupChatMember.getUserId(), param);
                     }
                 }
             });
         }
-
     }
 
     /**
@@ -149,13 +190,15 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-//        String userId = (String) StpUtil.getLoginId();
-        //随机生成一个uid
+        // 获取 userId
         String userId = IdUtil.getSnowflakeNextIdStr();
-        log.info("User " + userId + " connected.");
         if (StringUtils.isNotBlank(userId)) {
-            setOnlineUser(userId, ctx);
-            ctx.channel().attr(AttributeKey.valueOf("userId")).set(userId);
+            ctx.executor().schedule(() -> {
+                Map<String,String> stringStringHashMap = new HashMap<>();
+                stringStringHashMap.put("id", "-1");
+                stringStringHashMap.put("content", userId);
+                ctx.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(stringStringHashMap)));
+            },100,TimeUnit.MILLISECONDS);
         } else {
             ThrowUtils.throwIf(true, ErrorCode.NOT_LOGIN_ERROR);
         }
@@ -197,7 +240,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
      */
     private String getUserIdFromContext(ChannelHandlerContext ctx) {
         // 从上下文中获取用户ID
-        return (String) ctx.channel().attr(AttributeKey.valueOf("userId")).get();
+        return ctx.channel().attr(USER_ID_ATTR).get();
     }
 
     /**
@@ -205,40 +248,18 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
      * 可以使用消息队列（如RocketMQ、Kafka）或直接通过网络发送。
      *
      * @param receiverId 接收者的用户ID
-     * @param content    消息内容
+     * @param param    消息内容
      */
-    private void sendMessageToNode(Integer messageId, String receiverId, String content) {
+    private void sendMessageToNode(String receiverId, Map<String,String> param) {
         Channel channel = getChannelByUserId(receiverId);
         if (channel != null && channel.isActive()) {
-            channel.writeAndFlush(new TextWebSocketFrame("消息Id:" + messageId + "消息内容: " + content));
+            channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(param)));
+            log.info("发送消息成功");
         } else {
             System.out.println("Receiver " + receiverId + " is not active.");
         }
     }
 
-    /**
-     * 将消息持久化到数据库。
-     *
-     * @param senderId   发送者的用户ID
-     * @param receiverId 接收者的用户ID
-     * @param content    消息内容
-     */
-    private void persistMessage(String senderId, String receiverId, String content) {
-        String sql = String.format("INSERT INTO messages (sender_id, receiver_id, content, timestamp) VALUES ('%s', '%s', '%s', NOW())",
-                senderId, receiverId, content);
-        System.out.println("Persisted message: " + sql);
-    }
-
-    /**
-     * 发送离线通知给接收者。
-     *
-     * @param receiverId 接收者的用户ID
-     * @param content    消息内容
-     */
-    private void sendOfflineNotification(String receiverId, String content) {
-        // 发送离线通知
-        System.out.println("Sending offline notification to " + receiverId + ": " + content);
-    }
 
     /**
      * 将用户设置为在线状态。
@@ -249,11 +270,11 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
     private void setOnlineUser(String userId, ChannelHandlerContext ctx) {
         int shardIndex = getShardIndex(userId);
         String key = ChatServerConstant.ONLINE_USERS_PREFIX + shardIndex;
-        RSetCache<String> shardSet = redisson.getSetCache(key);
-        shardSet.add(userId, 30, TimeUnit.MINUTES); // 设置过期时间为30分钟
-        //将通道上下文存储到内存映射表中
+        RSetCache<String> setCache = redisson.getSetCache(key);
+        setCache.add(userId,30, TimeUnit.MINUTES); // 设置过期时间为30分钟
         userChannels.put(userId, ctx);
     }
+
 
     /**
      * 从在线用户列表中移除用户。
@@ -263,11 +284,10 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
     private void removeOnlineUser(String userId) {
         int shardIndex = getShardIndex(userId);
         String key = ChatServerConstant.ONLINE_USERS_PREFIX + shardIndex;
-        RSetCache<String> shardSet = redisson.getSetCache(key);
-        shardSet.remove(userId);
-
-        //从内存映射表中移除对应的通道上下文
+        RSetCache<String> setCache = redisson.getSetCache(key);
+        setCache.remove(userId);
         userChannels.remove(userId);
+        log.info("User " + userId + " removed from online users.");
     }
 
     /**
@@ -279,8 +299,8 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
     private boolean getOnlineUserNodeId(String userId) {
         int shardIndex = getShardIndex(userId);
         String key = ChatServerConstant.ONLINE_USERS_PREFIX + shardIndex;
-        RSetCache<String> shardSet = redisson.getSetCache(key);
-        return shardSet.contains(userId);
+        RSetCache<String> setCache = redisson.getSetCache(key);
+        return setCache.contains(userId) && userChannels.containsKey(userId);
     }
 
     /**
@@ -299,11 +319,11 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
      *
      * @param userId 用户ID
      */
-    private void renewUserExpiry(String userId) {
+    private void renewUserExpiry(String userId,ChannelHandlerContext ctx) {
         int shardIndex = getShardIndex(userId);
         String key = ChatServerConstant.ONLINE_USERS_PREFIX + shardIndex;
-        RSetCache<String> shardSet = redisson.getSetCache(key);
-        shardSet.add(userId, 10, TimeUnit.MINUTES); // 续期过期时间为30分钟
+        RSetCache<String> setCache = redisson.getSetCache(key);
+        setCache.add(userId, 30, TimeUnit.MINUTES);
     }
 
     /**
@@ -314,6 +334,8 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<TextWebSocket
      * @return 用户的通道上下文
      */
     private Channel getChannelByUserId(String userId) {
-        return userChannels.get(userId) != null ? userChannels.get(userId).channel() : null;
+        String key = ChatServerConstant.ONLINE_USERS_PREFIX + getShardIndex(userId);
+        RSetCache<String> setCache = redisson.getSetCache(key);
+        return setCache.contains(userId) && userChannels.containsKey(userId) ? userChannels.get(userId).channel() : null;
     }
 }

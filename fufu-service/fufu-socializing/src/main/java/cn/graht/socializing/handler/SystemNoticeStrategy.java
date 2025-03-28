@@ -15,6 +15,7 @@ import cn.graht.common.enums.NoticeType;
 import cn.graht.model.socializing.pojos.notice.SystemNoticeFocusContent;
 import cn.graht.socializing.service.caffeine.CaffeineCacheService;
 import cn.graht.socializing.utils.UserRedissonCache;
+import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import jakarta.annotation.Resource;
@@ -43,6 +44,8 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
     private String serviceName;
     @Resource
     private UserRedissonCache userRedissonCache;
+    @Resource
+    private UserToolUtils userToolUtils;
     @Override
     public void handle(Map<String, String> param) {
         //处理逻辑
@@ -55,7 +58,7 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
             String userId = param.get("userId");
             //谁关注了它
             String focusUserId = param.get("focusUserId");
-            UserVo userVo = getUserFromCacheOrFeign(userId);
+            UserVo userVo = userToolUtils.getUserFromCacheOrFeign(userId);
             SystemNoticeDto systemNoticeDto = new SystemNoticeDto();
             systemNoticeDto.setUserId(userId);
             SystemNoticeFocusContent systemNoticeFocusContent = new SystemNoticeFocusContent();
@@ -86,26 +89,6 @@ public class SystemNoticeStrategy implements FuFuEventStrategy{
             producerApi.sendMsg(sendMSGRequestParams, headers);
         }
     }
-    private UserVo getUserFromCacheOrFeign(String userId) {
-        UserVo userVo = null;
-        userVo = caffeineCacheService.getUserCache(userId);
-        if (ObjectUtils.isNotEmpty(userVo)) {
-            return userVo;
-        }
-        String user = userRedissonCache.getUser(userId);
-        if (StringUtils.isNotBlank(user)) {
-            userVo = JSONUtil.toBean(user, UserVo.class);
-            caffeineCacheService.putUserCache(userId, userVo);
-            return userVo;
-        }
-        //如果redis中不存在 调用feign 并且将结果存储到redis中
-        ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(userId);
-        ThrowUtils.throwIf(ObjectUtils.isEmpty(userInfo)
-                || ObjectUtils.isEmpty(userInfo.getData())
-                || userInfo.getCode() != ErrorCode.SUCCESS.getCode(), ErrorCode.PARAMS_ERROR);
-        userVo = userInfo.getData();
-        caffeineCacheService.putUserCache(userId, userVo);
-        return userVo;
-    }
+
 }
 

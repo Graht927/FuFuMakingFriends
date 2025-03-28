@@ -13,6 +13,7 @@ import cn.graht.model.socializing.vos.ThumbsupVo;
 import cn.graht.model.user.dtos.EditDynamicDto;
 import cn.graht.model.user.pojos.Dynamic;
 import cn.graht.common.enums.NoticeType;
+import cn.graht.model.user.vos.DynamicVo;
 import cn.graht.socializing.event.FuFuEventEnum;
 import cn.graht.socializing.event.FuFuEventPublisher;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -89,7 +90,7 @@ public class ThumbsupController {
                         "userId2",thumbsup.getUserId(),"dynamicId",thumbsup.getDynamicId().toString()));
         //更新 动态的likeCount
         EditDynamicDto editDynamicDto = new EditDynamicDto();
-        Dynamic dynamic = userFeignApi.getDynamicById(thumbsup.getDynamicId()).getData();
+        DynamicVo dynamic = userFeignApi.getDynamicById(thumbsup.getDynamicId()).getData();
         editDynamicDto.setId(dynamic.getId());
         editDynamicDto.setLikeCount(dynamic.getLikeCount() + 1);
         userFeignApi.updateDynamic(thumbsup.getDynamicId(), editDynamicDto);
@@ -120,7 +121,7 @@ public class ThumbsupController {
         bitSet.clear(index);
         //更新 动态的likeCount
         EditDynamicDto editDynamicDto = new EditDynamicDto();
-        Dynamic dynamic = userFeignApi.getDynamicById(dynamicId).getData();
+        DynamicVo dynamic = userFeignApi.getDynamicById(dynamicId).getData();
         editDynamicDto.setId(dynamic.getId());
         editDynamicDto.setLikeCount(dynamic.getLikeCount() - 1);
         userFeignApi.updateDynamic(dynamicId, editDynamicDto);
@@ -166,9 +167,9 @@ public class ThumbsupController {
         long addCount = addHyperLogLog.count();
         RHyperLogLog<Object> delHyperLogLog = redisson.getHyperLogLog(RedisKeyConstants.THUMBSUP_DEL_KEY + dynamicId);
         long delCount = delHyperLogLog.count();
-        ResultApi<Dynamic> dynamicById = userFeignApi.getDynamicById(dynamicId);
+        ResultApi<DynamicVo> dynamicById = userFeignApi.getDynamicById(dynamicId);
         long dbCount = 0;
-        Dynamic data = dynamicById.getData();
+        DynamicVo data = dynamicById.getData();
         if (!ObjectUtils.isEmpty(data)){
             dbCount = data.getLikeCount();
         }

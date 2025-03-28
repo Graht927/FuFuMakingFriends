@@ -11,10 +11,12 @@ import cn.graht.model.socializing.dtos.CreatePrivateSessionDto;
 import cn.graht.model.socializing.pojos.GroupChatMember;
 import cn.graht.model.socializing.pojos.PrivateChatMessage;
 import cn.graht.model.socializing.pojos.PrivateChatSession;
+import cn.graht.model.socializing.vos.MessageVo;
 import cn.graht.model.socializing.vos.SessionVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.socializing.service.PrivateChatMessageService;
 import cn.graht.socializing.service.PrivateChatSessionService;
+import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +42,8 @@ public class PrivateChatController {
 
     @Resource
     private PrivateChatMessageService privateChatMessageService;
+    @Autowired
+    private UserToolUtils userToolUtils;
 
     @PostMapping("/session")
     @Operation(summary = "创建私聊会话", description = "创建私聊会话")
@@ -102,9 +107,6 @@ public class PrivateChatController {
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     public ResultApi<Integer> createMessage(@RequestBody CreateMessageDto messageDto) {
-        String loginId = (String) StpUtil.getLoginId();
-        ThrowUtils.throwIf(ObjectUtil.isEmpty(loginId), ErrorCode.NOT_LOGIN_ERROR);
-        ThrowUtils.throwIf(loginId.equals(messageDto.getSenderId()), ErrorCode.PARAMS_ERROR);
         PrivateChatMessage message = new PrivateChatMessage();
         BeanUtils.copyProperties(messageDto, message);
         Integer sessionId = message.getSessionId();
@@ -141,14 +143,25 @@ public class PrivateChatController {
     @Operation(summary = "获取消息列表", description = "通过会话获取消息列表")
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
-    public ResultApi<List<PrivateChatMessage>> getMessagesBySessionId(@PathVariable Integer sessionId,@RequestBody PageQuery pageQuery) {
+    public ResultApi<List<MessageVo>> getMessagesBySessionId(@PathVariable Integer sessionId,@RequestBody PageQuery pageQuery) {
         String loginId = (String) StpUtil.getLoginId();
         LambdaQueryWrapper<PrivateChatSession> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(PrivateChatSession::getId, sessionId);
         PrivateChatSession one = privateChatSessionService.getOne(queryWrapper);
         ThrowUtils.throwIf(ObjectUtil.isEmpty(one)|| !(one.getUserId1().equals(loginId) || one.getUserId2().equals(loginId)), ErrorCode.PARAMS_ERROR);
-        Page<PrivateChatMessage> privateChatMessagePage = new Page<>(pageQuery.getPageSize(), pageQuery.getPageNum());
-        return ResultUtil.ok(privateChatMessageService.lambdaQuery().eq(PrivateChatMessage::getSessionId, sessionId).page(privateChatMessagePage).getRecords());
+        Page<PrivateChatMessage> privateChatMessagePage = new Page<>( pageQuery.getPageNum(),pageQuery.getPageSize());
+        Page<PrivateChatMessage> page = privateChatMessageService.lambdaQuery().eq(PrivateChatMessage::getSessionId, sessionId).orderByDesc(PrivateChatMessage::getSendTime).page(privateChatMessagePage);
+        List<MessageVo> list = page.getRecords().stream().map(t -> {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId(t.getId());
+            messageVo.setMessage(t.getContent());
+            UserVo user2 = userToolUtils.getUserFromCacheOrFeign(t.getSenderId());
+            messageVo.setSenderAvatar(user2.getAvatarUrl());
+            messageVo.setIsSelf(t.getSenderId().equals(loginId));
+            messageVo.setSendTime(t.getSendTime());
+            return messageVo;
+        }).toList();
+        return ResultUtil.ok(list);
     }
 
 

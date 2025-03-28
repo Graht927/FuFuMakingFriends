@@ -12,4 +12,5 @@ import java.util.List;
 
 public interface NoticeService  {
     List<NoticeVo> getAllNotice(String uid, PageQuery pageQuery);
+    Integer getCountPage(String uid,Long pageSize);
 }

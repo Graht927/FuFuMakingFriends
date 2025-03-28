@@ -23,6 +23,7 @@ public class SessionVo {
      * 最后一条消息时间
      */
     private Date lastMessageTime;
+    private String sessionType;
 
     /**
      * 最新消息内容

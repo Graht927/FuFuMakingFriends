@@ -20,4 +20,10 @@
         type,createTime,updateTime,
         isDelete
     </sql>
+    <select id="selectAllByPage" resultType="cn.graht.model.socializing.vos.NoticeVo">
+        select userId,type,content,createTime,userId2 from system_notice where userId = #{uid} and isDelete = 0
+        union all
+        select userId,type,content,createTime,userId2 from dynamic_notice where userId = #{uid} and isDelete = 0
+        order by createTime desc limit #{index},3;
+    </select>
 </mapper>

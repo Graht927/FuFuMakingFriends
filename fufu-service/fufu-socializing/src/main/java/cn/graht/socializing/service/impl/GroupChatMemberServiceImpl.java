@@ -36,6 +36,7 @@ public class GroupChatMemberServiceImpl extends ServiceImpl<GroupChatMemberMappe
         return tempGroupSessionVos.stream().map(temp -> {
             SessionVo sessionVo = new SessionVo();
             BeanUtils.copyProperties(temp, sessionVo);
+            sessionVo.setSessionType("group");
             if (ObjectUtil.isNotEmpty(temp.getSenderId()) || StringUtils.isNotBlank(temp.getSenderId())){
                 ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(temp.getSenderId());
                 if (ObjectUtil.isNotEmpty(userInfo)) {

@@ -1,7 +1,6 @@
-package cn.graht.organizeBureau.config;
+package cn.graht.user.config;
 
-
-import cn.graht.organizeBureau.interceptor.TokenDelayRequestInterceptor;
+import cn.graht.feignApi.interceptor.TokenDelayRequestInterceptor;
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author GRAHT
  */
-
 @Configuration
 public class AppConfig {
     @Bean

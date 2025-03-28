@@ -1,6 +1,7 @@
 package cn.graht.feignApi.producer;
 
 import cn.graht.common.commons.ResultApi;
+import cn.graht.feignApi.interceptor.TokenDelayRequestInterceptor;
 import cn.graht.model.mq.dto.producer.SendMSGRequestParams;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.MultiValueMap;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author GRAHT
  */
 
-@FeignClient("fufu-mq-producer")
+@FeignClient(value = "fufu-mq-producer",configuration = TokenDelayRequestInterceptor.class)
 public interface ProducerApi {
     @PostMapping("/v1/producer/sendMsg")
     ResultApi<Object> sendMsg(@RequestBody SendMSGRequestParams params, @RequestHeader MultiValueMap<String, String> headers);
