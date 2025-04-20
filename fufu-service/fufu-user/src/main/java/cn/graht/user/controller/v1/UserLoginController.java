@@ -80,7 +80,12 @@ public class UserLoginController {
                 || StringUtils.isBlank(checkPhoneCodeDto.getPhone())
                 || StringUtils.isBlank(checkPhoneCodeDto.getPhoneCode()), ErrorCode.PARAMS_ERROR);
         String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX +t + ":" + checkPhoneCodeDto.getPhone();
-        String code = (String) smsStringRedisTemplate.opsForValue().get(redisKey);
+        String code = "";
+        try {
+            code = redisson.getBucket(redisKey).get().toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return ResultUtil.ok(code.equals(checkPhoneCodeDto.getPhoneCode()));
     }
 

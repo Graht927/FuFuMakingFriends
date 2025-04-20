@@ -32,4 +32,13 @@
         isDelete,userRole,tags,
         profile,birthday
     </sql>
+    <select id="randomGetUserVo" resultType="cn.graht.model.user.vos.UserVo">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from user where
+                      isDelete = 0 and
+                      birthday &gt; #{randomGetUserDto.beginBirthday} and birthday
+        &lt;
+        #{randomGetUserDto.endBirthday} limit #{randomGetUserDto.pageNum},#{size};
+    </select>
 </mapper>

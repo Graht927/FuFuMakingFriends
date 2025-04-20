@@ -62,17 +62,29 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
         queryWrapper.eq(Focus::getUserId, getFocusByUidDto.getFocusUid());
         UserVo data2 = getUserFromCacheOrFeign(getFocusByUidDto.getFocusUid());
         ThrowUtils.throwIf(ObjectUtils.isEmpty(data2), ErrorCode.PARAMS_ERROR);
+        log.info("{}",getFocusByUidDto);
+        List<Object> args = Arrays.asList(
+                getFocusByUidDto.getPageSize()+"",
+                getFocusByUidDto.getPageNum()+""
+        );
         Object eval = redisson.getScript().eval(
                 RScript.Mode.READ_ONLY,
                 caffeineCacheService.getLuaScriptCache(LuaConstant.SOCIALIZING_GET_FOCUSES_LUA_SCRIPT),
-                RScript.ReturnType.INTEGER,
+                RScript.ReturnType.MULTI,
                 Collections.singletonList(getFocusByUidDto.getFocusUid()),
-                getFocusByUidDto.getPageNum(), getFocusByUidDto.getPageSize()
+                args.toArray()
         );
         if (eval == null) {
             log.warn("Eval returned null. Check Lua script and Redis data.");
         } else {
             log.info("Eval returned value: {}", eval);
+            List<String> list = (List<String>) eval;
+            log.info("{}",list);
+            List<UserVo> userVos = list.stream().map(userId -> {
+                //拿到关注者的id
+                return getUserFromCacheOrFeign(userId);
+            }).toList();
+            return userVos;
         }
         //暂不支持查看更多数据~_~
         Page<Focus> focusPage = focusMapper.selectPage(page, queryWrapper);
@@ -188,21 +200,20 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
     }
     private void checkAuth(Object param){
         if (param instanceof EditFocusDto editFocusDto) {
-            ThrowUtils.throwIf(!StpUtil.getLoginId().equals(editFocusDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
             ThrowUtils.throwIf(ObjectUtils.isEmpty(editFocusDto)
                             || ObjectUtils.isEmpty(editFocusDto.getUserId())
                             || ObjectUtils.isEmpty(editFocusDto.getFocusUserId())
                     , ErrorCode.PARAMS_ERROR);
         }
         if (param instanceof GetFansByUidDto getFansByUidDto) {
-            ThrowUtils.throwIf(StpUtil.getLoginId().equals(getFansByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(!StpUtil.getLoginId().equals(getFansByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
             ThrowUtils.throwIf(ObjectUtils.isEmpty(getFansByUidDto)
                             || ObjectUtils.isEmpty(getFansByUidDto.getUserId())
                             || ObjectUtils.isEmpty(getFansByUidDto.getFocusId())
                     , ErrorCode.PARAMS_ERROR);
         }
         if (param instanceof GetFocusByUidDto getFocusByUidDto) {
-            ThrowUtils.throwIf(StpUtil.getLoginId().equals(getFocusByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
+            ThrowUtils.throwIf(!StpUtil.getLoginId().equals(getFocusByUidDto.getUserId()), ErrorCode.FORBIDDEN_ERROR,"非法操作! 登录账户与该当前账户不一致");
             ThrowUtils.throwIf(ObjectUtils.isEmpty(getFocusByUidDto)
                             || ObjectUtils.isEmpty(getFocusByUidDto.getUserId())
                     , ErrorCode.PARAMS_ERROR);

@@ -9,11 +9,13 @@ import cn.graht.common.constant.UserConstant;
 import cn.graht.common.exception.BusinessException;
 import cn.graht.model.user.dtos.EditUserInfoDto;
 import cn.graht.model.user.dtos.LoginDto;
+import cn.graht.model.user.dtos.RandomGetUserDto;
 import cn.graht.model.user.dtos.RegisterDto;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserIdsVo;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.user.boot.UserRedissonCache;
+import cn.graht.user.controller.v1.SearchUserController;
 import cn.graht.user.event.FuFuEventEnum;
 import cn.graht.user.event.FuFuEventPublisher;
 import cn.graht.user.mapper.UserMapper;
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.redisson.Redisson;
+import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,7 +85,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     ErrorCode.LOGIN_PARAMS_ERROR);
             //校验手机验证码是否正确
             String redisKey = RedisKeyConstants.SMS_LOGIN_PREFIX + loginDto.getPhone();
-            String captcha = stringRedisTemplate.opsForValue().get(redisKey);
+            String captcha = redisson.getBucket(redisKey).get().toString();
             ThrowUtils.throwIf(!loginDto.getPhoneCode().equals(captcha), ErrorCode.USER_PHONE_CODE_ERROR);
             User user = null;
             if (StringUtils.isNotBlank(loginDto.getUserPassword())){
@@ -93,7 +97,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 ThrowUtils.throwIf(ObjectUtils.isEmpty(user), ErrorCode.USER_NOT_ERROR);
             }
             StpUtil.login(user.getId());
-            stringRedisTemplate.delete(redisKey);
+            redisson.getBucket(redisKey).delete();
             HashMap<String, Object> eventParams = new HashMap<>();
             eventParams.put("user", user);
             eventParams.put("loginDto", loginDto);
@@ -306,6 +310,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return user.getId();
         }).toList());
         return userIdsVo;
+    }
+
+    @Override
+    public List<UserVo> randomGetUserVo(RandomGetUserDto randomGetUserDto) {
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(randomGetUserDto),ErrorCode.PARAMS_ERROR);
+        List<UserVo> userVos = userMapper.randomGetUserVo(randomGetUserDto, randomGetUserDto.getPageNum()* randomGetUserDto.getPageSize());
+        if (ObjectUtils.isEmpty(userVos)) return List.of();
+        Collections.shuffle(userVos);
+        if (userVos.size()<=10) return userVos;else userVos = userVos.stream().limit(10).toList();
+        return userVos;
     }
 }
 

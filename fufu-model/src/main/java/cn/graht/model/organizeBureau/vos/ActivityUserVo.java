@@ -19,7 +19,6 @@ public class ActivityUserVo implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 队伍名
@@ -55,7 +54,7 @@ public class ActivityUserVo implements Serializable {
     /**
      * 队伍头像
      */
-    private List<String> teamImage;
+    private String teamImage;
     /**
      * 队伍地址
      */
@@ -64,6 +63,7 @@ public class ActivityUserVo implements Serializable {
      * 过期时间
      */
     private Date expireTime;
+    private UserVo leaderInfo;
 
 
     /**

@@ -18,7 +18,7 @@ public class knife4jConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()
-                        .title("user")
+                        .title("search")
                         .version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION))
                 .components(new Components().addSecuritySchemes(

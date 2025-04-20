@@ -6,9 +6,13 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 /**
  * @author GRAHT
@@ -145,5 +149,24 @@ public class SaTokenConfigure {
     @ConditionalOnMissingBean
     public StpLogic getStpLogicJwt() {
         return new StpLogicJwtForSimple();
+    }
+    @Value("${sa-token.redis.host}")
+    private String host;
+    @Value("${sa-token.redis.port}")
+    private int port;
+    @Value("${sa-token.redis.password}")
+    private String password;
+    @Value("${sa-token.redis.database}")
+    private int database;
+    @Bean
+    public RedisConnectionFactory connectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(host);
+        config.setPort(port);
+        config.setPassword(password);
+        config.setDatabase(database);  // 使用 db0
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(config);
+        factory.afterPropertiesSet();
+        return factory;
     }
 }

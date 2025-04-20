@@ -21,8 +21,11 @@ import cn.graht.socializing.service.GroupChatMessageService;
 import cn.graht.socializing.service.GroupChatSessionService;
 import cn.graht.socializing.utils.UserToolUtils;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esotericsoftware.minlog.Log;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,11 +64,13 @@ public class GroupChatController {
     public ResultApi<Integer> createSession(@RequestBody CreateGroupSessionDto sessionDto) {
         GroupChatSession session = new GroupChatSession();
         BeanUtils.copyProperties(sessionDto, session);
+        session.setActivityId(Integer.parseInt(sessionDto.getActivityId()));
+        Log.info("createSession: {}", JSONUtil.toJsonStr(session));
         boolean save = groupChatSessionService.save(session);
         ThrowUtils.throwIf(!save, ErrorCode.SYSTEM_ERROR);
         CreateGroupChatMemberDto createGroupChatMemberDto = new CreateGroupChatMemberDto();
         createGroupChatMemberDto.setGroupId(session.getId());
-        createGroupChatMemberDto.setUserId(StpUtil.getLoginId().toString());
+        createGroupChatMemberDto.setUserId(sessionDto.getUserId());
         createGroupChatMemberDto.setRole(2);
         addMember(createGroupChatMemberDto);
         return ResultUtil.ok(session.getId());
@@ -89,6 +94,15 @@ public class GroupChatController {
     @ApiResponse(responseCode = "40002", description = "结果为空")
     public ResultApi<GroupChatSession> getSession(@PathVariable Integer id) {
         return ResultUtil.ok(groupChatSessionService.getById(id));
+    }
+    @GetMapping("/session/activity/{activityId}")
+    @Operation(summary = "获取群聊会话", description = "通过id获取群聊会话")
+    @ApiResponse(responseCode = "200", description = "true")
+    @ApiResponse(responseCode = "40000", description = "参数错误")
+    @ApiResponse(responseCode = "40002", description = "结果为空")
+    public ResultApi<GroupChatSession> getSessionByActivityId(@PathVariable Integer activityId) {
+        GroupChatSession one = groupChatSessionService.lambdaQuery().eq(GroupChatSession::getActivityId, activityId).one();
+        return ResultUtil.ok(one);
     }
 
     @PutMapping("/session/{id}")
@@ -213,17 +227,22 @@ public class GroupChatController {
     public ResultApi<Boolean> deleteMessage(@PathVariable Integer id) {
         return ResultUtil.ok(groupChatMessageService.removeById(id));
     }
-
-    @PostMapping("/messages/session/{sessionId}")
+    private record getMessagesBySessionIdPageQuery(String sessionId,Integer pageNum, Integer pageSize) {
+    }
+    @PostMapping("/messages/session")
     @Operation(summary = "获取群聊消息列表", description = "获取群聊消息列表")
     @ApiResponse(responseCode = "200", description = "true")
     @ApiResponse(responseCode = "40000", description = "参数错误")
     @ApiResponse(responseCode = "40002", description = "结果为空")
-    public ResultApi<List<MessageVo>> getMessagesBySessionId(@PathVariable Integer sessionId, @RequestBody PageQuery pageQuery) {
+    public ResultApi<List<MessageVo>> getMessagesBySessionId(@RequestBody getMessagesBySessionIdPageQuery messagesDto ) {
+        Integer sessionId = Integer.parseInt(messagesDto.sessionId);
+        PageQuery pageQuery = new PageQuery();
+        pageQuery.setPageNum(messagesDto.pageNum);
+        pageQuery.setPageSize(messagesDto.pageSize);
         String loginId = (String) StpUtil.getLoginId();
         List<GroupChatMember> list = groupChatMemberService.lambdaQuery().eq(GroupChatMember::getGroupId, sessionId).list();
         ThrowUtils.throwIf(list.stream().noneMatch(groupChatMember -> groupChatMember.getUserId().equals(loginId)),ErrorCode.NO_AUTH);
-        Page<GroupChatMessage> groupChatMessagePage = new Page<>(pageQuery.getPageSize(), pageQuery.getPageNum());
+        Page<GroupChatMessage> groupChatMessagePage = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
         List<GroupChatMessage> records = groupChatMessageService.lambdaQuery().eq(GroupChatMessage::getGroupId, sessionId).orderByDesc(GroupChatMessage::getSendTime)
                 .page(groupChatMessagePage).getRecords();
         List<MessageVo> res = records.stream().map(t -> {

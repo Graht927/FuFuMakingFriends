@@ -4,6 +4,8 @@ import cn.graht.common.commons.PageQuery;
 import cn.graht.common.commons.ResultApi;
 import cn.graht.feignApi.interceptor.TokenDelayRequestInterceptor;
 import cn.graht.model.user.dtos.EditDynamicDto;
+import cn.graht.model.user.dtos.GetDynamicByUidDto;
+import cn.graht.model.user.dtos.RandomGetUserDto;
 import cn.graht.model.user.pojos.Dynamic;
 import cn.graht.model.user.vos.DynamicVo;
 import cn.graht.model.user.vos.UserIdsVo;
@@ -31,5 +33,9 @@ public interface UserFeignApi {
     ResultApi<UserIdsVo> getAllUserId(@RequestBody PageQuery pageQuery,@RequestHeader MultiValueMap<String, String> headers);
     @PutMapping("/v1/dynamics/{id}")
     ResultApi<Dynamic> updateDynamic(@PathVariable Long id, @RequestBody EditDynamicDto editDynamicDto);
+    @PostMapping("/v1/user/search")
+    ResultApi<List<UserVo>> randomGetUserVo(@RequestBody RandomGetUserDto randomGetUserDto);
+    @PostMapping("/v1/dynamics/user/byUid")
+    ResultApi<List<DynamicVo>> getDynamicsByUserId(@RequestBody GetDynamicByUidDto getDynamicByUidDto);
 
 }

@@ -20,6 +20,7 @@ public class GroupChatSession {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
+    private Integer activityId;
 
     /**
      * 群聊名称

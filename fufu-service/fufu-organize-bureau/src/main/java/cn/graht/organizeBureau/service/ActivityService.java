@@ -1,5 +1,6 @@
 package cn.graht.organizeBureau.service;
 
+import cn.graht.common.commons.PageQuery;
 import cn.graht.model.organizeBureau.dtos.TeamQuery;
 import cn.graht.model.organizeBureau.dtos.TeamQuitRequest;
 import cn.graht.model.organizeBureau.dtos.TeamSendJoinRequest;
@@ -31,7 +32,7 @@ public interface ActivityService extends IService<Activity> {
      * @param teamQuery
      * @return
      */
-    List<ActivityUserVo> listTeamByPage(TeamQuery teamQuery, HttpServletRequest request);
+    List<ActivityUserVo> listTeamByPage(TeamQuery teamQuery);
 
     /**
      *  修改队伍
@@ -70,7 +71,7 @@ public interface ActivityService extends IService<Activity> {
      * @param loginUser
      * @return
      */
-    List<ActivityUserVo> getCreateTeamByUser(User loginUser);
+    List<ActivityUserVo> getCreateTeamByUser(User loginUser, PageQuery pageQuery);
 
     /**
      *  获取当前用户创建的队伍  已过期的
@@ -84,7 +85,7 @@ public interface ActivityService extends IService<Activity> {
      * @param loginUser
      * @return
      */
-    List<ActivityUserVo> getAddTeamByUser(User loginUser);
+    List<ActivityUserVo> getAddTeamByUser(User loginUser, PageQuery pageQuery);
 
     /**
      * 通过id来获取队伍详细信息
@@ -93,6 +94,7 @@ public interface ActivityService extends IService<Activity> {
      * @return
      */
     ActivityUserVo getTeamInfoByTid(long teamId, User loginUser);
+    ActivityUserVo getTeamInfoByTid(long teamId, String uid);
 
     /**
      * 删除已过期的房间

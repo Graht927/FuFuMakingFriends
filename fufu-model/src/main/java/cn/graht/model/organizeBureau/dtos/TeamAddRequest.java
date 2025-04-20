@@ -31,6 +31,6 @@ public class TeamAddRequest implements Serializable {
      */
     private Date startTime;
     private String address;
-    private List<String> teamImage;
+    private String teamImage;
     private Double deposit;
 }

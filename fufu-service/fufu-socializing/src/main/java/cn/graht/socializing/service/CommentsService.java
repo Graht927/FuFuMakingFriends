@@ -3,6 +3,8 @@ package cn.graht.socializing.service;
 import cn.graht.common.commons.PageQuery;
 import cn.graht.model.socializing.dtos.GetChildrenCommentsByCidAndPid;
 import cn.graht.model.socializing.pojos.Comments;
+import cn.graht.model.socializing.vos.CommentLastVo;
+import cn.graht.model.socializing.vos.CommentsVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,8 +17,8 @@ import java.util.Map;
 */
 public interface CommentsService extends IService<Comments> {
 
-    List<Comments> getParentCommentsByCid(Long cid, PageQuery pageQuery);
+    List<CommentsVo> getParentCommentsByCid(Long cid, PageQuery pageQuery);
 
-    List<Comments> getCommentsByCid(Long cid, GetChildrenCommentsByCidAndPid getChildrenCommentsByCidAndPid);
+    List<CommentsVo> getCommentsByCid(Long cid, GetChildrenCommentsByCidAndPid getChildrenCommentsByCidAndPid);
 
 }

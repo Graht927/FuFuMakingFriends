@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.redisson.Redisson;
+import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +44,6 @@ public class SMSController {
     private SMSTemplateCode smsTemplateCode;
     @Resource
     private Redisson redisson;
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
 
 
     @PostMapping("/g")
@@ -55,6 +54,7 @@ public class SMSController {
     public ResultApi requestSms(@RequestBody SMSRequestParam smsRequestParam) {
         RLock lock = redisson.getLock(RedisKeyConstants.SMS_LOCK_PREFIX + smsRequestParam.getPhone());
         lock.lock();
+
         try {
             ThrowUtils.throwIf(ObjectUtils.isEmpty(smsRequestParam)
                             || StringUtils.isBlank(smsRequestParam.getPhone())
@@ -69,22 +69,26 @@ public class SMSController {
                 String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
                 String redisValue = String.valueOf(captcha);
                 log.info("redis添加信息: [key:{},value: {}]",redisKey,redisValue);
-                stringRedisTemplate.opsForValue().set(
-                        redisKey,
-                        redisValue,
-                        RedisKeyConstants.SMS_TIMEOUT,
-                        TimeUnit.SECONDS);
+                try {
+                   /* stringRedisTemplate.opsForValue().set(
+                            redisKey,
+                            redisValue,
+                            RedisKeyConstants.SMS_TIMEOUT,
+                            TimeUnit.SECONDS);*/
+                    RBucket<String> bucket = redisson.getBucket(redisKey);
+                    bucket.set(redisValue, RedisKeyConstants.SMS_TIMEOUT, TimeUnit.SECONDS);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 return ResultUtil.ok();
             }
             if ( !("remoteLogin".equals(smsRequestParam.getTemplateCodeStr())) && !ObjectUtils.isEmpty(sendSmsResponse) && "OK".equals(sendSmsResponse.getBody().getMessage())) {
                 String redisKey = RedisKeyConstants.SMS_TEMPLATE_CODE_PREFIX + smsRequestParam.getTemplateCodeStr() + ":" + smsRequestParam.getPhone();
                 String redisValue = String.valueOf(captcha);
                 log.info("redis添加信息: [key:{},value: {}]",redisKey,redisValue);
-                stringRedisTemplate.opsForValue().set(
-                        redisKey,
-                        redisValue,
-                        RedisKeyConstants.SMS_TIMEOUT,
-                        TimeUnit.SECONDS);
+                RBucket<String> bucket = redisson.getBucket(redisKey);
+                bucket.set(redisValue, RedisKeyConstants.SMS_TIMEOUT, TimeUnit.SECONDS);
                 return ResultUtil.ok();
             }
         } finally {

@@ -196,7 +196,6 @@ public class UserDynamicController {
         for (int i = 0; i < RedisKeyConstants.SHARD_COUNT; i++) {
             String bitmapKey = RedisKeyConstants.THUMBSUP_KEY + did + ":" + i;
             RBitSet bitSet = redisson.getBitSet(bitmapKey);
-            bitSet.set(-1);
             bitSet.expire(RedisKeyConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         }
     }

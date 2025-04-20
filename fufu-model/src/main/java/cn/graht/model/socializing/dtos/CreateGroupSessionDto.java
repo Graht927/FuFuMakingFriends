@@ -22,4 +22,6 @@ public class CreateGroupSessionDto {
      * 头像
      */
     private String avatarUrl;
+    private String activityId;
+    private String userId;
 }

@@ -47,7 +47,10 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper, Dynamic>
         ThrowUtils.throwIf(ObjectUtils.isEmpty(getDynamicByUidDto), ErrorCode.PARAMS_ERROR);
         IPage<Dynamic> dynamicPage = new Page<>( getDynamicByUidDto.getPageNum(),getDynamicByUidDto.getPageSize());
         QueryWrapper<Dynamic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userId", getDynamicByUidDto.getUid());
+        if (ObjectUtils.isNotEmpty(getDynamicByUidDto.getUid())){
+            queryWrapper.eq("userId", getDynamicByUidDto.getUid());
+        }
+        queryWrapper.orderByDesc("id");
         List<Dynamic> dynamics = dynamicMapper.selectList(dynamicPage, queryWrapper);
         return dynamics;
     }
@@ -65,7 +68,7 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper, Dynamic>
         int insert = dynamicMapper.insert(dynamic);
         ThrowUtils.throwIf(insert!=1, ErrorCode.SYSTEM_ERROR);
         DynamicVo dynamicVo = new DynamicVo();
-        dynamicVo.setImages(JSONUtil.toBean(dynamic.getImages(), List.class));
+        dynamicVo.setImages(createDynamicDto.getImages());
         BeanUtils.copyProperties(dynamic, dynamicVo);
         ResultApi<UserVo> userInfo = userFeignApi.getUserInfo(dynamic.getUserId());
         if (ObjectUtils.isNotEmpty(userInfo)) {

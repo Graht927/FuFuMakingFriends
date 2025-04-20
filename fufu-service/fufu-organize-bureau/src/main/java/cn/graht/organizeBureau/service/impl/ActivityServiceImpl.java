@@ -2,6 +2,7 @@ package cn.graht.organizeBureau.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.graht.common.commons.ErrorCode;
+import cn.graht.common.commons.PageQuery;
 import cn.graht.common.constant.RedisKeyConstants;
 import cn.graht.common.constant.UserConstant;
 import cn.graht.common.exception.BusinessException;
@@ -17,17 +18,20 @@ import cn.graht.model.organizeBureau.pojos.UserActivity;
 import cn.graht.model.user.pojos.User;
 import cn.graht.model.user.vos.UserVo;
 import cn.graht.organizeBureau.mapper.ActivityMapper;
+import cn.graht.organizeBureau.mapper.UserActivityMapper;
 import cn.graht.organizeBureau.service.ActivityService;
 import cn.graht.organizeBureau.service.UserActivityService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
@@ -58,6 +62,8 @@ public class ActivityServiceImpl extends
     private ActivityMapper teamMapper;
     @Resource
     private Redisson redisson;
+    @Resource
+    private UserActivityMapper userActivityMapper;
 
     @Override
     //todo 分布式事务
@@ -86,6 +92,7 @@ public class ActivityServiceImpl extends
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "当前队伍数量已经是最大值，如需新建请查看vip");
         activity.setId(null);
         activity.setUserId(loginId);
+        activity.setCurrentNum(1);
         boolean save = save(activity);
         ThrowUtils.throwIf(!save, ErrorCode.PARAMS_ERROR, "创建活动失败");
         Long teamId = activity.getId();
@@ -98,7 +105,7 @@ public class ActivityServiceImpl extends
     }
 
     @Override
-    public List<ActivityUserVo> listTeamByPage(TeamQuery teamQuery, HttpServletRequest request) {
+    public List<ActivityUserVo> listTeamByPage(TeamQuery teamQuery) {
         if (teamQuery == null) throw new BusinessException(ErrorCode.PARAMS_ERROR);
         long tid = Optional.ofNullable(teamQuery.getId()).orElse(0l);
         long pageNum = teamQuery.getPageNum();
@@ -121,8 +128,9 @@ public class ActivityServiceImpl extends
         if (!StringUtils.isBlank(name)) {
             queryWrapper.like(Activity::getName, name);
         }
-        if (!ObjectUtils.isNotEmpty(startTime)) {
-            queryWrapper.eq(Activity::getStartTime, startTime);
+        if (!ObjectUtils.isEmpty(startTime)) {
+            Date endOfDay = DateUtil.endOfDay(startTime);
+            queryWrapper.between(Activity::getStartTime,startTime,endOfDay);
         }
 
         if (!StringUtils.isBlank(address)) {
@@ -158,13 +166,10 @@ public class ActivityServiceImpl extends
             BeanUtils.copyProperties(team, teamUserVo);
             Long id = team.getId();
             ThrowUtils.throwIf(ObjectUtils.isEmpty(id) || id < 0, ErrorCode.PARAMS_ERROR);
-
             List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(id);
             ThrowUtils.throwIf(CollectionUtils.isEmpty(userTeamByTeamId), ErrorCode.PARAMS_ERROR);
             teamUserVo.setTeamUserInfos(userTeamByTeamId);
-            String teamImage = team.getTeamImage();
-            ThrowUtils.throwIf(StringUtils.isBlank(teamImage), ErrorCode.PARAMS_ERROR);
-            teamUserVo.setTeamImage(Arrays.asList(teamImage.split(",")));
+            teamUserVo.setLeaderInfo(userTeamByTeamId.get(0));
             return teamUserVo;
         }).collect(Collectors.toList()).stream().filter(teamUserVo -> {
             if (!Objects.isNull(loginId)) {
@@ -271,6 +276,11 @@ public class ActivityServiceImpl extends
             resultUserTeam.setJoinTime(new Date());
             boolean save = userTeamService.save(resultUserTeam);
             if (!save) throw new BusinessException(ErrorCode.NULL_ERROR, "加入队伍失败");
+            LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Activity::getId, teamId);
+            team.setCurrentNum((int) currentNum + 1);
+            int update = teamMapper.update(team, queryWrapper);
+            if (update <= 0) throw new BusinessException(ErrorCode.NULL_ERROR, "加入队伍失败");
             return true;
         } finally {
             lock.unlock();
@@ -323,6 +333,12 @@ public class ActivityServiceImpl extends
         boolean b = userTeamService.remove(new LambdaQueryWrapper<UserActivity>().eq(UserActivity::getTeamId, teamId)
                 .eq(UserActivity::getUserId, loginUser.getId()));
         if (!b) throw new BusinessException(ErrorCode.NULL_ERROR);
+        team.setCurrentNum(team.getCurrentNum() - 1);
+        if (team.getCurrentNum() < 0) {
+            team.setCurrentNum(0);
+        }
+        teamMapper.update(team, new LambdaUpdateWrapper<Activity>().eq(Activity::getId, teamId));
+        boolean result = updateById(team);
         //todo 获取当前队伍中的人数 退押金
         return true;
     }
@@ -349,19 +365,25 @@ public class ActivityServiceImpl extends
     }
 
     @Override
-    public List<ActivityUserVo> getCreateTeamByUser(User loginUser) {
+    public List<ActivityUserVo> getCreateTeamByUser(User loginUser, PageQuery pageQuery) {
         if (Objects.isNull(loginUser)) throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        String id = loginUser.getId();
-        LambdaQueryWrapper<Activity> teamLambdaQueryWrapper = new LambdaQueryWrapper<Activity>().eq(Activity::getUserId, id);
-        List<Activity> teams = this.list(teamLambdaQueryWrapper);
-        if (CollectionUtils.isEmpty(teams)) {
-            throw new BusinessException(ErrorCode.NULL_ERROR);
-        }
+        String loginUserId = loginUser.getId();
+        LambdaQueryWrapper<Activity> teamLambdaQueryWrapper = new LambdaQueryWrapper<Activity>();
+        teamLambdaQueryWrapper.eq(Activity::getUserId, loginUserId);
+        Page<Activity> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
+        Page<Activity> activityPage = teamMapper.selectPage(page, teamLambdaQueryWrapper);
+        ThrowUtils.throwIf(Objects.isNull(activityPage), ErrorCode.PARAMS_ERROR);
+        List<Activity> teams = activityPage.getRecords();
+        if (teams.isEmpty()) return new ArrayList<>();
         List<ActivityUserVo> teamUserVos = teams.stream().filter(team -> team.getExpireTime().after(new Date())).map(team -> {
             ActivityUserVo teamUserVo = new ActivityUserVo();
             BeanUtils.copyProperties(team, teamUserVo);
-            List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(team.getId());
+            Long id = team.getId();
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(id) || id < 0, ErrorCode.PARAMS_ERROR);
+            List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(id);
+            ThrowUtils.throwIf(CollectionUtils.isEmpty(userTeamByTeamId), ErrorCode.PARAMS_ERROR);
             teamUserVo.setTeamUserInfos(userTeamByTeamId);
+            teamUserVo.setLeaderInfo(userTeamByTeamId.get(0));
             return teamUserVo;
         }).collect(Collectors.toList());
         return teamUserVos;
@@ -387,13 +409,21 @@ public class ActivityServiceImpl extends
     }
 
     @Override
-    public List<ActivityUserVo> getAddTeamByUser(User loginUser) {
+    public List<ActivityUserVo> getAddTeamByUser(User loginUser,PageQuery pageQuery) {
         if (Objects.isNull(loginUser)) throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         String userId = loginUser.getId();
-        List<Activity> addTeamByUserId = teamMapper.getAddTeamByUserId(userId);
-        if (CollectionUtils.isEmpty(addTeamByUserId)) {
-            throw new BusinessException(ErrorCode.NULL_ERROR);
-        }
+        Page<Activity> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
+//        List<Activity> addTeamByUserId = teamMapper.getAddTeamByUserId(userId);
+        LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Activity::getId, userActivityMapper.selectList(
+                        new LambdaQueryWrapper<UserActivity>()
+                                .eq(UserActivity::getUserId, userId)
+                                .eq(UserActivity::getIsDelete, 0)
+                ).stream().map(UserActivity::getTeamId).collect(Collectors.toList()))
+                .eq(Activity::getIsDelete, 0);
+        Page<Activity> activityPage = teamMapper.selectPage(page, queryWrapper);
+        List<Activity> addTeamByUserId = activityPage.getRecords();
+        if (CollectionUtils.isEmpty(addTeamByUserId)) return new ArrayList<>();
         return addTeamByUserId.stream().filter(team -> {
             if (team.getExpireTime().before(new Date())) {
                 return false;
@@ -405,33 +435,44 @@ public class ActivityServiceImpl extends
         }).map(team -> {
             ActivityUserVo teamUserVo = new ActivityUserVo();
             BeanUtils.copyProperties(team, teamUserVo);
-            List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(team.getId());
+            Long id = team.getId();
+            ThrowUtils.throwIf(ObjectUtils.isEmpty(id) || id < 0, ErrorCode.PARAMS_ERROR);
+            List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(id);
+            ThrowUtils.throwIf(CollectionUtils.isEmpty(userTeamByTeamId), ErrorCode.PARAMS_ERROR);
             teamUserVo.setTeamUserInfos(userTeamByTeamId);
+            teamUserVo.setLeaderInfo(userTeamByTeamId.get(0));
             return teamUserVo;
         }).collect(Collectors.toList());
     }
 
     @Override
-    public ActivityUserVo getTeamInfoByTid(long teamId, User loginUser) {
-        if (Objects.isNull(loginUser)) throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+    public ActivityUserVo getTeamInfoByTid(long teamId, String uid) {
         if (teamId < 0) throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        String uid = loginUser.getId();
         Activity team = this.getOne(new LambdaQueryWrapper<Activity>().eq(Activity::getId, teamId));
         if (Objects.isNull(team)) throw new BusinessException(ErrorCode.NULL_ERROR);
-        if (!UserConstant.ADMIN_ROLE.equals(loginUser.getUserRole())) {
-            if (!team.getUserId().equals(loginUser.getId())) {
-                UserActivity userTeam = userTeamService.getOne(new LambdaQueryWrapper<UserActivity>().eq(UserActivity::getUserId, uid).eq(UserActivity::getTeamId, teamId));
-                //他不是这个队伍中成员
-                if (Objects.isNull(userTeam)) throw new BusinessException(ErrorCode.NO_AUTH);
-                //他是队伍中的一员
-            }
-        }
         ActivityUserVo teamUserVo = new ActivityUserVo();
         BeanUtils.copyProperties(team, teamUserVo);
         List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(teamId);
         if (CollectionUtils.isEmpty(userTeamByTeamId)) {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
+        teamUserVo.setLeaderInfo(userTeamByTeamId.get(0));
+        teamUserVo.setTeamUserInfos(userTeamByTeamId);
+        return teamUserVo;
+    }
+    @Override
+    public ActivityUserVo getTeamInfoByTid(long teamId, User loginUser) {
+        if (teamId < 0) throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        String uid = loginUser.getId();
+        Activity team = this.getOne(new LambdaQueryWrapper<Activity>().eq(Activity::getId, teamId));
+        if (Objects.isNull(team)) throw new BusinessException(ErrorCode.NULL_ERROR);
+        ActivityUserVo teamUserVo = new ActivityUserVo();
+        BeanUtils.copyProperties(team, teamUserVo);
+        List<UserVo> userTeamByTeamId = userTeamService.findUserTeamByTeamId(teamId);
+        if (CollectionUtils.isEmpty(userTeamByTeamId)) {
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        }
+        teamUserVo.setLeaderInfo(userTeamByTeamId.get(0));
         teamUserVo.setTeamUserInfos(userTeamByTeamId);
         return teamUserVo;
     }
