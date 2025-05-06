@@ -82,7 +82,7 @@ public class UserRedissonCache {
      * 根据用户ID计算分片索引
      */
     private int getShardIndex(String userId, int shardCount) {
-        return (int) (userId.hashCode() % shardCount);
+        return (int) Math.abs(userId.hashCode() % shardCount);
     }
 
 }

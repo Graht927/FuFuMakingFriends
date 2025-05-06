@@ -1,8 +1,12 @@
 package cn.graht.user.utils;
 
+import cn.graht.common.constant.SystemConstant;
+import cn.hutool.core.util.IdUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.util.DigestUtils;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 /**
  * 网络工具类
@@ -10,6 +14,10 @@ import java.net.InetAddress;
  * @author GRAHT
  */
 public class NetUtils {
+
+    public static void main(String[] args) {
+        System.out.println(DigestUtils.md5DigestAsHex((SystemConstant.SALT + "FUFUM123456#").getBytes()));
+    }
 
     /**
      * 获取客户端 IP 地址

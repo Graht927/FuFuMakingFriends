@@ -52,6 +52,18 @@ public class PrivateChatController {
     @ApiResponse(responseCode = "40002", description = "结果为空")
     public ResultApi<Boolean> createSession(@RequestBody CreatePrivateSessionDto session) {
         PrivateChatSession session1 = new PrivateChatSession();
+        LambdaQueryWrapper<PrivateChatSession> privateChatSessionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        privateChatSessionLambdaQueryWrapper.and(wrapper ->
+                        wrapper.eq(PrivateChatSession::getUserId1, session.getUserId1())
+                                .eq(PrivateChatSession::getUserId2, session.getUserId2()))
+                .or()
+                .and(wrapper ->
+                        wrapper.eq(PrivateChatSession::getUserId1, session.getUserId2())
+                                .eq(PrivateChatSession::getUserId2, session.getUserId1()));
+        PrivateChatSession one = privateChatSessionService.getOne(privateChatSessionLambdaQueryWrapper);
+        if (ObjectUtil.isNotNull(one)) {
+            return ResultUtil.ok(true);
+        }
         BeanUtils.copyProperties(session, session1);
         return ResultUtil.ok(privateChatSessionService.save(session1));
     }

@@ -6,7 +6,6 @@
         <artifactId>FuFuMakingFriends</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
     <artifactId>fufu-service</artifactId>
     <packaging>pom</packaging>
     <modules>
